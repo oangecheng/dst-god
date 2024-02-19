@@ -5,9 +5,7 @@ local function addPower(self, name, ent)
             inst = ent,
         }
         ent.persists = false
-        --- 属性系统才可以绑定
         ent.components.ksg_power:Bind(name, self.inst)
-        self.inst:PushEvent(KSG_EVENTS.POWER_ATTACH, { name = name, power = ent })
     else
         ent:Remove()
     end
@@ -39,7 +37,7 @@ function System:AddPower(name)
     local existed = self.powers[name]
     local ret = nil
     if existed == nil then
-        local ent = SpawnPrefab("ksg_power"..name)
+        local ent = SpawnPrefab("ksg_power_"..name)
         if ent then
             addPower(self, name, ent)
             if self.onGainFn then

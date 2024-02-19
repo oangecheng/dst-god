@@ -1,6 +1,7 @@
 
 KSG_CONF = {
-    IS_CH = true
+    IS_CH = true,
+    LOG = true,
 }
 
 
@@ -48,7 +49,11 @@ KSG_POWERS = {
 }
 
 
+KSG_TAGS = {
+    LEVEL = "KSG_TAG_LEVEL"
+}
+
 KSG_EVENTS = {
-    POWER_ATTACH = "KSG_POWER_ATTACH",
-    TASK_FINISH  = "KSG_TASK_FINISH" ,
+    POWER_REFRESH = "KSG_POWER_REFRESH",
+    TASK_FINISH   = "KSG_TASK_FINISH" ,
 }

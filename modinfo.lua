@@ -1,8 +1,9 @@
 ---@diagnostic disable: lowercase-global, undefined-global
+
 local ch = locale == "zh" or locale == "zhr"
 
 -- 名称
-name = ch and "饥荒mod模版" or "dst template"
+name = ch and "神之试炼" or "Trial"
 
 -- 描述
 description = ch and "模板" or "template"
