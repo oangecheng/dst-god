@@ -3,36 +3,45 @@ local expfndef = function (lv)
     return (lv + 1) * 10
 end
 
-local function onlvchange(self, lv)
-    if self.onlvfn then
-        self.onlvfn(self.inst, lv, self:IsMax())
+local function onLvChanged(self, lv)
+    if self.onLvFn then
+        self.onLvFn(lv)
+    end
+end
+
+
+local function onXpChanged(self, xp)
+    if self.onXpFn then
+        self.onXpFn(xp)
     end
 end
 
 
 local Level = Class(
     function(self, inst)
+        self.inst = inst
         self.lv = 0
         self.xp = 0
         self.max = math.maxinteger
     end,
     nil,
     {
-        lv = onlvchange
+        lv = onLvChanged,
+        xp = onXpChanged
     })
 
 
----comment 设置状态变更监听，等级或者经验变更都会回调
+---comment 设置经验变更回调
 ---@param fn function
-function Level:SetOnStateFn(fn)
-    self.onstatefn = fn
+function Level:SetOnXpFn(fn)
+    self.onXpFn = fn
 end
 
 
 ---comment 设置等级监听，只有等级发生变更时才会回调
 ---@param fn function
 function Level:SetOnLvFn(fn)
-    self.onlvfn = fn
+    self.onLvFn = fn
 end
 
 
@@ -63,9 +72,9 @@ function Level:XpDelta(delta)
         self.lv = math.min(self.max, tlv)
     end
 
-    self.xp = self:IsMax() and txp or 0
-    if self.onstatefn then
-        self.onstatefn(self.inst)
+    txp = self:IsMax() and 0 or txp
+    if self.xp ~= txp then
+        self.xp = txp
     end
 end
 
