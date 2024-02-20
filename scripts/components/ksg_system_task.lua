@@ -19,11 +19,21 @@ local System = Class(function (self, inst)
 end)
 
 
+---comment 获取任务实体
+---@param type string
+---@return table|nil
+function System:GetTask(type)
+    local task =  self.tasks[type]
+    return task and task.inst or nil
+end
+
+
 ---comment 新增任务
----@param type string 任务类型
 ---@param data table 任务数据
 ---@return table|nil 任务实体
-function System:AddTask(type, data)
+function System:AddTask(data)
+    local type = data.type
+    KsgLog("addTask", type, data.name)
     local task = self.tasks[type]
     local ret = nil
     if task == nil then

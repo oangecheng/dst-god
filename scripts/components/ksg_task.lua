@@ -62,6 +62,13 @@ function Task:SetData(data)
 end
 
 
+---comment获取任务数据
+---@return table|nil
+function Task:GetData()
+    return self.taskdata
+end
+
+
 ---comment 开始任务
 ---@param type string
 ---@param owner table
@@ -80,6 +87,13 @@ function Task:Stop(type)
     self.owner = nil
     self.type = nil
     self.inst.owner = nil
+end
+
+
+function Task:Update()
+    if self.owner ~= nil then
+        self.owner:PushEvent(KSG_EVENTS.TASK_UPDATE)
+    end
 end
 
 

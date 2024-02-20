@@ -49,11 +49,41 @@ KSG_POWERS = {
 }
 
 
+
+KSG_TASKS = {
+    TYPE = {
+        KILL = "kill",
+        PICK = "pick",
+        FISH = "fish",
+        COOK = "cook",
+        MINE = "mine",
+        CHOP = "chop",
+        DRY  = "dry" ,
+    },
+
+    NAME = {
+        DAILY  = "daily",
+        TRIAL  = "trial",
+        BOUNTY = "bounty",
+    },
+
+    LIMIT = {
+        NONE = "none", 
+        TIME = "time",
+        MOON = "fullmoon",
+        HURT = "nohurt",
+        AREA = "area",
+    }
+}
+
+
+
 KSG_TAGS = {
     LEVEL = "KSG_TAG_LEVEL"
 }
 
 KSG_EVENTS = {
     POWER_REFRESH = "KSG_POWER_REFRESH",
+    TASK_UPDATE   = "KSG_TASK_UPDATE",
     TASK_FINISH   = "KSG_TASK_FINISH" ,
 }
