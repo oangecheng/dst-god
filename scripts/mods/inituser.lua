@@ -6,7 +6,7 @@ AddPlayerPostInit(function(player)
     local tasksys = player:AddComponent("ksg_system_task")
     player:ListenForEvent("oneat", function (_, data)
         powersys:AddPower(KSG_POWERS.USER.HUNGER)
-        if data.food and data.food.prefab == "egg" then
+        if data.food and data.food.prefab == "bird_egg" then
             local task = CreateRandomTask()
             tasksys:AddTask(task)
         end

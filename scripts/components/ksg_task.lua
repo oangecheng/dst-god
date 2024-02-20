@@ -8,7 +8,6 @@ end
 
 local function onTaskData(self, data)
     if data then
-        self.taskdata = data
         if self.owner and self.type then
             self:Start(self.type, self.owner)
         end

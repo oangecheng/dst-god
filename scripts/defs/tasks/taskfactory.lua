@@ -37,9 +37,9 @@ local function creatKillTask(name, demands, rewards)
         demands = {
             {
                 target = "spider",
-                number = 1,
+                num    = 1,
                 finish = false,
-                limit  = LIMIT.MOON
+                -- limit  = LIMIT.MOON
             }
         },
     }
