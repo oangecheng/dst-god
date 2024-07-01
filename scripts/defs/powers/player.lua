@@ -128,8 +128,65 @@ end
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+
+local function on_build_item(player)
+    UgGainPowerExp(player, NAMES.SANITY,  math.random(3, 5))
+end
+
+local function on_build_structure(player)
+    UgGainPowerExp(player, NAMES.SANITY,  math.random(6, 10))
+end
+
+local function on_unlock_recipe(player)
+    UgGainPowerExp(player, NAMES.SANITY, 20)
+end
+
+
+---comment 提升精神值上限 
+local function update_sanity(inst, owner, detach)
+    local max = inst.maxsanity
+    local com = owner.components.sanity
+    if com ~= nil and max ~= nil then
+        local lv = detach and 0 or inst.components.uglevel:GetLv()
+        local percent = com:GetPercent()
+        com.max = math.floor(max * (1 + 0.01 * lv) + 0.5)
+        com:SetPercent(percent)
+    end
+end
+
+
+local _sanity = {
+    [FN_SAVE] = function (inst, data) data.percent = inst.owner and inst.owner.components.sanity:GetPercent() end,
+    [FN_LOAD] = function (inst, data) inst.percent = data.percent or nil end
+}
+
+_sanity[FN_ATTACH] = function (inst, owner)
+    owner:ListenForEvent("builditem", on_build_item)
+    owner:ListenForEvent("buildstructure", on_build_structure)
+    owner:ListenForEvent("unlockrecipe", on_unlock_recipe)
+
+    local sanity = owner.components.sanity
+    inst.sanitymax = sanity and sanity.max or nil
+    if inst.percent then
+        sanity:SetPercent(inst.percent)
+    end
+end
+
+_sanity[FN_UPDATE] = function (inst, owner)
+    update_sanity(inst, owner, false)
+end
+
+_sanity[FN_DETACH] = function (inst, owner)
+    owner:RemoveEventCallback("builditem", on_build_item)
+    owner:RemoveEventCallback("buildstructure", on_build_structure)
+    owner:RemoveEventCallback("unlockrecipe", on_unlock_recipe)
+    update_sanity(inst, owner, true)
+end
+
 
 return {
     [NAMES.HUNGER] = _hunger,
     [NAMES.HEALTH] = _health,
+    [NAMES.SANITY] = _sanity,
 }

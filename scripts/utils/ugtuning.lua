@@ -24,7 +24,9 @@ local player = "ugplayer_"
 UGPOWERS = {
 
     PLAYER = {
-        HUNGER = player.."hunger"
+        HUNGER = player.."hunger",
+        HEALTH = player.."health",
+        SANITY = player.."sanity",
     }
 }
 
