@@ -216,9 +216,39 @@ _cooker[FN_DETACH] = function (inst, owner)
 end
 
 
+
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function on_harvest_dry(doer, data)
+    UgGainPowerExp(doer, NAMES.DRYER, 5)
+end
+
+local function update_dryer(inst, owner, detach)
+    local lv = inst.components.uglevel:GetLv()
+    local v = detach and nil or math.max(1 - lv * 0.01, 0.3)
+    PutUgData(owner, UGDATA_KEY.DRY_MULTI, v)
+end
+
+local _dryer = {}
+_dryer[FN_ATTACH] = function (_, owner)
+    owner:ListenForEvent(UGEVENTS.HARVEST_DRY, on_harvest_dry)
+end
+
+_dryer[FN_UPDATE] = function (inst, owner)
+    update_dryer(inst, owner, false)
+end
+
+_dryer[FN_DETACH] = function (inst, owner)
+    update_dryer(inst, owner, true)
+    owner:RemoveEventCallback(UGEVENTS.HARVEST_DRY, on_harvest_dry)
+end
+
+
+
 return {
     [NAMES.HUNGER] = _hunger,
     [NAMES.HEALTH] = _health,
     [NAMES.SANITY] = _sanity,
     [NAMES.COOKER] = _cooker,
+    [NAMES.DRYER ] = _dryer ,
+    
 }
