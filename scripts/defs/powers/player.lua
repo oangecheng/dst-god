@@ -4,6 +4,7 @@ local FN_DETACH = "detach"
 local FN_UPDATE = "update"
 local FN_SAVE   = "save"
 local FN_LOAD   = "load"
+local LV_MAX    = 100
 
 
 
@@ -185,8 +186,39 @@ _sanity[FN_DETACH] = function (inst, owner)
 end
 
 
+
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+
+local function on_harvest_food(doer, data)
+    UgLog("on_harvest_food")
+    UgGainPowerExp(doer, NAMES.COOKER, 5)
+end
+
+local function update_cooker(inst, owner, detach)
+    local lv = detach and 0 or inst.components.uglevel:GetLv()
+    local v  = math.max(1 - lv * 0.005, 0.5)
+    PutUgData(owner, UGDATA_KEY.COOK_MULTI, v)
+end
+
+local _cooker = {}
+
+_cooker[FN_ATTACH] = function (inst, owner)
+    owner:ListenForEvent(UGEVENTS.HARVEST_SELF_FOOD, on_harvest_food)
+end
+
+_cooker[FN_UPDATE] = function (inst, owner)
+    update_cooker(inst, owner, false)
+end
+
+_cooker[FN_DETACH] = function (inst, owner)
+    owner:RemoveEventCallback(UGEVENTS.HARVEST_SELF_FOOD, on_harvest_food)
+    update_cooker(inst, owner, true)
+end
+
+
 return {
     [NAMES.HUNGER] = _hunger,
     [NAMES.HEALTH] = _health,
     [NAMES.SANITY] = _sanity,
+    [NAMES.COOKER] = _cooker,
 }
