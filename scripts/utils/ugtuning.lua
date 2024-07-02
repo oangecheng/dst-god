@@ -35,6 +35,7 @@ UGPOWERS = {
         PICKER = player.."picker",
         FARMER = player.."farmer",
         FISHER = player.."fisher",
+        RUNNER = player.."runner",
     },
 }
 

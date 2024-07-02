@@ -441,6 +441,54 @@ end
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function monitor_locomotor(inst, owner)
+    if not owner:HasTag("playerghost") then
+        if owner.components.locomotor.wantstomoveforward then
+            inst.time = inst.time + 1
+        end
+        -- 每走10s获得1点经验
+        if inst.time >= 10 then
+            GainUgPowerXp(owner, NAMES.RUNNER, 1)
+            inst.time = 0
+        end
+    end
+end
+
+
+local function update_runner(inst, owner, detach)
+    local locomotor = owner.components.locomotor
+    if locomotor ~= nil then
+        if detach then
+            locomotor:RemoveExternalSpeedMultiplier(inst, NAMES.RUNNER)
+        else
+            local lv = inst.components.uglevel:GetLv()
+            local mult = math.min(1 + lv * 0.01, 1.5)
+            locomotor:SetExternalSpeedMultiplier(inst, NAMES.RUNNER, mult)
+        end
+    end
+end
+
+local _runner = {}
+_runner[FN_ATTACH] = function (inst, owner)
+    inst.time = 0
+    owner.ugloco_task = owner:DoPeriodicTask(1, function ()
+        monitor_locomotor(owner)
+    end)
+end
+
+_runner[FN_UPDATE] = function (inst, owner)
+    update_runner(inst, owner)
+end
+
+_runner[FN_DETACH] = function (inst, owner)
+    update_runner(inst, owner, true)
+    if owner.ugloco_task ~= nil then
+        owner.ugloco_task:Cancel()
+        owner.ugloco_task = nil
+    end
+end 
+
 
 
 return {
@@ -452,4 +500,5 @@ return {
     [NAMES.PICKER] = _picker,
     [NAMES.FARMER] = _farmer,
     [NAMES.FISHER] = _fisher,
+    [NAMES.RUNNER] = _runner,
 }
