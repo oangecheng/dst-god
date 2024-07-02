@@ -1,5 +1,6 @@
 
 UGCOFIG = {
+    CH  = true,
     LOG = true,
 }
 

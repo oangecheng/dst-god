@@ -3,6 +3,10 @@ require("ugtuning")
 require("ugfns")
 require("uglog")
 
+
+modimport("scripts/strings/power.lua")
+
+
 --- 导入物品文件
 PrefabFiles = {
     "ugpower",
