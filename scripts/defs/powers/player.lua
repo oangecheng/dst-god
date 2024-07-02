@@ -16,7 +16,7 @@ local function on_eat(eater, data)
         local healthexp = edible:GetHealth(eater)
         local sanityexp = edible:GetSanity(eater)
         local exp = 0.2 * hungerexp + healthexp * 0.3 + sanityexp * 0.5
-        UgGainPowerExp(eater, NAMES.HUNGER, exp)
+        GainUgPowerXp(eater, NAMES.HUNGER, exp)
     end
 end
 
@@ -71,7 +71,7 @@ local function on_kill_other(killer, data)
         -- 所有经验都是10*lv 因此血量也需要计算为1/10
         local exp = math.max(victim.components.health.maxhealth * 0.1, 1)
         -- 击杀者能够得到满额的经验
-        UgGainPowerExp(killer, NAMES.HEALTH, exp)
+        GainUgPowerXp(killer, NAMES.HEALTH, exp)
         -- 非击杀者经验值计算，范围10以内其他玩家
         local x, y, z = victim.Transform:GetWorldPosition()
         local players = TheSim:FindEntities(x, y, z, 10, { "player" })
@@ -82,7 +82,7 @@ local function on_kill_other(killer, data)
             for _, player in ipairs(players) do
                 -- 击杀者已经给了经验了
                 if player ~= killer then
-                    UgGainPowerExp(player, NAMES.HEALTH, exp * multi)
+                    GainUgPowerXp(player, NAMES.HEALTH, exp * multi)
                 end
             end
         end
@@ -132,15 +132,15 @@ end
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
 
 local function on_build_item(player)
-    UgGainPowerExp(player, NAMES.SANITY,  math.random(3, 5))
+    GainUgPowerXp(player, NAMES.SANITY,  math.random(3, 5))
 end
 
 local function on_build_structure(player)
-    UgGainPowerExp(player, NAMES.SANITY,  math.random(6, 10))
+    GainUgPowerXp(player, NAMES.SANITY,  math.random(6, 10))
 end
 
 local function on_unlock_recipe(player)
-    UgGainPowerExp(player, NAMES.SANITY, 20)
+    GainUgPowerXp(player, NAMES.SANITY, 20)
 end
 
 
@@ -191,7 +191,7 @@ end
 
 local function on_harvest_food(doer, data)
     UgLog("on_harvest_food")
-    UgGainPowerExp(doer, NAMES.COOKER, 5)
+    GainUgPowerXp(doer, NAMES.COOKER, 5)
 end
 
 local function update_cooker(inst, owner, detach)
@@ -219,7 +219,7 @@ end
 
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
 local function on_harvest_dry(doer, data)
-    UgGainPowerExp(doer, NAMES.DRYER, 5)
+    GainUgPowerXp(doer, NAMES.DRYER, 5)
 end
 
 local function update_dryer(inst, owner, detach)
@@ -244,11 +244,186 @@ end
 
 
 
+
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local PICK_MAX = 5 
+local PICKABLE_DEFS = (require "defs/items/ugitems").pick
+
+---comment 计算倍率，最高5倍采集
+---@param powerlv number 属性等级
+---@return number 额外掉落物，累加计数
+local function calc_extra_num(powerlv)
+    local lv = powerlv
+    lv = math.min(math.floor(lv * 0.05), PICK_MAX)
+    local seed = 2 ^ PICK_MAX
+    if lv < 1 then
+        return math.random() < 0.1 and 1 or 0
+    end
+    local r = math.random(seed)
+    for i = lv, 1, -1 do
+        local ratio = seed / (2 ^ i)
+        if r <= ratio then
+            return i
+        end
+    end
+    return 0
+end
+
+
+local function on_pick_plant(player, data)
+    if not (data and data.object) then
+        return
+    end
+
+    if data.object:HasTag("farm_plant") then
+        return
+    end
+
+    local powerlv = GetUgPowerLv(player, NAMES.PICKER)
+    if powerlv == nil then
+        return
+    end
+
+
+    local obj  = data.object
+    local loot = data.loot
+    local exp = (PICKABLE_DEFS[obj.prefab] or 0)
+    if not (exp > 0 and obj) then 
+        return 
+    end
+
+    GainUgPowerXp(player, NAMES.PICKER, exp)
+
+    -- 处理特殊case，目前支持多汁浆果
+    if data.prefab then
+        local num = calc_extra_num(powerlv)
+        if num > 0 and obj.components.lootdropper then
+            local pt = obj:GetPosition()
+            pt.y = pt.y + (obj.components.pickable.dropheight or 0)
+            for _ = 1, num * data.num do
+                obj.components.lootdropper:SpawnLootPrefab(data.prefab, pt)
+            end
+        end
+
+    elseif loot then
+        --- 单个物品
+        if loot.prefab ~= nil then
+            -- 根据等级计算可以额外掉落的数量
+            local num = calc_extra_num(powerlv)
+            if num > 0 then
+                for _ = 1, num do
+                    local item = SpawnPrefab(loot.prefab)
+                    player.components.inventory:GiveItem(item, nil, player:GetPosition())
+                end
+            end
+
+        -- 多物品掉落(好像没走这个逻辑，确认下是不是农场作物掉落, 暂时保留)
+        elseif not IsTableEmpty(loot) then
+            -- 额外掉落物
+            local extraloot = {}
+            local lootdropper = obj.components.lootdropper
+            local num = calc_extra_num(powerlv)
+            local dropper = lootdropper:GenerateLoot()
+            if (not IsTableEmpty(dropper)) and num > 0 then
+                for _, prefab in ipairs(dropper) do
+                    for i = 1, num do
+                        table.insert(extraloot, lootdropper:SpawnLootPrefab(prefab))
+                    end
+                end
+                for i, item in ipairs(extraloot) do
+                    player.components.inventory:GiveItem(item, nil, player:GetPosition())
+                end
+            end
+        end
+
+        -- 仙人掌花单独处理
+        if obj.has_flower and (obj.prefab == "cactus" or obj.prefab == "oasis_cactus") then
+            local n = calc_extra_num(powerlv)
+            for i = 1, n do
+                local flower = SpawnPrefab("cactus_flower")
+                player.components.inventory:GiveItem(flower, nil, player:GetPosition())
+            end
+        end
+    end
+end
+
+
+local _picker = {}
+_picker[FN_ATTACH] = function (inst, owner)
+    owner:ListenForEvent("picksomething", on_pick_plant)
+    owner:ListenForEvent(UGEVENTS.PICK_STH, on_pick_plant)
+end
+
+_picker[FN_DETACH] = function (inst, owner)
+    owner:RemoveEventCallback("picksomething", on_pick_plant)
+    owner:RemoveEventCallback(UGEVENTS.PICK_STH, on_pick_plant)
+end
+
+
+
+
+
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function on_pick_farm(player, data)
+    if not (data and data.object) then
+        return
+    end
+
+    if not data.object:HasTag("farm_plant") then
+        return
+    end
+
+    local powerlv = GetUgPowerLv(player, NAMES.FARMER)
+    if powerlv == nil then
+        return
+    end
+
+    local oversized = data.object.is_oversized
+    local exp = oversized and 10 or 5
+    GainUgPowerXp(player, NAMES.FARMER, exp)
+
+    local dropper = data.object.components.lootdropper
+    -- 额外掉落物
+    if dropper then
+        local num = calc_extra_num(powerlv)
+        local loot = dropper:GenerateLoot()
+        if num <= 0 or IsTableEmpty(loot) then return end
+        local extraloot = {}
+        for _, p in ipairs(loot) do
+            for i = 1, num do
+                table.insert(extraloot, dropper:SpawnLootPrefab(p))
+            end
+        end
+ 
+         -- 给予玩家物品
+        for _, item in ipairs(extraloot) do
+            player.components.inventory:GiveItem(item, nil, player:GetPosition())
+        end 
+    end
+end
+
+
+local _farmer = {}
+_farmer[FN_ATTACH] = function (inst, owner)
+    owner:ListenForEvent("picksomething", on_pick_farm)
+end
+
+_farmer[FN_DETACH] = function (inst, owner)
+    owner:RemoveEventCallback("picksomething", on_pick_farm)
+end
+
+
+
+
+
+
+
 return {
     [NAMES.HUNGER] = _hunger,
     [NAMES.HEALTH] = _health,
     [NAMES.SANITY] = _sanity,
     [NAMES.COOKER] = _cooker,
     [NAMES.DRYER ] = _dryer ,
-    
+    [NAMES.PICKER] = _picker,
+    [NAMES.FARMER] = _farmer,
 }

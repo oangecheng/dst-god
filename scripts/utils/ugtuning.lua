@@ -18,7 +18,8 @@ UGTAGS = {
 UGEVENTS = {
     POWER_UPDATE = "ugpower_update",
     HARVEST_SELF_FOOD = "ugharvest_self_food",
-    HARVEST_DRY = "ugharvest_dry"
+    HARVEST_DRY = "ugharvest_dry",
+    PICK_STH = "ugpick_something"
 }
 
 
@@ -30,7 +31,8 @@ UGPOWERS = {
         SANITY = player.."sanity",
         COOKER = player.."cooker",
         DRYER  = player.."dryer" ,
-
+        PICKER = player.."picker",
+        FARMER = player.."farmer",
     },
 }
 
