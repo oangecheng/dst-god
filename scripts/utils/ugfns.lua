@@ -41,14 +41,16 @@ end
 ---@param value any 任意值
 function PutUgData(owner, key, value)
     UgLog("PutUgData", key, value)
-    local datas = owner.ugdata or {}
-    datas[key] = value
-    owner.ugdata = datas
+    if owner ~= nil then
+        local datas = owner.ugdata or {}
+        datas[key] = value
+        owner.ugdata = datas
+    end
 end
 
 
 ---comment 获取临时存放owner上的数据
----@param owner table 目标
+---@param owner table|nil 目标
 ---@param key string 数据的key
 ---@return any data 任意类型，做好类型check
 function GetUgData(owner, key)

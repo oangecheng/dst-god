@@ -19,7 +19,8 @@ UGEVENTS = {
     POWER_UPDATE = "ugpower_update",
     HARVEST_SELF_FOOD = "ugharvest_self_food",
     HARVEST_DRY = "ugharvest_dry",
-    PICK_STH = "ugpick_something"
+    PICK_STH = "ugpick_something",
+    FISH_SUCCESS = "ugfish_success",
 }
 
 
@@ -33,6 +34,7 @@ UGPOWERS = {
         DRYER  = player.."dryer" ,
         PICKER = player.."picker",
         FARMER = player.."farmer",
+        FISHER = player.."fisher",
     },
 }
 
@@ -40,5 +42,6 @@ UGPOWERS = {
 UGDATA_KEY = {
     COOK_MULTI = "cook_multi",
     DRY_MULTI  = "dry_multi" ,
+    FISH_MULTI = "fish_multi",
 }
 

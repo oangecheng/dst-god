@@ -90,3 +90,53 @@ AddPrefabPostInit("berrybush_juicy", function(inst)
         end
     end
 end)
+
+
+
+--修改海钓竿组件
+AddComponentPostInit("oceanfishingrod", function(self)
+	local oldCatchFish = self.CatchFish
+	self.CatchFish = function(self)
+		if self.target ~= nil and self.target.components.oceanfishable ~= nil then
+			self.fisher:PushEvent(UGEVENTS.FISH_SUCCESS, { fish = self.target, isocean = true } )
+		end
+		if oldCatchFish then
+			oldCatchFish(self)
+		end
+	end
+end)
+
+
+--修改普通鱼竿组件
+AddComponentPostInit("fishingrod", function(fishingrod)
+	local oldCollect = fishingrod.Collect
+	fishingrod.Collect = function(self)
+		if self.caughtfish and self.fisherman and self.target then
+			self.fisherman:PushEvent(UGEVENTS.FISH_SUCCESS, { fish = self.caughtfish, pond = self.target })
+		end
+		if oldCollect then
+			oldCollect(self)
+		end
+	end
+
+    local oldWaitForFish = fishingrod.WaitForFish
+    fishingrod.WaitForFish = function(self)
+        local mult = GetUgData(self.fisherman, UGDATA_KEY.FISH_MULTI)
+        if mult ~= nil then
+            local oldmin = self.minwaittime
+            local oldmax = self.maxwaittime
+            -- 根据源码，这里同步缩小 min和max值 就能实现缩短时间，不需要copy代码
+            if oldmin ~= nil and oldmax ~= nil then
+                self.minwaittime = oldmin * mult
+                self.maxwaittime = oldmax * mult
+            end
+
+            if oldWaitForFish ~= nil then
+                oldWaitForFish(self)
+            end
+
+            self.minwaittime = oldmin
+            self.maxwaittime = oldmax
+        end
+    end
+end)

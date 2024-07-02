@@ -414,6 +414,31 @@ end
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function on_fish(owner, data)
+    GainUgPowerXp(owner, NAMES.FISHER, 10)
+end
+
+local function update_fisher(inst, owner, detach)
+    local lv = inst.components.uglevel:GetLv()
+    local m = detach and nil or math.max(1 - lv * 0.01, 0.2)
+    PutUgData(owner, UGDATA_KEY.FISH_MULTI, m)
+end
+
+local _fisher = {}
+_fisher[FN_ATTACH] = function (inst, owner)
+    owner:ListenForEvent(UGEVENTS.FISH_SUCCESS, on_fish)
+end
+
+_fisher[FN_UPDATE] = function (inst, owner)
+    update_fisher(inst, owner)
+end
+
+_fisher[FN_DETACH] = function (inst, owner)
+    update_fisher(inst, owner, true)
+    owner:RemoveEventCallback(UGEVENTS.FISH_SUCCESS, on_fish)
+end
+
 
 
 
@@ -426,4 +451,5 @@ return {
     [NAMES.DRYER ] = _dryer ,
     [NAMES.PICKER] = _picker,
     [NAMES.FARMER] = _farmer,
+    [NAMES.FISHER] = _fisher,
 }
