@@ -2,6 +2,7 @@
 UGCOFIG = {
     CH  = true,
     LOG = true,
+    TEST = true,
 }
 
 

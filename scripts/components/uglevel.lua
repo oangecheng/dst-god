@@ -1,6 +1,6 @@
 
 local expfndef = function (lv)
-    return (lv + 1) * 10
+    return UGCOFIG.TEST and 1 or (lv + 1) * 10
 end
 
 local function onLvChanged(self, lv)
@@ -22,7 +22,7 @@ local Level = Class(
         self.inst = inst
         self.lv = 0
         self.xp = 0
-        self.max = math.maxinteger
+        self.max = 10000
     end,
     nil,
     {

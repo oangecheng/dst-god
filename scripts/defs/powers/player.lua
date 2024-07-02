@@ -146,7 +146,7 @@ end
 
 ---comment 提升精神值上限 
 local function update_sanity(inst, owner, detach)
-    local max = inst.maxsanity
+    local max = inst.sanitymax
     local com = owner.components.sanity
     if com ~= nil and max ~= nil then
         local lv = detach and 0 or inst.components.uglevel:GetLv()
@@ -473,7 +473,7 @@ local _runner = {}
 _runner[FN_ATTACH] = function (inst, owner)
     inst.time = 0
     owner.ugloco_task = owner:DoPeriodicTask(1, function ()
-        monitor_locomotor(owner)
+        monitor_locomotor(inst, owner)
     end)
 end
 

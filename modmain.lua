@@ -1,7 +1,7 @@
 GLOBAL.setmetatable(env,{__index=function(t,k) return GLOBAL.rawget(GLOBAL,k) end})
-require("ugtuning")
-require("ugfns")
-require("uglog")
+require("utils/ugtuning")
+require("utils/ugfns")
+require("utils/uglog")
 
 
 modimport("scripts/strings/power.lua")
@@ -15,7 +15,8 @@ PrefabFiles = {
 
 
 if GLOBAL.TheNet:GetIsServer() then
-    modimport("scripts/mods/inituser.lua")
+    modimport("scripts/mods/hook.lua")
+    modimport("scripts/mods/hookuser.lua")
 end
 
 
