@@ -43,6 +43,8 @@ UGPOWERS = {
 
     EQUIPS = {
         DAMAGE = equips.."damage",
+        VAMPIR = equips.."vampir",
+        
     }
 }
 
