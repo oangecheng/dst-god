@@ -27,6 +27,7 @@ UGEVENTS = {
 
 
 local player = "ugplayer_"
+local equips = "ugequips_" 
 UGPOWERS = {
     PLAYER = {
         HUNGER = player.."hunger",
@@ -39,6 +40,10 @@ UGPOWERS = {
         FISHER = player.."fisher",
         RUNNER = player.."runner",
     },
+
+    EQUIPS = {
+        DAMAGE = equips.."damage",
+    }
 }
 
 
