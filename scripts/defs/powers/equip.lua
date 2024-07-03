@@ -67,8 +67,58 @@ local _vampir = {
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+
+--- aoe需要排除对象的tag
+local splash_exclude = {
+	"INLIMBO",
+	"companion", 
+	"wall",
+	"abigail", 
+}
+
+-- 判断是否为跟随者，比如雇佣的猪哥
+local function isFollower(inst, target)
+    return inst.components.leader ~= nil and inst.components.leader:IsFollower(target)
+end
+
+-- 初始 50% 范围伤害，满级80%
+-- 初始 1.2 范围， 满级3范围
+local function cacl_splash_data(lv)
+    local multi = 0.5 + 0.03 * lv
+    local area  = 1.2 + 0.018 * lv
+    return multi, area
+end
+
+
+local function attack_splash(power, attacker, victim, weapon, lv)
+    local multi, area = cacl_splash_data(lv)
+    local combat = attacker.components.combat
+    local x,y,z = victim.Transform:GetWorldPosition()
+    local ents = TheSim:FindEntities(x, y, z, area, { "_combat" }, splash_exclude)
+    for i, ent in ipairs(ents) do
+        if ent ~= victim and ent ~= attacker and combat:IsValidTarget(ent) and (not isFollower(attacker, ent)) then
+            attacker:PushEvent("onareaattackother", { target = ent, weapon = weapon, stimuli = nil })
+            local damage = combat:CalcDamage(ent, weapon, 1) * multi
+            ent.components.combat:GetAttacked(attacker, damage, weapon, nil)
+        end
+    end
+end
+
+
+local _splash = {
+    [FN_ATTACH] = function (inst)
+        inst.attackfn = attack_splash
+    end,
+    [FN_ATTACH] = function (inst)
+        inst.attackfn = nil
+    end,
+}
+
+
 
 return {
     [NAMES.DAMAGE] = _damage,
-    [NAMES.VAMPIR] = _vampir
+    [NAMES.VAMPIR] = _vampir,
+    [NAMES.SPLASH] = _splash,
 }
