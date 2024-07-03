@@ -45,6 +45,7 @@ UGPOWERS = {
         DAMAGE = equips.."damage",
         VAMPIR = equips.."vampir",
         SPLASH = equips.."splash",
+        CRITER = equips.."criter",
     }
 }
 

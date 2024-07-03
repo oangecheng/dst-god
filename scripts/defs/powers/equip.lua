@@ -117,8 +117,33 @@ local _splash = {
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+
+local function attack_criter(power, attacker, victim, weapon, lv)
+    if attacker.components.combat ~= nil and victim.components.combat ~= nil then
+        local dmg, spdmg = attacker.components.combat:CalcDamage(attacker, weapon, 1)
+        -- 概率双倍伤害
+        if dmg ~= nil and math.random() < (lv * 0.01)then
+            victim.components.combat:GetAttacked(attacker, dmg, weapon, nil)
+        end
+    end
+end
+
+local _criter = {
+    [FN_ATTACH] = function (inst)
+        inst.attackfn = attack_criter
+    end,
+    [FN_DETACH] = function (inst)
+        inst.attackfn = nil
+    end
+}
+
+
+
+
 return {
     [NAMES.DAMAGE] = _damage,
     [NAMES.VAMPIR] = _vampir,
     [NAMES.SPLASH] = _splash,
+    [NAMES.CRITER] = _criter,
 }
