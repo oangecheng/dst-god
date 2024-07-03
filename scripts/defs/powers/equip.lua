@@ -332,6 +332,33 @@ end
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local chopmax = 15
+
+local function update_choper(inst, owner, detach)
+    local lv = detach and 0 or inst.components.uglevel:GetLevel()
+    local mv = math.max(chopmax - lv * 0.15, 1)
+    local multi = math.floor(chopmax/mv + 0.5)
+    owner.components.tool:SetAction(ACTIONS.CHOP, multi)
+    if owner.components.finiteuses ~= nil then
+        owner.components.finiteuses:SetConsumption(ACTIONS.CHOP, 1)
+    end
+    
+end
+
+local _choper = {
+    [FN_UPDATE] = update_choper,
+    [FN_DETACH] = function (inst, owner)
+        update_choper(inst, owner, true)
+        RemoveUgComponent(owner, "tool")
+    end,
+    [FN_ATTACH] = function (inst, owner)
+        AddUgComponent(owner, "tool")
+    end
+}
+
+
+
 
 return {
     [NAMES.DAMAGE] = _damage,
@@ -343,4 +370,6 @@ return {
     [NAMES.WARMER] = _warmer,
     [NAMES.DAPPER] = _dapper,
     [NAMES.PROOFR] = _proofr,
+    [NAMES.CHOPER] = _choper,
+
 }

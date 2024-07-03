@@ -53,6 +53,8 @@ UGPOWERS = {
         WARMER = equips.."warmer",
         DAPPER = equips.."dapper",
         PROOFR = equips.."proofr",
+        CHOPER = equips.."choper",
+        MINING = equips.."mining",
     }
 }
 
