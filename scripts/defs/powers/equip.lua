@@ -226,22 +226,25 @@ end
 
 local _warmer = {
     [FN_UPDATE] = update_warmer,
-    [FN_DETACH] = function(inst, owner) update_warmer(inst, owner, true) end,
     [FN_LOAD]   = function (inst, data)
         inst.modtype = data.modtype
         inst.actived = data.actived
     end,
-
     [FN_SAVE]   = function (inst, data)
         data.modtype = inst.modtype
         data.actived = inst.actived
+    end,
+    [FN_DETACH] = function(inst, owner) 
+        update_warmer(inst, owner, true)
+        RemoveUgComponent(owner, "insulator")
+        inst.ugswitchfn = nil
+        inst.ugactivefn = nil
     end
 }
 
 _warmer[FN_ATTACH] = function(inst, owner)
-
     -- 激活函数
-    inst.activefn = function ()
+    owner.ugactivefn = function(doer, data)
         if inst.actived then
             return false
         else
@@ -251,7 +254,7 @@ _warmer[FN_ATTACH] = function(inst, owner)
     end
 
     -- 切换函数
-    inst.switchfn = function ()
+    owner.ugswitchfn = function(doer, data)
         if inst.actived and inst.modtype ~= nil then
             inst.modtype = (inst.modtype == SEASONS.SUMMER) and SEASONS.WINTER or SEASONS.SUMMER
             update_warmer(inst, owner)
@@ -260,6 +263,7 @@ _warmer[FN_ATTACH] = function(inst, owner)
         return false
     end
 
+    AddUgComponent(owner, "insulator")
     if owner.components.insulator then
         local value, type = owner.components.insulator:GetInsulation()
         inst.insulation = value
@@ -272,6 +276,32 @@ end
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local DAPPERNESS_RATIO = TUNING.DAPPERNESS_MED / 3
+
+local function update_dapper(inst, owner, detach)
+    if inst.dapperness ~= nil then
+        local lv = detach and 0 or inst.components.uglevel:GetLv()
+        local dv = inst.dapperness + DAPPERNESS_RATIO * lv
+        owner.components.equippable.dapperness = dv
+    end
+end
+
+local _dapper = {
+    [FN_UPDATE] = update_dapper,
+    [FN_DETACH] = function (inst, owner)
+        update_dapper(inst, owner, true)
+    end,
+    [FN_ATTACH] = function (inst, owner)
+        if owner.components.equippable ~= nil then
+            inst.dapperness = owner.components.equippable.dapperness
+        end
+    end
+}
+
+
+
+
 return {
     [NAMES.DAMAGE] = _damage,
     [NAMES.VAMPIR] = _vampir,
@@ -280,4 +310,5 @@ return {
     [NAMES.BLINDR] = _blindr,
     [NAMES.MAXUSE] = _maxuse,
     [NAMES.WARMER] = _warmer,
+    [NAMES.DAPPER] = _dapper,
 }

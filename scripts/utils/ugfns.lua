@@ -58,3 +58,24 @@ function GetUgData(owner, key)
         return owner.ugdata[key]
     end
 end
+
+
+---comment 添加临时组件，如果已有就不添加
+---@param owner table 目标
+---@param com string 组件名称
+function AddUgComponent(owner, com)
+    if owner ~= nil and owner.components[com] == nil then
+        owner:AddComponent(com)
+        owner.components[com].isugtemp = true
+    end
+end
+
+---comment 移除临时组件
+---@param owner table 目标
+---@param com string 组件名称
+function RemoveUgComponent(owner, com)
+    local v = owner.components[com]
+    if v ~= nil and v.isugtemp then
+        owner:RemoveComponent(com)
+    end
+end
