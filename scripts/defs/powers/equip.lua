@@ -208,6 +208,70 @@ local _maxuse = {
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function update_warmer(inst, owner, detach)
+    if inst.modtype ~ nil and inst.insulator ~= nil and inst.type ~= nil then
+        local lv = detach and 0 or inst.components.uglevel:GetLv()
+        local iv = inst.insulator + lv * 10
+        local ty = detach and inst.type or inst.modtype
+        owner.components.SetInsulation(iv)
+        if ty == SEASONS.SUMMER then
+            owner.components.insulator:SetSummer()
+        elseif ty == SEASONS.WINTER then
+            owner.components.insulator:SetWinter()
+        end
+    end
+end
+
+
+local _warmer = {
+    [FN_UPDATE] = update_warmer,
+    [FN_DETACH] = function(inst, owner) update_warmer(inst, owner, true) end,
+    [FN_LOAD]   = function (inst, data)
+        inst.modtype = data.modtype
+        inst.actived = data.actived
+    end,
+
+    [FN_SAVE]   = function (inst, data)
+        data.modtype = inst.modtype
+        data.actived = inst.actived
+    end
+}
+
+_warmer[FN_ATTACH] = function(inst, owner)
+
+    -- 激活函数
+    inst.activefn = function ()
+        if inst.actived then
+            return false
+        else
+            inst.actived = true
+            return true
+        end
+    end
+
+    -- 切换函数
+    inst.switchfn = function ()
+        if inst.actived and inst.modtype ~= nil then
+            inst.modtype = (inst.modtype == SEASONS.SUMMER) and SEASONS.WINTER or SEASONS.SUMMER
+            update_warmer(inst, owner)
+            return true
+        end
+        return false
+    end
+
+    if owner.components.insulator then
+        local value, type = owner.components.insulator:GetInsulation()
+        inst.insulation = value
+        inst.type = type
+        if inst.modtype == nil then
+            inst.modtype = type
+        end
+    end
+end
+
+
+
 return {
     [NAMES.DAMAGE] = _damage,
     [NAMES.VAMPIR] = _vampir,
@@ -215,4 +279,5 @@ return {
     [NAMES.CRITER] = _criter,
     [NAMES.BLINDR] = _blindr,
     [NAMES.MAXUSE] = _maxuse,
+    [NAMES.WARMER] = _warmer,
 }

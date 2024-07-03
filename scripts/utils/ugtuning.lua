@@ -50,6 +50,7 @@ UGPOWERS = {
         BLINDR = equips.."blindr",
 
         MAXUSE = equips.."maxuse",
+        WARMER = equips.."warmer",
     }
 }
 
