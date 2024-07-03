@@ -172,10 +172,47 @@ local _blindr = {
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+
+local function update_maxuse(inst, owner, detach)
+    local max = inst.max
+    if max ~= nil then
+        local lv = detach and 0 or inst.components.uglevel:GetLv()
+        local mv = max * (lv * 0.5 + 1)
+        if owner.components.finiteuses ~= nil then
+            local pt = owner.components.finiteuses:GetPercent()
+            owner.components.finiteuses:SetMaxUses(mv)
+            owner.components.finiteuses:SetPercent(pt)
+        elseif owner.components.armor ~= nil then
+            local pt = owner.components.armor:GetPercent()
+            owner.components.armor.maxcondition = mv
+            owner.components.armor:SetPercent(pt)
+        end
+    end
+
+end
+
+
+local _maxuse = {
+    [FN_UPDATE] = update_maxuse,
+    [FN_DETACH] = function(inst, owner) update_maxuse(inst, owner, true) end,
+    [FN_ATTACH] = function(inst, owner)
+        if owner.components.finiteuses ~= nil then
+            inst.max = owner.components.finiteuses.total
+        elseif owner.components.armor ~= nil then
+            inst.max = owner.components.armor.maxcondition
+        end
+    end
+}
+
+
+
+
 return {
     [NAMES.DAMAGE] = _damage,
     [NAMES.VAMPIR] = _vampir,
     [NAMES.SPLASH] = _splash,
     [NAMES.CRITER] = _criter,
     [NAMES.BLINDR] = _blindr,
+    [NAMES.MAXUSE] = _maxuse,
 }

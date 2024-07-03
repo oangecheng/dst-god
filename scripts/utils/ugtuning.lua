@@ -42,11 +42,14 @@ UGPOWERS = {
     },
 
     EQUIPS = {
+        --- 攻击类型
         DAMAGE = equips.."damage",
         VAMPIR = equips.."vampir",
         SPLASH = equips.."splash",
         CRITER = equips.."criter",
         BLINDR = equips.."blindr",
+
+        MAXUSE = equips.."maxuse",
     }
 }
 
