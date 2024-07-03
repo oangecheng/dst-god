@@ -141,9 +141,41 @@ local _criter = {
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+
+local function attack_blindr(power, attacker, victim, weapon, lv)
+    -- 概率致盲
+    if math.random() < (math.min(0.3, lv * 0.01)) then
+        -- 给目标增加致盲标记
+        PutUgData(victim, UGMARK.ATK_MISS, lv)
+        if victim.ugblindtask ~= nil then
+            victim.ugblindtask:Cancel()
+            victim.ugblindtask = nil
+        end
+        -- 3s后移除标记
+        victim.ugblindtask = victim:DoTaskInTime(3, function ()
+            PutUgData(victim, UGMARK.ATK_MISS, nil)
+        end)
+    end
+end
+
+local _blindr = {
+    [FN_ATTACH] = function (inst)
+        inst.attackfn = attack_blindr
+    end,
+    [FN_DETACH] = function (inst)
+        inst.attackfn = nil
+    end
+}
+
+
+
+
+
 return {
     [NAMES.DAMAGE] = _damage,
     [NAMES.VAMPIR] = _vampir,
     [NAMES.SPLASH] = _splash,
     [NAMES.CRITER] = _criter,
+    [NAMES.BLINDR] = _blindr,
 }

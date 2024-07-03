@@ -197,7 +197,7 @@ end
 local function update_cooker(inst, owner, detach)
     local lv = detach and 0 or inst.components.uglevel:GetLv()
     local v  = math.max(1 - lv * 0.005, 0.5)
-    PutUgData(owner, UGDATA_KEY.COOK_MULTI, v)
+    PutUgData(owner, UGMARK.COOK_MULTI, v)
 end
 
 local _cooker = {}
@@ -225,7 +225,7 @@ end
 local function update_dryer(inst, owner, detach)
     local lv = inst.components.uglevel:GetLv()
     local v = detach and nil or math.max(1 - lv * 0.01, 0.3)
-    PutUgData(owner, UGDATA_KEY.DRY_MULTI, v)
+    PutUgData(owner, UGMARK.DRY_MULTI, v)
 end
 
 local _dryer = {}
@@ -422,7 +422,7 @@ end
 local function update_fisher(inst, owner, detach)
     local lv = inst.components.uglevel:GetLv()
     local m = detach and nil or math.max(1 - lv * 0.01, 0.2)
-    PutUgData(owner, UGDATA_KEY.FISH_MULTI, m)
+    PutUgData(owner, UGMARK.FISH_MULTI, m)
 end
 
 local _fisher = {}

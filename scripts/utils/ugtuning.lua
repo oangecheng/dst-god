@@ -46,13 +46,14 @@ UGPOWERS = {
         VAMPIR = equips.."vampir",
         SPLASH = equips.."splash",
         CRITER = equips.."criter",
+        BLINDR = equips.."blindr",
     }
 }
 
 
-UGDATA_KEY = {
+UGMARK = {
     COOK_MULTI = "cook_multi",
     DRY_MULTI  = "dry_multi" ,
     FISH_MULTI = "fish_multi",
+    ATK_MISS   = "atk_miss",
 }
-

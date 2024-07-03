@@ -1,7 +1,7 @@
 
 
 local function cook_time_multi(doer)
-    return GetUgData(doer, UGDATA_KEY.COOK_MULTI) or 1
+    return GetUgData(doer, UGMARK.COOK_MULTI) or 1
 end
 
 
@@ -66,7 +66,7 @@ end)
 local oldDrnfn = ACTIONS.DRY.fn
 ACTIONS.DRY.fn = function(act)
     if act.target and act.doer then
-        act.target.drymulti = GetUgData(act.doer, UGDATA_KEY.DRY_MULTI)
+        act.target.drymulti = GetUgData(act.doer, UGMARK.DRY_MULTI)
     end
     local ret, str = oldDrnfn(act)
     if act.target and act.doer then
@@ -121,7 +121,7 @@ AddComponentPostInit("fishingrod", function(fishingrod)
 
     local oldWaitForFish = fishingrod.WaitForFish
     fishingrod.WaitForFish = function(self)
-        local mult = GetUgData(self.fisherman, UGDATA_KEY.FISH_MULTI)
+        local mult = GetUgData(self.fisherman, UGMARK.FISH_MULTI)
         if mult ~= nil then
             local oldmin = self.minwaittime
             local oldmax = self.maxwaittime
