@@ -52,6 +52,7 @@ UGPOWERS = {
         MAXUSE = equips.."maxuse",
         WARMER = equips.."warmer",
         DAPPER = equips.."dapper",
+        PROOFR = equips.."proofr",
     }
 }
 

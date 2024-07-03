@@ -301,6 +301,37 @@ local _dapper = {
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function update_proofr(inst, owner, detach)
+    if inst.effect ~= nil then
+        local lv = detach and 0 or inst.components.uglevel:GetLv()
+        local ev = math.min(inst.effect + lv * 0.01, 1)
+        owner.components.waterproofer:SetEffectiveness(ev)
+    end
+end
+
+local _proofr = {
+    [FN_UPDATE] = update_proofr,
+    [FN_DETACH] = function (inst, owner)
+        update_proofr(inst, owner, true)
+        RemoveUgComponent(owner, "waterproofer")
+    end,
+}
+
+_proofr[FN_ATTACH] = function (inst, owner)
+    -- 修改下升级函数，防水升级到100比较困难
+    inst.components.uglevel.expfn = function () return 10 end
+    AddUgComponent(owner, "waterproofer")
+    local waterproofer = owner.components.waterproofer
+    if waterproofer.isugtemp then
+        waterproofer:SetEffectiveness(0)
+    end
+    local eff = waterproofer:GetEffectiveness()
+    inst.effect = eff
+end
+
+
+
 
 return {
     [NAMES.DAMAGE] = _damage,
@@ -311,4 +342,5 @@ return {
     [NAMES.MAXUSE] = _maxuse,
     [NAMES.WARMER] = _warmer,
     [NAMES.DAPPER] = _dapper,
+    [NAMES.PROOFR] = _proofr,
 }
