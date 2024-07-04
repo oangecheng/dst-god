@@ -83,7 +83,9 @@
         "MakePlacer",
         "MakeObstaclePhysics",
         "FRAMES",
-        "RemoveUgComponent"
+        "RemoveUgComponent",
+        "AddStategraphPostInit",
+        "AddActionQueuerAction"
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",

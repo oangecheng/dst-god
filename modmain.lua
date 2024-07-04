@@ -3,15 +3,13 @@ require("utils/ugtuning")
 require("utils/ugfns")
 require("utils/uglog")
 
-
-modimport("scripts/strings/power.lua")
-
-
 --- 导入物品文件
 PrefabFiles = {
     "ugpower",
 }
 
+modimport("scripts/strings/power.lua")
+modimport("scripts/mods/hookaction.lua")
 
 
 if GLOBAL.TheNet:GetIsServer() then
