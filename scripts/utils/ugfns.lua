@@ -63,19 +63,38 @@ end
 ---comment 添加临时组件，如果已有就不添加
 ---@param owner table 目标
 ---@param com string 组件名称
-function AddUgComponent(owner, com)
-    if owner ~= nil and owner.components[com] == nil then
-        owner:AddComponent(com)
-        owner.components[com].isugtemp = true
+---@param source string 标记位
+function AddUgComponent(owner, com, source)
+    if owner ~= nil then
+        local comp = owner.components[com]
+        if comp == nil then
+            owner:AddComponent(com)
+            PutUgData(owner.components[com], source, true)
+        elseif comp.ugdata ~= nil then
+            PutUgData(comp, source, true)
+        end
     end
 end
 
 ---comment 移除临时组件
 ---@param owner table 目标
 ---@param com string 组件名称
-function RemoveUgComponent(owner, com)
+---@param source string 标记位
+function RemoveUgComponent(owner, com, source)
     local v = owner.components[com]
-    if v ~= nil and v.isugtemp then
-        owner:RemoveComponent(com)
+    --- ugdata 非空则认为由此mod添加的临时组件
+    if v ~= nil and v.ugdata ~= nil then
+        PutUgData(v, source, nil)
+        local ret = false
+        -- 遍历列表，如果没有值了，就把组件移除了
+        for _, value in pairs(v.ugdata) do
+            if value then
+                ret = true
+                break
+            end
+        end
+        if not ret then
+            owner:RemoveComponent(com)
+        end
     end
 end

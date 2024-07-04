@@ -82,7 +82,8 @@
         "RGB",
         "MakePlacer",
         "MakeObstaclePhysics",
-        "FRAMES"
+        "FRAMES",
+        "RemoveUgComponent"
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",

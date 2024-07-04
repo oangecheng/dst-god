@@ -55,6 +55,7 @@ UGPOWERS = {
         PROOFR = equips.."proofr",
         CHOPER = equips.."choper",
         MINING = equips.."mining",
+        SPEEDR = equips.."speedr",
     }
 }
 

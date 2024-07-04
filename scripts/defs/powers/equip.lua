@@ -236,7 +236,7 @@ local _warmer = {
     end,
     [FN_DETACH] = function(inst, owner) 
         update_warmer(inst, owner, true)
-        RemoveUgComponent(owner, "insulator")
+        RemoveUgComponent(owner, "insulator", NAMES.WARMER)
         inst.ugswitchfn = nil
         inst.ugactivefn = nil
     end
@@ -263,7 +263,7 @@ _warmer[FN_ATTACH] = function(inst, owner)
         return false
     end
 
-    AddUgComponent(owner, "insulator")
+    AddUgComponent(owner, "insulator", NAMES.WARMER)
     if owner.components.insulator then
         local value, type = owner.components.insulator:GetInsulation()
         inst.insulation = value
@@ -314,14 +314,14 @@ local _proofr = {
     [FN_UPDATE] = update_proofr,
     [FN_DETACH] = function (inst, owner)
         update_proofr(inst, owner, true)
-        RemoveUgComponent(owner, "waterproofer")
+        RemoveUgComponent(owner, "waterproofer", NAMES.PROOFR)
     end,
 }
 
 _proofr[FN_ATTACH] = function (inst, owner)
     -- 修改下升级函数，防水升级到100比较困难
     inst.components.uglevel.expfn = function () return 10 end
-    AddUgComponent(owner, "waterproofer")
+    AddUgComponent(owner, "waterproofer", NAMES.PROOFR)
     local waterproofer = owner.components.waterproofer
     if waterproofer.isugtemp then
         waterproofer:SetEffectiveness(0)
@@ -336,7 +336,7 @@ end
 local chopmax = 15
 
 local function update_choper(inst, owner, detach)
-    local lv = detach and 0 or inst.components.uglevel:GetLevel()
+    local lv = detach and 0 or inst.components.uglevel:GetLv()
     local mv = math.max(chopmax - lv * 0.15, 1)
     local multi = math.floor(chopmax/mv + 0.5)
     owner.components.tool:SetAction(ACTIONS.CHOP, multi)
@@ -350,13 +350,62 @@ local _choper = {
     [FN_UPDATE] = update_choper,
     [FN_DETACH] = function (inst, owner)
         update_choper(inst, owner, true)
-        RemoveUgComponent(owner, "tool")
+        RemoveUgComponent(owner, "tool", NAMES.CHOPER)
     end,
     [FN_ATTACH] = function (inst, owner)
-        AddUgComponent(owner, "tool")
+        AddUgComponent(owner, "tool", NAMES.CHOPER)
     end
 }
 
+
+
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local minemax = 10
+
+local function update_mining(inst, owner, detach)
+    local lv = detach and 0 or inst.components.uglevel:GetLv()
+    local mv = math.max(minemax - lv * 0.1, 1)
+    local multi = math.floor(minemax/mv + 0.5)
+    owner.components.tool:SetAction(ACTIONS.MINE, multi)
+    if owner.components.finiteuses ~= nil then
+        owner.components.finiteuses:SetConsumption(ACTIONS.MINE, 1)
+    end
+    
+end
+
+local _mining = {
+    [FN_UPDATE] = update_mining,
+    [FN_DETACH] = function (inst, owner)
+        update_mining(inst, owner, true)
+        RemoveUgComponent(owner, "tool", NAMES.MINING)
+    end,
+    [FN_ATTACH] = function (inst, owner)
+        AddUgComponent(owner, "tool", NAMES.MINING)
+    end
+}
+
+
+
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function update_speedr(inst, owner, detach)
+    if inst.speed ~= nil then
+        local lv = detach and 0 or inst.components.uglevel:GetLv()
+        local mv = inst.speed + lv * 0.01
+        owner.components.equippable.walkspeedmult = mv
+    end
+end
+
+local _speedr = {
+    [FN_UPDATE] = update_speedr,
+    [FN_DETACH] = function (inst, owner)
+        update_speedr(inst, owner, true)
+    end,
+    [FN_ATTACH] = function (inst, owner)
+        if owner.components.equippable ~= nil then
+            inst.speed = owner.components.equippable:GetWalkSpeedMult()
+        end
+    end
+}
 
 
 
@@ -371,5 +420,6 @@ return {
     [NAMES.DAPPER] = _dapper,
     [NAMES.PROOFR] = _proofr,
     [NAMES.CHOPER] = _choper,
-
+    [NAMES.MINING] = _mining,
+    [NAMES.SPEEDR] = _speedr,
 }
