@@ -19,7 +19,9 @@ end
 
 
 local _damage = {
-    [FN_UPDATE] = update_damage,
+    [FN_UPDATE] = function (inst, owner)
+        update_damage(inst, owner, false)
+    end,
     [FN_DETACH] = function(inst, owner)
         update_damage(inst, owner, true)
     end,
@@ -225,7 +227,7 @@ end
 
 
 local _maxuse = {
-    [FN_UPDATE] = update_maxuse,
+    [FN_UPDATE] = function(inst, owner) update_maxuse(inst, owner, false) end,
     [FN_DETACH] = function(inst, owner) update_maxuse(inst, owner, true) end,
     [FN_ATTACH] = function(inst, owner)
         if owner.components.finiteuses ~= nil then
@@ -241,7 +243,7 @@ local _maxuse = {
 
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
 local function update_warmer(inst, owner, detach)
-    if inst.modtype ~ nil and inst.insulator ~= nil and inst.type ~= nil then
+    if inst.modtype ~= nil and inst.insulator ~= nil and inst.type ~= nil then
         local lv = detach and 0 or inst.components.uglevel:GetLv()
         local iv = inst.insulator + lv * 10
         local ty = detach and inst.type or inst.modtype
@@ -256,16 +258,18 @@ end
 
 
 local _warmer = {
-    [FN_UPDATE] = update_warmer,
-    [FN_LOAD]   = function (inst, data)
+    [FN_UPDATE] = function(inst, owner)
+        update_warmer(inst, owner, false)
+    end,
+    [FN_LOAD]   = function(inst, data)
         inst.modtype = data.modtype
         inst.actived = data.actived
     end,
-    [FN_SAVE]   = function (inst, data)
+    [FN_SAVE]   = function(inst, data)
         data.modtype = inst.modtype
         data.actived = inst.actived
     end,
-    [FN_DETACH] = function(inst, owner) 
+    [FN_DETACH] = function(inst, owner)
         update_warmer(inst, owner, true)
         RemoveUgComponent(owner, "insulator", NAMES.WARMER)
         inst.ugswitchfn = nil
@@ -319,7 +323,9 @@ local function update_dapper(inst, owner, detach)
 end
 
 local _dapper = {
-    [FN_UPDATE] = update_dapper,
+    [FN_UPDATE] = function (inst, owner)
+        update_dapper(inst, owner, false)
+    end,
     [FN_DETACH] = function (inst, owner)
         update_dapper(inst, owner, true)
     end,
@@ -342,7 +348,9 @@ local function update_proofr(inst, owner, detach)
 end
 
 local _proofr = {
-    [FN_UPDATE] = update_proofr,
+    [FN_UPDATE] = function (inst, owner)
+        update_proofr(inst, owner, false)
+    end,
     [FN_DETACH] = function (inst, owner)
         update_proofr(inst, owner, true)
         RemoveUgComponent(owner, "waterproofer", NAMES.PROOFR)
@@ -354,7 +362,7 @@ _proofr[FN_ATTACH] = function (inst, owner)
     inst.components.uglevel.expfn = function () return 10 end
     AddUgComponent(owner, "waterproofer", NAMES.PROOFR)
     local waterproofer = owner.components.waterproofer
-    if waterproofer.isugtemp then
+    if GetUgData(waterproofer, NAMES.PROOFR) then
         waterproofer:SetEffectiveness(0)
     end
     local eff = waterproofer:GetEffectiveness()
@@ -378,7 +386,9 @@ local function update_choper(inst, owner, detach)
 end
 
 local _choper = {
-    [FN_UPDATE] = update_choper,
+    [FN_UPDATE] = function (inst, owner)
+        update_choper(inst, owner, false)
+    end,
     [FN_DETACH] = function (inst, owner)
         update_choper(inst, owner, true)
         RemoveUgComponent(owner, "tool", NAMES.CHOPER)
@@ -405,7 +415,9 @@ local function update_mining(inst, owner, detach)
 end
 
 local _mining = {
-    [FN_UPDATE] = update_mining,
+    [FN_UPDATE] = function (inst, owner)
+        update_mining(inst, owner, false)
+    end,
     [FN_DETACH] = function (inst, owner)
         update_mining(inst, owner, true)
         RemoveUgComponent(owner, "tool", NAMES.MINING)
@@ -427,7 +439,9 @@ local function update_speedr(inst, owner, detach)
 end
 
 local _speedr = {
-    [FN_UPDATE] = update_speedr,
+    [FN_UPDATE] = function (inst, owner)
+        update_speedr(inst, owner, false)
+    end,
     [FN_DETACH] = function (inst, owner)
         update_speedr(inst, owner, true)
     end,
@@ -452,7 +466,9 @@ local function update_absorb(inst, owner, detach)
 end
 
 local _absorb = {
-    [FN_UPDATE] = update_absorb,
+    [FN_UPDATE] = function (inst, owner)
+        update_absorb(inst, owner, false)
+    end,
     [FN_DETACH] = function (inst, owner)
         update_absorb(inst, owner, true)
     end,

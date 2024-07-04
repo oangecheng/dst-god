@@ -22,12 +22,13 @@ end
 local actions = {
     {
         id  = IDS.REPAIR,
-        str = isch and "修理" and "repair",
+        str = isch and "修理" or "repair",
         state = "give",
         fn  = function (act)
             local sys = act.target and act.target.components.ugsystem
             if act.doer and sys and act.invobject then
                 UgLog("修复测试", act.invobject.prefab)
+                removeItem(act.invobject)
             end
             return false
         end,

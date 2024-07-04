@@ -124,7 +124,7 @@ _health[FN_DETACH] = function (inst, owner, name)
 end
 
 _health[FN_UPDATE] = function (inst, owner, name)
-    update_health(inst, owner)
+    update_health(inst, owner, false)
 end
 
 
@@ -431,7 +431,7 @@ _fisher[FN_ATTACH] = function (inst, owner)
 end
 
 _fisher[FN_UPDATE] = function (inst, owner)
-    update_fisher(inst, owner)
+    update_fisher(inst, owner, false)
 end
 
 _fisher[FN_DETACH] = function (inst, owner)
@@ -478,7 +478,7 @@ _runner[FN_ATTACH] = function (inst, owner)
 end
 
 _runner[FN_UPDATE] = function (inst, owner)
-    update_runner(inst, owner)
+    update_runner(inst, owner, false)
 end
 
 _runner[FN_DETACH] = function (inst, owner)

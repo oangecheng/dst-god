@@ -81,7 +81,7 @@ function System:GetAll(type)
     local list = {}
     for k, v in pairs(self.entities) do
         if type == nil or type == v.inst.type then
-            table.insert(v.inst)
+            table.insert(list, v.inst)
         end
     end
     return list    

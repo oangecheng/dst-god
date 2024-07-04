@@ -2,7 +2,7 @@
 local function hook_weapon_attack(attacker, victim, weapon)
     local sys = weapon and weapon.components.ugsystem or nil
     if sys ~= nil then
-        local powers = sys:GetEntity(UGENTITY_TYPE.POWER)
+        local powers = sys:GetAll(UGENTITY_TYPE.POWER)
         for _, v in ipairs(powers) do
             if v.attackfn ~= nil then
                 local lv = v.components.uglevel:GetLv()
