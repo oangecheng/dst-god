@@ -219,26 +219,26 @@ end
 
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
 local function on_harvest_dry(doer, data)
-    GainUgPowerXp(doer, NAMES.DRYER, 5)
+    GainUgPowerXp(doer, NAMES.DRYERR, 5)
 end
 
-local function update_dryer(inst, owner, detach)
+local function update_dryerr(inst, owner, detach)
     local lv = inst.components.uglevel:GetLv()
     local v = detach and nil or math.max(1 - lv * 0.01, 0.3)
     PutUgData(owner, UGMARK.DRY_MULTI, v)
 end
 
-local _dryer = {}
-_dryer[FN_ATTACH] = function (_, owner)
+local _dryerr = {}
+_dryerr[FN_ATTACH] = function (_, owner)
     owner:ListenForEvent(UGEVENTS.HARVEST_DRY, on_harvest_dry)
 end
 
-_dryer[FN_UPDATE] = function (inst, owner)
-    update_dryer(inst, owner, false)
+_dryerr[FN_UPDATE] = function (inst, owner)
+    update_dryerr(inst, owner, false)
 end
 
-_dryer[FN_DETACH] = function (inst, owner)
-    update_dryer(inst, owner, true)
+_dryerr[FN_DETACH] = function (inst, owner)
+    update_dryerr(inst, owner, true)
     owner:RemoveEventCallback(UGEVENTS.HARVEST_DRY, on_harvest_dry)
 end
 
@@ -496,7 +496,7 @@ return {
     [NAMES.HEALTH] = _health,
     [NAMES.SANITY] = _sanity,
     [NAMES.COOKER] = _cooker,
-    [NAMES.DRYER ] = _dryer ,
+    [NAMES.DRYERR] = _dryerr,
     [NAMES.PICKER] = _picker,
     [NAMES.FARMER] = _farmer,
     [NAMES.FISHER] = _fisher,
