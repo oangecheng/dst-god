@@ -409,6 +409,32 @@ local _speedr = {
 
 
 
+
+
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function update_absorb(inst, owner, detach)
+    if inst.absorb ~= nil then
+        local lv = detach and 0 or inst.components.uglevel:GetLv()
+        local mv = inst.absorb + lv * 0.01
+        owner.components.armor:SetAbsorption(mv)
+    end
+end
+
+local _absorb = {
+    [FN_UPDATE] = update_absorb,
+    [FN_DETACH] = function (inst, owner)
+        update_absorb(inst, owner, true)
+    end,
+    [FN_ATTACH] = function (inst, owner)
+        if owner.components.armor ~= nil then
+            inst.absorb = owner.components.armor.absorb_percent
+        end
+    end
+}
+
+
+
+
 return {
     [NAMES.DAMAGE] = _damage,
     [NAMES.VAMPIR] = _vampir,
@@ -422,4 +448,5 @@ return {
     [NAMES.CHOPER] = _choper,
     [NAMES.MINING] = _mining,
     [NAMES.SPEEDR] = _speedr,
+    [NAMES.ABSORB] = _absorb,
 }

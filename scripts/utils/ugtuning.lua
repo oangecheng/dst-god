@@ -56,6 +56,7 @@ UGPOWERS = {
         CHOPER = equips.."choper",
         MINING = equips.."mining",
         SPEEDR = equips.."speedr",
+        ABSORB = equips.."absorb",
     }
 }
 
