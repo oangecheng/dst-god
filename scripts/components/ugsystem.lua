@@ -73,6 +73,21 @@ function System:GetEntity(name)
 end
 
 
+
+---comment 获取实例列表
+---@param type number|nil 类型，nil返回全部 
+---@return 数据列表 table 实例
+function System:GetAll(type)
+    local list = {}
+    for k, v in pairs(self.entities) do
+        if type == nil or type == v.inst.type then
+            table.insert(v.inst)
+        end
+    end
+    return list    
+end
+
+
 ---将所有实体迁移至另一个目标
 ---@param target table 目标
 function System:Transform(target)

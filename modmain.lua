@@ -17,6 +17,7 @@ PrefabFiles = {
 if GLOBAL.TheNet:GetIsServer() then
     modimport("scripts/mods/hook.lua")
     modimport("scripts/mods/hookuser.lua")
+    modimport("scripts/mods/hookatk.lua")
 end
 
 
