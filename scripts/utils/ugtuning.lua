@@ -48,6 +48,7 @@ UGPOWERS = {
         SPLASH = equips.."splash",
         CRITER = equips.."criter",
         BLINDR = equips.."blindr",
+        POISON = equips.."poison", 
 
         MAXUSE = equips.."maxuse",
         WARMER = equips.."warmer",

@@ -171,6 +171,37 @@ local _blindr = {
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function attack_poison(power, attacker, victim, weapon, lv)
+    if victim.components.locomotor ~= nil then
+        -- 最高30%概率减速 25%
+        if math.random() < (math.min(0.3, lv * 0.01)) then
+            victim.components.locomotor:SetExternalSpeedMultiplier(power, NAMES.POISON, 0.75)
+            if victim.ugpoisontask ~= nil then
+                victim.ugpoisontask:Cancel()
+                victim.ugpoisontask = nil
+            end
+            -- 3s后移除标记
+            victim.ugpoisontask = victim:DoTaskInTime(3, function()
+                victim.components.locomotor:RemoveExternalSpeedMultiplier(power, NAMES.POISON)
+            end)
+        end
+    end
+end
+
+local _poison = {
+    [FN_ATTACH] = function (inst)
+        inst.attackfn = attack_poison
+    end,
+    [FN_DETACH] = function (inst)
+        inst.attackfn = nil
+    end
+}
+
+
+
+
+
 
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
 
@@ -441,6 +472,8 @@ return {
     [NAMES.SPLASH] = _splash,
     [NAMES.CRITER] = _criter,
     [NAMES.BLINDR] = _blindr,
+    [NAMES.POISON] = _poison,
+
     [NAMES.MAXUSE] = _maxuse,
     [NAMES.WARMER] = _warmer,
     [NAMES.DAPPER] = _dapper,
