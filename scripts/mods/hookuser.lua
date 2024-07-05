@@ -10,9 +10,8 @@ end)
 
 AddPrefabPostInit("spear", function (inst)
     local sys = inst:AddComponent("ugsystem")
-    sys:AddEntity(UGPOWERS.EQUIPS.DAMAGE)
-    local powers = sys:GetAll(UGENTITY_TYPE.POWER)
-    for _, v in ipairs(powers) do
-        v.components.uglevel:SetLv(100)
+    for _, v in pairs(UGPOWERS.EQUIPS) do
+        local power = sys:AddEntity(v)
+        power.components.uglevel:SetLv(100)
     end
 end)

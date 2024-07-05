@@ -108,7 +108,7 @@ end
 --- 武器，玩家
 local function hook_atk(inst, data)
     local attacker = inst
-    local victim = data.victim
+    local victim = data.target
     local weapon = data.weapon
     hook_target_atk(attacker, attacker, victim, weapon)
     hook_target_atk(weapon, attacker, victim, weapon)
