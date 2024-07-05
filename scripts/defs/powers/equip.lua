@@ -33,6 +33,53 @@ local _damage = {
 }
 
 
+
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+-- 最高暴击倍率
+local critmax = 5
+local function dmg_criter(power, lv, dmg, spdmg, data)
+    local m = 1
+    if math.random() < 0.2 then
+        local seed = lv * 0.1
+        m = math.min(math.floor(2 + seed), critmax)
+    end
+    return dmg * m, spdmg
+end
+
+local _criter = {
+    [FN_ATTACH] = function (inst)
+        inst.dmgfn = dmg_criter
+    end,
+    [FN_DETACH] = function (inst)
+        inst.dmgfn = nil
+    end
+}
+
+
+
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+-- 最高闪避概率
+local DODGER_MAX = 0.3
+local function dmg_dodger(power, lv, dmg, spdmg, data)
+    local seed = math.min(lv * 0.01, DODGER_MAX)
+    -- 闪避支持位面伤害等
+    if math.random() < seed then
+        return 0, nil
+    end
+    return dmg, spdmg
+end
+
+local _dodger = {
+    [FN_ATTACH] = function (inst)
+        inst.dmgfn = dmg_dodger
+    end,
+    [FN_DETACH] = function (inst)
+        inst.dmgfn = nil
+    end
+}
+
+
+
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
 local function can_vampir(victim)
     return victim ~= nil
@@ -115,29 +162,6 @@ local _splash = {
     [FN_ATTACH] = function (inst)
         inst.attackfn = nil
     end,
-}
-
-
-
---------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
--- 最高暴击倍率
-local critmax = 5
-local function dmg_criter(power, lv, dmg, spdmg, data)
-    local m = 1
-    if math.random() < 0.2 then
-        local seed = lv * 0.1
-        m = math.min(math.floor(2 + seed), critmax)
-    end
-    return dmg * m, spdmg
-end
-
-local _criter = {
-    [FN_ATTACH] = function (inst)
-        inst.dmgfn = dmg_criter
-    end,
-    [FN_DETACH] = function (inst)
-        inst.dmgfn = nil
-    end
 }
 
 
@@ -482,14 +506,21 @@ local _absorb = {
 
 
 
+
+
 return {
-    [NAMES.DAMAGE] = _damage,
+    -- 伤害计算类型
+    [NAMES.CRITER] = _criter,
+    [NAMES.DODGER] = _dodger,
+    
+    -- 攻击效果类型
     [NAMES.VAMPIR] = _vampir,
     [NAMES.SPLASH] = _splash,
-    [NAMES.CRITER] = _criter,
     [NAMES.BLINDR] = _blindr,
     [NAMES.POISON] = _poison,
 
+    -- 固定属性类型
+    [NAMES.DAMAGE] = _damage,
     [NAMES.MAXUSE] = _maxuse,
     [NAMES.WARMER] = _warmer,
     [NAMES.DAPPER] = _dapper,

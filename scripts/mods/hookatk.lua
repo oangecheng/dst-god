@@ -1,3 +1,7 @@
+local function check_dmg(dmg, spdmg)
+    return dmg == 0 and spdmg == nil
+end
+
 local function dmgfn(target, dmg, spdmg, data)
     local xdmg = dmg
     local xspd = spdmg
@@ -7,6 +11,10 @@ local function dmgfn(target, dmg, spdmg, data)
             if v.dmgfn ~= nil then
                 local lv = v.components.uglevel:GetLv()
                 xdmg, xspd = v.dmgfn(v, lv, xdmg, xspd, data)
+                --- 如果已经是0 和 空值，提前返回
+                if check_dmg(xdmg, xspd) then
+                    return 0, nil
+                end
             end
         end
     end
@@ -33,16 +41,31 @@ local function hook_damage(attacker, victim, weapon, dmg, spdmg)
 
     ---计算攻击者
     xdmg, xspd = dmgfn(attacker, xdmg, xspd, data)
+    if check_dmg(xdmg, xspd) then
+        return xdmg, xspd
+    end
+
     ---计算武器
     xdmg, xspd = dmgfn(weapon, xdmg, xspd, data)
+    if check_dmg(xdmg, xspd) then
+        return xdmg, xspd
+    end
+
     ---计算被攻击者的
     xdmg, xspd = dmgfn(victim, xdmg, xspd, data)
+    if check_dmg(xdmg, xspd) then
+        return xdmg, xspd
+    end
+
     ---这里只计算护甲类型的减伤
     if victim ~= nil and victim.components.inventory ~= nil then
         local slots = victim.components.inventory.equipslots
         for k, v in pairs(slots) do
             if v.components.ugsystem ~= nil and v.components.armor ~= nil then
                 xdmg, xspd = dmgfn(v, xdmg, xspd, data)
+                if check_dmg(xdmg, xspd) then
+                    return xdmg, xspd
+                end
             end
         end
     end
