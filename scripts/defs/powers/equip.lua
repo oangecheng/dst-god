@@ -227,6 +227,27 @@ local _poison = {
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function atked_thorns(power, attacker, victim, weapon, lv)
+    if attacker.components.health ~= nil then
+        local dmg = math.floor( math.random(5) + lv * 0.1)
+        attacker.components.health:DoDelta(-dmg, nil, nil, true, nil, true)
+        attacker:PushEvent("thorns")
+    end
+end
+
+local _thorns = {
+    [FN_ATTACH] = function (inst, owner)
+        inst.attackedfn = atked_thorns
+    end,
+    [FN_DETACH] = function (inst, owner)
+        inst.attackedfn = nil
+    end
+}
+
+
+
+
 
 
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
@@ -512,12 +533,15 @@ return {
     -- 伤害计算类型
     [NAMES.CRITER] = _criter,
     [NAMES.DODGER] = _dodger,
-    
+
     -- 攻击效果类型
     [NAMES.VAMPIR] = _vampir,
     [NAMES.SPLASH] = _splash,
     [NAMES.BLINDR] = _blindr,
     [NAMES.POISON] = _poison,
+
+    -- 被攻击
+    [NAMES.THORNS] = _thorns,
 
     -- 固定属性类型
     [NAMES.DAMAGE] = _damage,

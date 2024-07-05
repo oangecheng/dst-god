@@ -42,15 +42,20 @@ UGPOWERS = {
     },
 
     EQUIPS = {
-        --- 攻击类型
-        VAMPIR = equips.."vampir",
-        SPLASH = equips.."splash",
+        ---伤害类型
         CRITER = equips.."criter",
-        BLINDR = equips.."blindr",
-        POISON = equips.."poison",
-        ---被攻击类型
         DODGER = equips.."dodger",
 
+        ---攻击效果
+        VAMPIR = equips.."vampir",
+        SPLASH = equips.."splash",
+        BLINDR = equips.."blindr",
+        POISON = equips.."poison",
+
+        ---被攻击效果
+        THORNS = equips.."thorns", --荆棘
+
+        ---固定类型
         DAMAGE = equips.."damage",
         MAXUSE = equips.."maxuse",
         WARMER = equips.."warmer",
