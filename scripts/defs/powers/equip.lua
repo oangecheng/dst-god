@@ -460,7 +460,7 @@ local _speedr = {
 local function update_absorb(inst, owner, detach)
     if inst.absorb ~= nil then
         local lv = detach and 0 or inst.components.uglevel:GetLv()
-        local mv = inst.absorb + lv * 0.01
+        local mv = math.min(inst.absorb + lv * 0.01, 0.9)
         owner.components.armor:SetAbsorption(mv)
     end
 end
