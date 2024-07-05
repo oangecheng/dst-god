@@ -491,6 +491,39 @@ end
 
 
 
+
+
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function update_doctor(inst, owner, detach)
+    local lv = inst.components.uglevel:GetLv()
+    local mv = detach and nil or (1 + lv * 0.01)
+    PutUgData(owner, UGMARK.HEAL_MULTI, mv)
+end
+
+
+local function on_heal(doer, data)
+    if data.health ~= nil then
+        local xp = data.health * 0.5
+        GainUgPowerXp(doer, NAMES.DOCTOR, xp)
+    end
+end
+
+
+local _doctor = {
+    [FN_UPDATE] = function (inst, owner)
+        update_doctor(inst, owner, false)
+    end,
+    [FN_DETACH] = function (inst, owner)
+        update_doctor(inst, owner, true)
+        owner:RemoveEventCallback(UGEVENTS.HEAL, on_heal)
+    end,  
+    [FN_ATTACH] = function (inst, owner)
+        owner:ListenForEvent(UGEVENTS.HEAL, on_heal)
+    end
+}
+
+
+
 return {
     [NAMES.HUNGER] = _hunger,
     [NAMES.HEALTH] = _health,
@@ -501,4 +534,5 @@ return {
     [NAMES.FARMER] = _farmer,
     [NAMES.FISHER] = _fisher,
     [NAMES.RUNNER] = _runner,
+    [NAMES.DOCTOR] = _doctor,
 }

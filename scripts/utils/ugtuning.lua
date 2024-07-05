@@ -23,6 +23,7 @@ UGEVENTS = {
     HARVEST_DRY = "ugharvest_dry",
     PICK_STH = "ugpick_something",
     FISH_SUCCESS = "ugfish_success",
+    HEAL = "ugheal",
 }
 
 
@@ -39,6 +40,7 @@ UGPOWERS = {
         FARMER = player.."farmer",
         FISHER = player.."fisher",
         RUNNER = player.."runner",
+        DOCTOR = player.."doctor",
     },
 
     EQUIPS = {
@@ -74,4 +76,5 @@ UGMARK = {
     DRY_MULTI  = "dry_multi" ,
     FISH_MULTI = "fish_multi",
     ATK_MISS   = "atk_miss",
+    HEAL_MULTI = "heal_multi",
 }

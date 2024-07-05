@@ -16,6 +16,7 @@ register_name(PLAYER.PICKER, "采集者", "Picker")
 register_name(PLAYER.FARMER, "农场主", "Farmer")
 register_name(PLAYER.FISHER, "钓鱼佬", "Fisher")
 register_name(PLAYER.RUNNER, "风行者", "Runner")
+register_name(PLAYER.DOCTOR, "药剂师", "Pharmacist")
 
 
 ---物品，装备
