@@ -120,23 +120,23 @@ local _splash = {
 
 
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
-
-local function attack_criter(power, attacker, victim, weapon, lv)
-    if attacker.components.combat ~= nil and victim.components.combat ~= nil then
-        local dmg, spdmg = attacker.components.combat:CalcDamage(attacker, weapon, 1)
-        -- 概率双倍伤害
-        if dmg ~= nil and math.random() < (lv * 0.01)then
-            victim.components.combat:GetAttacked(attacker, dmg, weapon, nil)
-        end
+-- 最高暴击倍率
+local critmax = 5
+local function dmg_criter(power, lv, dmg, spdmg, data)
+    local m = 1
+    if math.random() < 0.2 then
+        local seed = lv * 0.1
+        m = math.min(math.floor(2 + seed), critmax)
     end
+    return dmg * m, spdmg
 end
 
 local _criter = {
     [FN_ATTACH] = function (inst)
-        inst.attackfn = attack_criter
+        inst.dmgfn = dmg_criter
     end,
     [FN_DETACH] = function (inst)
-        inst.attackfn = nil
+        inst.dmgfn = nil
     end
 }
 

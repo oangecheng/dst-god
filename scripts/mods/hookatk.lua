@@ -1,6 +1,75 @@
+local function dmgfn(target, dmg, spdmg, data)
+    local xdmg = dmg
+    local xspd = spdmg
+    if target ~= nil and target.components.ugsystem ~= nil then
+        local powers = target.components.ugsystem:GetAll(UGENTITY_TYPE.POWER)
+        for _, v in ipairs(powers) do
+            if v.dmgfn ~= nil then
+                local lv = v.components.uglevel:GetLv()
+                xdmg, xspd = v.dmgfn(v, lv, xdmg, xspd, data)
+            end
+        end
+    end
+    return xdmg, xspd
+end
 
-local function hook_weapon_attack(attacker, victim, weapon)
-    local sys = weapon and weapon.components.ugsystem or nil
+
+---comment hook 攻击伤害
+---@param attacker table 攻击者
+---@param victim table 受害者
+---@param weapon table 武器
+---@param dmg number 伤害
+---@param spdmg table|nil 特殊伤害，例如位面伤害
+---@return number 伤害, table|nil 特殊伤害
+local function hook_damage(attacker, victim, weapon, dmg, spdmg)
+    local xdmg = dmg
+    local xspd = spdmg
+
+    local data = { 
+        attacker = attacker, 
+        victim = victim, 
+        weapon = weapon
+     }
+
+    ---计算攻击者
+    xdmg, xspd = dmgfn(attacker, xdmg, xspd, data)
+    ---计算武器
+    xdmg, xspd = dmgfn(weapon, xdmg, xspd, data)
+    ---计算被攻击者的
+    xdmg, xspd = dmgfn(victim, xdmg, xspd, data)
+    ---这里只计算护甲类型的减伤
+    if victim ~= nil and victim.components.inventory ~= nil then
+        local slots = victim.components.inventory.equipslots
+        for k, v in pairs(slots) do
+            if v.components.ugsystem ~= nil and v.components.armor ~= nil then
+                xdmg, xspd = dmgfn(v, xdmg, xspd, data)
+            end
+        end
+    end
+
+    return xdmg, xspd
+end
+
+
+--- hook combat 组件
+--- 伤害计算使用这个函数hook
+--- 怪物之间战斗的伤害结算也是计算属性的，因为hook的是组件
+AddComponentPostInit("combat", function(self)
+    local old_cacl_damage = self.CalcDamage
+    self.CalcDamage = function(_, target, weapon, multiplier)
+        local dmg, spdmg = old_cacl_damage(self, target, weapon, multiplier)
+        dmg, spdmg = hook_damage(self.inst, target, weapon, dmg, spdmg)
+        return dmg, spdmg
+    end
+end)
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+--- 攻击之后触发的效果
+local function hook_target_atk(target, attacker, victim, weapon)
+    local sys = target and target.components.ugsystem or nil
     if sys ~= nil then
         local powers = sys:GetAll(UGENTITY_TYPE.POWER)
         for _, v in ipairs(powers) do
@@ -13,19 +82,40 @@ local function hook_weapon_attack(attacker, victim, weapon)
 end
 
 
-local function hook_attacked()
-    
+--- 武器，玩家
+local function hook_atk(inst, data)
+    local attacker = inst
+    local victim = data.victim
+    local weapon = data.weapon
+    hook_target_atk(attacker, attacker, victim, weapon)
+    hook_target_atk(weapon, attacker, victim, weapon)
+end
+
+
+--- 被攻击触发的效果
+local function hook_target_atked(target, attacker, victim, weapon)
+    local sys = target and target.components.ugsystem or nil
+    if sys ~= nil then
+        local powers = sys:GetAll(UGENTITY_TYPE.POWER)
+        for _, v in ipairs(powers) do
+            if v.attackedfn ~= nil then
+                local lv = v.components.uglevel:GetLv()
+                v.attackedfn(v, attacker, victim, weapon, lv)
+            end
+        end
+    end
+end
+
+
+---受害者
+local function hook_atked(inst, data)
+    hook_target_atked(inst, data.attacker, inst, data.weapon)
 end
 
 
 --- hook玩家攻击和被攻击的事件
 --- 一般执行属性效果使用这个hook
 AddPlayerPostInit(function(player)
-    player:ListenForEvent("onattackother", function (inst, data)
-        hook_weapon_attack(inst, data.target, data.weapon)
-    end)
-
-    player:ListenForEvent("attacked", function (inst, data)
-        hook_attacked()
-    end)
+    player:ListenForEvent("onattackother", hook_atk)
+    player:ListenForEvent("attacked", hook_atked)
 end)
