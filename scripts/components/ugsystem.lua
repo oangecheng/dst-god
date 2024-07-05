@@ -88,6 +88,13 @@ function System:GetAll(type)
 end
 
 
+
+function System:SyncData(name)
+    
+end
+
+
+
 ---将所有实体迁移至另一个目标
 ---@param target table 目标
 function System:Transform(target)

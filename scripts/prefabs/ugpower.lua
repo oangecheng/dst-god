@@ -2,7 +2,7 @@
 
 local function tryUpdatePower(inst, name, data)
     if inst.owner ~= nil then
-        inst.owner:PushEvent(UGEVENTS.POWER_REFRESH, { name = name })
+        inst.owner:PushEvent(UGEVENTS.POWER_UPDATE, { name = name })
         if data then
             if data.update then
                 UgLog("update power", name, inst.components.uglevel:GetLv() )
@@ -41,7 +41,7 @@ local function MakePower(name, data)
 
         level:SetOnXpFn(function()
             if inst.owner then
-                inst.owner:PushEvent(UGEVENTS.POWER_REFRESH, { name = name })
+                inst.owner:PushEvent(UGEVENTS.POWER_UPDATE, { name = name })
             end
         end)
 

@@ -85,7 +85,7 @@
         "FRAMES",
         "RemoveUgComponent",
         "AddStategraphPostInit",
-        "AddActionQueuerAction"
+        "AddActionQueuerAction",
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",

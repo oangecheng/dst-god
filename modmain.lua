@@ -4,12 +4,15 @@ require("utils/ugfns")
 require("utils/uglog")
 
 --- 导入物品文件
+AddReplicableComponent("ugsync")
 PrefabFiles = {
     "ugpower",
 }
 
 modimport("scripts/strings/power.lua")
 modimport("scripts/mods/hookaction.lua")
+modimport("scripts/ui/ugui.lua")
+
 
 
 if GLOBAL.TheNet:GetIsServer() then
