@@ -1,0 +1,21 @@
+<Atlas>
+	<Texture filename="uggems.tex" />
+    <Elements>
+        <Element name="ugequips_absorb_gem.tex" u1="0" u2="0.0625" v1="0.9375" v2="1" />
+        <Element name="ugequips_blindr_gem.tex" u1="0.0625" u2="0.125" v1="0.9375" v2="1" />
+        <Element name="ugequips_choper_gem.tex" u1="0.125" u2="0.1875" v1="0.9375" v2="1" />
+        <Element name="ugequips_criter_gem.tex" u1="0.1875" u2="0.25" v1="0.9375" v2="1" />
+        <Element name="ugequips_damage_gem.tex" u1="0.25" u2="0.3125" v1="0.9375" v2="1" />
+        <Element name="ugequips_dapper_gem.tex" u1="0.3125" u2="0.375" v1="0.9375" v2="1" />
+        <Element name="ugequips_dodger_gem.tex" u1="0.375" u2="0.4375" v1="0.9375" v2="1" />
+        <Element name="ugequips_maxuse_gem.tex" u1="0.4375" u2="0.5" v1="0.9375" v2="1" />
+        <Element name="ugequips_mining_gem.tex" u1="0.5" u2="0.5625" v1="0.9375" v2="1" />
+        <Element name="ugequips_poison_gem.tex" u1="0.5625" u2="0.625" v1="0.9375" v2="1" />
+        <Element name="ugequips_proofr_gem.tex" u1="0.625" u2="0.6875" v1="0.9375" v2="1" />
+        <Element name="ugequips_speedr_gem.tex" u1="0.6875" u2="0.75" v1="0.9375" v2="1" />
+        <Element name="ugequips_splash_gem.tex" u1="0.75" u2="0.8125" v1="0.9375" v2="1" />
+        <Element name="ugequips_thorns_gem.tex" u1="0.8125" u2="0.875" v1="0.9375" v2="1" />
+        <Element name="ugequips_vampir_gem.tex" u1="0.875" u2="0.9375" v1="0.9375" v2="1" />
+        <Element name="ugequips_warmer_gem.tex" u1="0" u2="0.0625" v1="0.875" v2="0.9375" />
+    </Elements>
+</Atlas>

@@ -35,3 +35,10 @@ register_name(EQUIPS.SPEEDR, "移速", "Speed")
 register_name(EQUIPS.SPLASH, "溅射", "Aoe")
 register_name(EQUIPS.VAMPIR, "吸血", "Vampire")
 register_name(EQUIPS.WARMER, "恒温", "Insulator")
+
+
+-- for _, v in pairs(EQUIPS) do
+--     local powername = string.upper(v)
+--     local name = STRINGS.NAMES[powername]
+--     register_name(v.."_gem", name.."宝石", name.." Gem")
+-- end

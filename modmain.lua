@@ -7,6 +7,7 @@ require("utils/uglog")
 AddReplicableComponent("ugsync")
 PrefabFiles = {
     "ugpower",
+    "ugitems"
 }
 
 modimport("scripts/strings/power.lua")
