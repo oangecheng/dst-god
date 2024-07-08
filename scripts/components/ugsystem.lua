@@ -7,6 +7,7 @@ local function attach(system, name, ent, data)
             inst = ent,
             type = ent.type
         }
+        system.inst:PushEvent(UGEVENTS.POWER_UPDATE, {})
     else
         ent:Remove()
     end
@@ -19,6 +20,7 @@ local function detach(system, name)
     if ent ~= nil and ent.inst.components.ugentity then
         ent.inst.components.ugentity:Detach()
     end
+    system.inst:PushEvent(UGEVENTS.POWER_UPDATE, {})
     return ent.inst
 end
 
@@ -80,17 +82,11 @@ end
 function System:GetAll(type)
     local list = {}
     for k, v in pairs(self.entities) do
-        if type == nil or type == v.inst.type then
+        if v ~= nil and type == nil or type == v.inst.type then
             table.insert(list, v.inst)
         end
     end
     return list    
-end
-
-
-
-function System:SyncData(name)
-    
 end
 
 

@@ -2,7 +2,9 @@
 local isch = UGCOFIG.CH
 
 local IDS = {
-    REPAIR = "UGREPAIR"
+    REPAIR  = "UGREPAIR",
+    INLAY   = "UGINLAY",
+    ENHANCE = "UGENHANCE",   
 }
 
 
@@ -22,7 +24,7 @@ end
 local actions = {
     {
         id  = IDS.REPAIR,
-        str = isch and "修理" or "repair",
+        str = isch and "修理" or "Repair",
         state = "give",
         fn  = function (act)
             local sys = act.target and act.target.components.ugsystem
@@ -35,7 +37,23 @@ local actions = {
         actiondata = {
             priority = 10,
         } 
-    }
+    }, 
+    {
+        id  = IDS.INLAY,
+        str = isch and "镶嵌" or "Inlay",
+        state = "dolongaction",
+        fn = function (act)
+            local sys = act.target and act.target.components.ugsystem
+            if sys and act.invobject and act.invobject.inlayfn then
+                if act.invobject.inlayfn(act.doer, act.target, act.invobject) then
+                   removeItem(act.invobject)
+                   return true
+                end 
+            end
+            return false
+        end
+    },
+    
 }
 
 
@@ -50,6 +68,12 @@ local component_actions = {
                 action = IDS.REPAIR,
                 testfn = function (inst, doer, target, acts, right)
                     return inst.prefab == "goldnugget"
+                end
+            },
+            {
+                action = IDS.INLAY,
+                testfn = function (inst, doer, target, acts, right)
+                    return inst:HasTag(UGTAGS.GEM)
                 end
             }
         }

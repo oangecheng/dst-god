@@ -34,7 +34,10 @@ local function getEquipmentsPowers(owner)
 			for k, v in pairs(inventory:GetEquips()) do
 				local p = getTargetPowers(v)
 				if p then
-					list[v.prefab] = p
+					list[v.prefab] = {
+						powers = p,
+						target = v
+					}
 				end
 			end
 		end
@@ -63,6 +66,7 @@ local MultiTabWidget = Class(Widget, function(self, owner)
 			build_panel_fn = function()
 				local data = {
 					powers = getTargetPowers(owner),
+					target = owner,
 					xml = nil,
 				}
 				return PowerPage(self, owner, data)
@@ -80,7 +84,8 @@ local MultiTabWidget = Class(Widget, function(self, owner)
 						text = STRINGS.NAMES[string.upper(k)],
 						build_panel_fn = function()
 							local data = {
-								powers = v,
+								powers = v.powers,
+								target = v.target,
 								xml = "images/items/uggems.xml" 
 							}
 							return PowerPage(self, owner, data)

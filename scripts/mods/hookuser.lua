@@ -24,4 +24,5 @@ AddPrefabPostInit("spear", function (inst)
     inst:DoTaskInTime(0.1, function ()
         inst.components.ugsync:SyncPower()
     end)
+    
 end)

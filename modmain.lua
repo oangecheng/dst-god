@@ -7,7 +7,7 @@ require("utils/uglog")
 AddReplicableComponent("ugsync")
 PrefabFiles = {
     "ugpower",
-    "ugitems"
+    "uggems",
 }
 Assets = {
     Asset("ANIM", "images/items/uggems.xml"),
@@ -17,6 +17,7 @@ Assets = {
 modimport("scripts/strings/power.lua")
 modimport("scripts/mods/hookaction.lua")
 modimport("scripts/ui/ugui.lua")
+modimport("scripts/mods/rpc.lua")
 
 
 

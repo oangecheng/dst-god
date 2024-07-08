@@ -15,6 +15,8 @@ local GridPage = Class(Widget, function(self, parent_widget, owner, data)
 
     self.parent_widget = parent_widget
 	self.root = self:AddChild(Widget("root"))
+	self.owner = owner
+	self.target = data.target
 
 	--皮肤面板
 	self.skin_grid = self.root:AddChild(self:BuildSkinScrollGrid())
@@ -45,7 +47,6 @@ local GridPage = Class(Widget, function(self, parent_widget, owner, data)
 	self.skin_help:SetHAlign( ANCHOR_LEFT)
 	self.skin_help:SetString(name)
 	self.skin_help:SetColour(UICOLOURS.GOLD)
-
 
 	local datas = {}--皮肤数据
 	for k, v in pairs(data.powers) do--遍历皮肤数据表
@@ -141,26 +142,39 @@ function GridPage:BuildSkinScrollGrid()
 		w.sure_button:SetTextSize(18)
 		w.sure_button:SetPosition(0, -95, 0)
 		
+		local page = self
+
 		--皮肤选项卡展示
 		function w:SetSkinPage(name)
 			local data = w.data
 			if not data then return end
-            local str = data.lv .."  "..data.xp 
+
+			local str = data.lv .. "  " .. data.xp
 			w.powerlv:SetString(str)
+
 			if data.xml ~= nil then
 				w.skin_img:SetTexture(data.xml, data.tex)
-			end 
+			end
 
 			w.sure_button:SetOnClick(function()
 				local popup
 				popup = PopupDialogScreen("title", "desc",
 					{
-						{text = "确认", cb = function()
-							TheFrontEnd:PopScreen(popup)
-						end},
-						{text = "取消", cb = function()
-							TheFrontEnd:PopScreen(popup)
-						end},
+						{
+							text = "确认",
+							cb = function()
+								if page and page.target and page.target.ugunload_gem then
+									page.target.ugunload_gem(page.owner, page.target, data.name)
+								end
+								TheFrontEnd:PopScreen(popup)
+							end
+						},
+						{
+							text = "取消",
+							cb = function()
+								TheFrontEnd:PopScreen(popup)
+							end
+						},
 					}
 				)
 				TheFrontEnd:PushScreen(popup)
