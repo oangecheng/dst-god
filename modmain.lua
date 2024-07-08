@@ -9,6 +9,10 @@ PrefabFiles = {
     "ugpower",
     "ugitems"
 }
+Assets = {
+    Asset("ANIM", "images/items/uggems.xml"),
+    Asset("ANIM", "images/items/uggems.tex"),
+}
 
 modimport("scripts/strings/power.lua")
 modimport("scripts/mods/hookaction.lua")

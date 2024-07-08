@@ -58,18 +58,38 @@ local MultiTabWidget = Class(Widget, function(self, owner)
 
 
 	local button_data = {
-		{text = "人物面板", build_panel_fn = function() return PowerPage(self, owner, getTargetPowers(owner)) end},
+		{
+			text = "人物面板",
+			build_panel_fn = function()
+				local data = {
+					powers = getTargetPowers(owner),
+					xml = nil,
+				}
+				return PowerPage(self, owner, data)
+			end
+		},
 	}
 
 	local list = getEquipmentsPowers(owner)
 	if next(list) ~= nil then
 		for k, v in pairs(list) do
 			if v ~= nil and next(v) ~= nil then
-				table.insert(button_data, { text = STRINGS.NAMES[string.upper(k)], build_panel_fn = function() return PowerPage(self, owner, v) end})
+				table.insert(
+					button_data,
+					{
+						text = STRINGS.NAMES[string.upper(k)],
+						build_panel_fn = function()
+							local data = {
+								powers = v,
+								xml = "images/items/uggems.xml" 
+							}
+							return PowerPage(self, owner, data)
+						end
+					}
+				)
 			end
 		end
 	end
-
 	local function MakeTab(data, index)
         local tab = ImageButton("images/plantregistry.xml", "plant_tab_inactive.tex", nil, nil, nil, "plant_tab_active.tex")
 		tab:SetFocusScale(base_size, base_size)

@@ -10,7 +10,7 @@ local PopupDialogScreen = require "screens/redux/popupdialog"
 -- local DESC = require "powers/power_ui"
 
 
-local GridPage = Class(Widget, function(self, parent_widget, owner, powers)
+local GridPage = Class(Widget, function(self, parent_widget, owner, data)
     Widget._ctor(self, "GridPage")
 
     self.parent_widget = parent_widget
@@ -48,11 +48,13 @@ local GridPage = Class(Widget, function(self, parent_widget, owner, powers)
 
 
 	local datas = {}--皮肤数据
-	for k, v in pairs(powers) do--遍历皮肤数据表
+	for k, v in pairs(data.powers) do--遍历皮肤数据表
         local pdata = {
             name = k,
             lv = v.lv,
             xp = v.xp,
+			xml = data.xml,
+			tex = k.."_gem.tex"
         }
 		table.insert(datas, pdata)
 	end
@@ -105,12 +107,17 @@ function GridPage:BuildSkinScrollGrid()
 		w.skin_seperator = w.cell_root:AddChild(Image("images/plantregistry.xml", "plant_entry_seperator.tex"))
 		w.skin_seperator:SetPosition(0, 88)
 
+		--皮肤贴图
+		w.skin_img = w.cell_root:AddChild(Image())
+		w.skin_img:SetPosition(0, 0)
+		w.skin_img:SetScale(0.8, 0.8)
+
 
 		-- 属性标题，在每个cell最上方
 		w.powername = w.cell_root:AddChild(Text(font, font_size))
 		w.powername:SetPosition(0, 100)
-		w.powername:SetRegionSize( width_label, height )
-		w.powername:SetHAlign( ANCHOR_MIDDLE )
+		w.powername:SetRegionSize(width_label, height)
+		w.powername:SetHAlign(ANCHOR_MIDDLE)
 
 		--- 等级
 		w.powerlv = w.cell_root:AddChild(Text(font, font_size))
@@ -140,6 +147,9 @@ function GridPage:BuildSkinScrollGrid()
 			if not data then return end
             local str = data.lv .."  "..data.xp 
 			w.powerlv:SetString(str)
+			if data.xml ~= nil then
+				w.skin_img:SetTexture(data.xml, data.tex)
+			end 
 
 			w.sure_button:SetOnClick(function()
 				local popup

@@ -21,24 +21,30 @@ register_name(PLAYER.DOCTOR, "药剂师", "Pharmacist")
 
 ---物品，装备
 local EQUIPS = UGPOWERS.EQUIPS
-register_name(EQUIPS.ABSORB, "守护", "Absorb")
-register_name(EQUIPS.BLINDR, "致盲", "Blind")
-register_name(EQUIPS.CHOPER, "伐木", "Chop")
+
 register_name(EQUIPS.CRITER, "暴击", "Crit")
-register_name(EQUIPS.DAMAGE, "攻击", "ATK")
-register_name(EQUIPS.DAPPER, "精神", "Spirit")
-register_name(EQUIPS.MAXUSE, "耐久", "Durable")
-register_name(EQUIPS.MINING, "矿石", "Mining")
-register_name(EQUIPS.POISON, "毒素", "Posion")
-register_name(EQUIPS.PROOFR, "雨水", "Rain")
-register_name(EQUIPS.SPEEDR, "移速", "Speed")
-register_name(EQUIPS.SPLASH, "溅射", "Aoe")
+register_name(EQUIPS.DODGER, "闪避", "Dodge")
+
 register_name(EQUIPS.VAMPIR, "吸血", "Vampire")
+register_name(EQUIPS.SPLASH, "溅射", "Aoe")
+register_name(EQUIPS.BLINDR, "致盲", "Blind")
+register_name(EQUIPS.POISON, "毒素", "Posion")
+
+register_name(EQUIPS.THORNS, "荆棘", "Thorns")
+
+register_name(EQUIPS.DAMAGE, "攻击", "ATK")
+register_name(EQUIPS.MAXUSE, "耐久", "Durable")
 register_name(EQUIPS.WARMER, "恒温", "Insulator")
+register_name(EQUIPS.DAPPER, "精神", "Spirit")
+register_name(EQUIPS.PROOFR, "雨水", "Rain")
+register_name(EQUIPS.CHOPER, "伐木", "Chop")
+register_name(EQUIPS.MINING, "矿石", "Mining")
+register_name(EQUIPS.SPEEDR, "移速", "Speed")
+register_name(EQUIPS.ABSORB, "守护", "Absorb")
 
 
--- for _, v in pairs(EQUIPS) do
---     local powername = string.upper(v)
---     local name = STRINGS.NAMES[powername]
---     register_name(v.."_gem", name.."宝石", name.." Gem")
--- end
+for _, v in pairs(EQUIPS) do
+    local powername = string.upper(v)
+    local name = STRINGS.NAMES[powername]
+    register_name(v.."_gem", name.."宝石", name.." Gem")
+end
