@@ -36,12 +36,13 @@ UGPOWERS = {
         HEALTH = player.."health",
         SANITY = player.."sanity",
         COOKER = player.."cooker",
-        DRYERR = player.."dryerr" ,
+        DRYERR = player.."dryerr",
         PICKER = player.."picker",
         FARMER = player.."farmer",
         FISHER = player.."fisher",
         RUNNER = player.."runner",
         DOCTOR = player.."doctor",
+        HUNTER = player.."hunter",
     },
 
     EQUIPS = {

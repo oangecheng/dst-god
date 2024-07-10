@@ -524,6 +524,53 @@ local _doctor = {
 
 
 
+--------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local function on_hunter_killed(inst, data)
+    local victim = data.victim
+   
+    if victim.components.freezable or victim:HasTag("monster") then
+        local dropper = victim.components.lootdropper
+        if dropper == nil then
+            return
+        end
+
+        local lv = GetUgPowerLv(inst, NAMES.HUNTER)
+        if lv ~= nil then
+            -- 双倍掉落初始10%，满级100%
+            local ratio = (lv + 10) / 100
+            local rd = math.random()
+    
+            -- 三倍掉落概率更低，为两倍概率的1/5
+            if rd < ratio / 5 then 
+                dropper:DropLoot()
+                dropper:DropLoot()
+            elseif rd < ratio then
+                dropper:DropLoot() 
+            end
+    
+            -- 击杀大于血量1000的怪物能够升级属性
+            if victim.components.health then
+                local max = victim.components.health.maxhealth
+                if max >= 1000 then
+                    GainUgPowerXp(inst, NAMES.HUNTER, max * 0.01)
+                end 
+            end
+        end
+
+    end
+end
+
+local _hunter = {
+    [FN_ATTACH] = function (inst, owner)
+        owner:ListenForEvent("killed", on_hunter_killed)
+    end,
+    [FN_DETACH] = function (inst, owner)
+        owner:RemoveEventCallback("killed", on_hunter_killed)
+    end
+}
+
+
+
 return {
     [NAMES.HUNGER] = _hunger,
     [NAMES.HEALTH] = _health,
@@ -535,4 +582,5 @@ return {
     [NAMES.FISHER] = _fisher,
     [NAMES.RUNNER] = _runner,
     [NAMES.DOCTOR] = _doctor,
+    [NAMES.HUNTER] = _hunter,
 }
