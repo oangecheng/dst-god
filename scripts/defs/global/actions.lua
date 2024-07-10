@@ -53,6 +53,21 @@ local actions = {
             return false
         end
     },
+
+    {
+        id  = IDS.ENHANCE,
+        str = isch and "强化" or "Enhance",
+        state = "dolongaction",
+        fn = function (act)
+            if act.invobject and act.target and act.target.enhancefn then
+                if act.target.enhancefn.enhancefn(act.invobject) then
+                    act.invobject:Remove()
+                    return true
+                end
+            end
+            return false
+        end
+    }
     
 }
 
@@ -74,6 +89,12 @@ local component_actions = {
                 action = IDS.INLAY,
                 testfn = function (inst, doer, target, acts, right)
                     return inst:HasTag(UGTAGS.GEM)
+                end
+            },
+            {
+                action = IDS.ENHANCE,
+                testfn = function (inst, doer, target, acts, right)
+                    return target:HasTag(UGTAGS.GEM)
                 end
             }
         }

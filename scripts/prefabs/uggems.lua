@@ -10,6 +10,8 @@ local assets = {
     Asset("IMAGE", "images/items/uggems.tex")
 }
 
+local enhance = require("defs/enhance/gems")
+
 
 local function inlayfn(doer, target, gem)
     local sys =  target.components.ugsystem
@@ -65,6 +67,9 @@ local function MakeItem(prefab, data)
         end)
 
         inst.inlayfn = inlayfn
+        inst.enhancefn = function (item)
+            enhance.enhancefn(inst, item, data.power)
+        end
 
         return inst
     end
