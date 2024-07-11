@@ -1,6 +1,8 @@
-local TYPE = KSG_TASKS.TYPE
-local NAME = KSG_TASKS.NAME
-local LIMIT = KSG_TASKS.LIMIT
+local TYPES  = UGTASKS.TYPE
+local ATTACH = "attach"
+local DETACH = "detach"
+local SAVE   = "save"
+local LOAD   = "load"
 
 
 local function findTargetDemand(data, judge)
@@ -55,14 +57,13 @@ end
 
 ---comment通用的任务判定
 ---@param owner table 玩家实例
----@param type string task类型
 ---@param judge table 判定数据
 ---@param cnt number 任务判定成功之后，需要完成的目标数量
-local function commonTaskCheck(owner, type, judge, cnt)
-    local inst = owner.components.ksg_system_task:GetTask(type)
-    local data = inst and inst.components.ksg_task:GetData()
+local function commonTaskCheck(owner, judge, cnt)
+    local inst = owner.components.ugsystem:GetEntity(UGTASKS.NAME)
+    local data = inst and inst.datafn()
     if not data then
-        KsgLog("taskcheck, empty data")
+        UgLog("taskcheck, empty data")
         return
     end
     local demand = findTargetDemand(data, judge)
@@ -96,8 +97,8 @@ end
 
 local function onKillOther(killer, data)
     local victim = data.victim
-    local judge = { target = victim.prefab, type = TYPE.KILL }
-    commonTaskCheck(killer, TYPE.KILL, judge, 1)
+    local judge = { target = victim.prefab, type = TYPES.KILL }
+    commonTaskCheck(killer,judge, 1)
 end
 
 

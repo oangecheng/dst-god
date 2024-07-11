@@ -73,6 +73,11 @@ UGPOWERS = {
 }
 
 
+UGTASKS = {
+    DAILY = "ugtask_daily",
+}
+
+
 UGMARK = {
     COOK_MULTI = "cook_multi",
     DRY_MULTI  = "dry_multi" ,
