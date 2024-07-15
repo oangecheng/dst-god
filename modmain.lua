@@ -8,7 +8,8 @@ AddReplicableComponent("ugsync")
 PrefabFiles = {
     "ugpower",
     "uggems",
-    "ugtasks"
+    "ugtasks",
+    "ugitems",
 }
 Assets = {
     Asset("ANIM", "images/items/uggems.xml"),
