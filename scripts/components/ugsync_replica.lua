@@ -5,10 +5,7 @@ local function on_data_dirty(self, inst)
         if info ~= nil then
             for k, v in pairs(info) do
                 if type(v) == "table" then
-                    self.datas[k] = self.datas[k] or {}
-                    for k1, v1 in pairs(v) do
-                        self.datas[k][k1] = v1
-                    end
+                    self.datas[k] = v
                 else
                     self.datas[k] = v
                 end

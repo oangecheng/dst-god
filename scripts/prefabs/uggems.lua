@@ -68,7 +68,7 @@ local function MakeItem(prefab, data)
 
         inst.inlayfn = inlayfn
         inst.enhancefn = function (item)
-            enhance.enhancefn(inst, item, data.power)
+            return enhance.enhancefn(inst, item, data.power)
         end
 
         return inst

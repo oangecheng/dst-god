@@ -547,8 +547,13 @@ local _choper = {
         update_choper(inst, owner, false)
     end,
     [FN_DETACH] = function (inst, owner)
+        UgLog("chop detach", owner.prefab)
         update_choper(inst, owner, true)
         RemoveUgComponent(owner, "tool", NAMES.CHOPER)
+        if owner.components.tool ~= nil then
+            owner.components.tool.actions[ACTIONS.CHOP] = 0
+            owner:RemoveTag(ACTIONS.CHOP.id.."_tool")
+        end
     end,
     [FN_ATTACH] = function (inst, owner)
         AddUgComponent(owner, "tool", NAMES.CHOPER)

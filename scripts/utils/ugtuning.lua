@@ -26,6 +26,7 @@ UGEVENTS = {
     PICK_STH = "ugpick_something",
     FISH_SUCCESS = "ugfish_success",
     HEAL = "ugheal",
+    TASK_FINISH = "ugtask_finish"
 }
 
 

@@ -30,7 +30,7 @@ return {
         if item.components.stackable ~= nil then
             xp = xp * item.components.stackable:StackSize()
         end
-        GainUgPowerXp(inst, name, xp)
+        inst.components.uglevel:XpDelta(xp)
         return true
     end
 }

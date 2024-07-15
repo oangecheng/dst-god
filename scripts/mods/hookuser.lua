@@ -1,15 +1,23 @@
+local factory = require "defs/tasks/factory"
+
 AddPlayerPostInit(function(player)
-    local powersys = player:AddComponent("ugsystem")
+    local sys = player:AddComponent("ugsystem")
     player:AddComponent("ugsync")
-    
+
+
+    player:ListenForEvent(UGEVENTS.TASK_FINISH, function (inst, data)
+        sys:RemoveEntity(data.name)
+    end)
 
     player:ListenForEvent("oneat", function (_, data)
         for key, value in pairs(UGPOWERS.PLAYER) do
-            powersys:AddEntity(value)
+            sys:AddEntity(value)
         end
 
         if data.food.prefab == "bird_egg" then
-            powersys:AddEntity(UGTASKS.NAMES.DAILY)
+            local name = UGTASKS.NAMES.DAILY
+            local task = factory.taskfn(player, name, UGTASKS.STARS.S)
+            sys:AddEntity(name, task)
         end
     end)
 
@@ -25,7 +33,6 @@ AddPrefabPostInit("spear", function (inst)
     -- 测试代码
     for _, v in pairs(UGPOWERS.EQUIPS) do
         local power = inst.components.ugsystem:AddEntity(v)
-        power.components.uglevel:SetLv(100)
     end
 
     inst:DoTaskInTime(0.1, function ()

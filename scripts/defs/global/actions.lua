@@ -62,7 +62,7 @@ local actions = {
         state = "dolongaction",
         fn = function (act)
             if act.invobject and act.target and act.target.enhancefn then
-                if act.target.enhancefn.enhancefn(act.invobject) then
+                if act.target.enhancefn(act.invobject) then
                     act.invobject:Remove()
                     return true
                 end
@@ -84,7 +84,7 @@ local component_actions = {
             {
                 action = IDS.REPAIR,
                 testfn = function (inst, doer, target, acts, right)
-                    return target:HasTag(UGTAGS.REPAIR)
+                    return inst.prefab == "goldnugget" and target:HasTag(UGTAGS.REPAIR)
                 end
             },
             {

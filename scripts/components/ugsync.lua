@@ -28,25 +28,13 @@ function Sync:SyncPower(name)
     local data = {}
     local sys = self.inst.components.ugsystem
     if sys ~= nil then
-        if name ~= nil then
-            local power = sys:GetEntity(name)
-            if power ~= nil then
-                data["power"] = {
-                    [name] = {
-                        lv = power.components.uglevel:GetLv(),
-                        xp = power.components.uglevel:GetXp()
-                    }
-                }
-            end
-        else
-            local powers = sys:GetAll(UGENTITY_TYPE.POWER)
-            data["power"] = {}
-            for i, v in ipairs(powers) do
-                data["power"][v.name] = {
-                    lv = v.components.uglevel:GetLv(),
-                    xp = v.components.uglevel:GetXp()
-               }
-            end
+        local powers = sys:GetAll(UGENTITY_TYPE.POWER)
+        data["power"] = {}
+        for i, v in ipairs(powers) do
+            data["power"][v.name] = {
+                lv = v.components.uglevel:GetLv(),
+                xp = v.components.uglevel:GetXp()
+            }
         end
     end
 

@@ -37,9 +37,9 @@ local AWARD = UGTASKS.AWARD
 local function task_kill(player, name, star)
     return {
         name = NAMES.DAILY,
-        type = TYPES.KILL,
         demands = {
             {
+                type = TYPES.KILL,
                 target = "spider",
                 num = 1,
             }

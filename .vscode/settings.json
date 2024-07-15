@@ -86,6 +86,8 @@
         "RemoveUgComponent",
         "AddStategraphPostInit",
         "AddActionQueuerAction",
+        "UGTASKS",
+        "RemoveUgTag"
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",
