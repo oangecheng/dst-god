@@ -19,12 +19,19 @@ local function fn()
     inst.datafn = function()
         return inst.components.ugentity:GetData()
     end
+    inst.winfn = function ()
+        
+    end
+
+    inst.losefn = function ()
+        
+    end
 
     inst.components.ugentity:SetOnAttachFn(function(owner, name)
-        
+        owner.ugtask = name
     end)
     inst.components.ugentity:SetOnDetachFn(function(owner, name)
-
+        owner.ugtask = nil
     end)
 
     return inst

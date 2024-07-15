@@ -1,9 +1,9 @@
-local TYPES  = UGTASKS.TYPE
+local CONSTS = require("defs/tasks/const")
+local TYPES  = CONSTS.TYPES
+local LIMIT  = CONSTS.LIMIT
+
 local ATTACH = "attach"
 local DETACH = "detach"
-local SAVE   = "save"
-local LOAD   = "load"
-
 
 local function findTargetDemand(data, judge)
     -- 先查找第一个进行中的任务
@@ -59,8 +59,7 @@ end
 ---@param owner table 玩家实例
 ---@param name string 任务名称
 ---@param judge table 判定数据
----@param cnt number 任务判定成功之后，需要完成的目标数量
-local function commonTaskCheck(owner, name, judge, cnt)
+local function commonTaskCheck(owner, name, judge)
     local inst = owner.components.ugsystem:GetEntity(name)
     local data = inst and inst.datafn()
     if not data then
@@ -69,7 +68,7 @@ local function commonTaskCheck(owner, name, judge, cnt)
     end
     local demand = findTargetDemand(data, judge)
     if demand ~= nil then
-        demand.num = demand.num - cnt
+        demand.num = demand.num - (judge.cnt or 1)
         if demand.num < 1 then
             demand.finish = true
         end
@@ -85,36 +84,68 @@ local function commonTaskCheck(owner, name, judge, cnt)
 
     -- 任务全部做完了，推送任务完成事件
     if not next then
-        inst.components.ksg_task:Win()
+        inst.winfn()
     else
         -- 否则刷新下面板
         if demand then
-            inst.components.ksg_task:Update()
+            inst.updatefn()
         end
     end
 end
 
 
-
-local function onKillOther(killer, data)
-    local victim = data.victim
-    local judge = { target = victim.prefab, type = TYPES.KILL }
-    commonTaskCheck(killer,judge, 1)
+local function checkfn(owner, judge)
+    if owner.ugtask ~= nil then
+        commonTaskCheck(owner, owner.ugtask, judge)
+    end
 end
 
 
 
-local kill = {
-    startfn = function (owner, data)
-        owner:ListenForEvent("killed", onKillOther)
+
+--------------------------------------------------------------------------*--------------------------------------------------------------------------
+local on_kill_other = function(inst, data)
+    local judge = { target = data.victim.prefab, type = TYPES.KILL }
+    checkfn(inst, judge)
+end
+
+local _kill = {
+    [ATTACH] = function (inst, owner)
+        owner:ListenForEvent("killed", on_kill_other)
     end,
-    stopfn = function (owner, data)
-        owner:RemoveEventCallback("killed", onKillOther)
+    [DETACH] = function (inst, owner)
+        owner:RemoveEventCallback("killed", on_kill_other)
     end
 }
 
 
 
+
+--------------------------------------------------------------------------*--------------------------------------------------------------------------
+local function on_fish(inst, data)
+    local judge = { 
+        type  = TYPES.FISH,
+        arget = data.finish 
+    }
+    if data.isocean then
+        judge.extra = {
+            area = "ocean"
+        }
+    end
+    checkfn(inst, judge)
+end
+
+local _fish = {
+    [ATTACH] = function(inst, owner, name)
+        owner:ListenForEvent(UGEVENTS.FISH_SUCCESS, on_fish)
+    end,
+    [DETACH] = function(inst, owner, name)
+        owner:RemoveEventCallback(UGEVENTS.FISH_SUCCESS, on_fish)
+    end
+}
+
+
 return {
-    [TYPE.KILL] = kill
+    [TYPES.KILL] = _kill,
+    [TYPES.FISH] = _fish,
 }

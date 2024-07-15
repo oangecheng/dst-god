@@ -1,5 +1,6 @@
 local TYPES_DEF = {
-    KILL = 1
+    KILL = "kill",
+    FISH = "fish",
 }
 
 local LIMIT_DEF = {
@@ -10,7 +11,15 @@ local LIMIT_DEF = {
 }
 
 
+local FISH_DEF = {
+    "wobster_moonglass",
+    "wobster_sheller",
+    "eel",
+}
+
+
 return {
     TYPES = TYPES_DEF,
-    LIMIT = LIMIT_DEF
+    LIMIT = LIMIT_DEF,
+    FISHS = FISH_DEF,
 }
