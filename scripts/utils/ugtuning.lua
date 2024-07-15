@@ -75,7 +75,42 @@ UGPOWERS = {
 
 
 UGTASKS = {
-    DAILY = "ugtask_daily",
+
+    NAMES = {
+        "ugtask_daily"
+    },
+
+    TYPES = {
+        KILL = 1,
+        FISH = 2,
+    },
+
+    LIMIT = {
+        NONE = 0,
+        TIME = 1,
+        MOON = 2,
+        AREA = 3,
+    },
+
+    STARS = {
+        D = 1,
+        C = 2,
+        B = 3,
+        A = 4,
+        S = 5,
+    },
+
+    REWARD = {
+        ITEM = 1,
+        GEM_PIECE = 2,
+        GEM = 3,
+        POTION = 4,
+        TASK = 5,
+    },
+
+    PUNISH = {
+        
+    }
 }
 
 

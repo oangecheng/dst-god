@@ -1,6 +1,5 @@
-local CONSTS = require("defs/tasks/const")
-local TYPES  = CONSTS.TYPES
-local LIMIT  = CONSTS.LIMIT
+local TYPES  = UGTASKS.TYPES
+local LIMIT  = UGTASKS.LIMIT
 
 local ATTACH = "attach"
 local DETACH = "detach"
