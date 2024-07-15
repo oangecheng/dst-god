@@ -98,3 +98,30 @@ function RemoveUgComponent(owner, com, source)
         end
     end
 end
+
+
+
+function AddUgTag(owner, tag, source)
+    if owner ~= nil then
+        if owner.ugtags == nil then
+            owner.ugtags = {}
+        end
+        owner.ugtags[source] = tag
+        if not owner:HasTag(tag) then
+            owner:AddTag(tag)
+        end
+    end
+end
+
+
+
+function RemoveUgTag(owner, tag, source)
+    if owner ~= nil then
+        if owner.ugtags ~= nil then
+            owner.ugtags[source] = nil
+        end
+        if owner.ugtags == nil or IsTableEmpty(owner.ugtags) then
+            owner:RemoveTag(tag)
+        end
+    end
+end

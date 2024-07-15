@@ -14,7 +14,8 @@ UGENTITY_TYPE = {
 
 UGTAGS = {
     LEVEL = "uglevel",
-    GEM = "uggems"
+    GEM = "uggems",
+    REPAIR = "repair",
 }
 
 

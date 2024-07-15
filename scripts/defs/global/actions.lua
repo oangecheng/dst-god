@@ -4,7 +4,7 @@ local isch = UGCOFIG.CH
 local IDS = {
     REPAIR  = "UGREPAIR",
     INLAY   = "UGINLAY",
-    ENHANCE = "UGENHANCE",   
+    ENHANCE = "UGENHANCE", 
 }
 
 
@@ -27,10 +27,12 @@ local actions = {
         str = isch and "修理" or "Repair",
         state = "give",
         fn  = function (act)
-            local sys = act.target and act.target.components.ugsystem
-            if act.doer and sys and act.invobject then
-                UgLog("修复测试", act.invobject.prefab)
-                removeItem(act.invobject)
+            local repair = act.target and act.target.components.ugrepair
+            if act.doer and repair and act.invobject then
+                if repair:Repair(act.invobject, act.doer) then
+                    removeItem(act.invobject)
+                    return true
+                end
             end
             return false
         end,
@@ -82,7 +84,7 @@ local component_actions = {
             {
                 action = IDS.REPAIR,
                 testfn = function (inst, doer, target, acts, right)
-                    return inst.prefab == "goldnugget"
+                    return target:HasTag(UGTAGS.REPAIR)
                 end
             },
             {
