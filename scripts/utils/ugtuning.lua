@@ -77,7 +77,7 @@ UGPOWERS = {
 UGTASKS = {
 
     NAMES = {
-        "ugtask_daily"
+        DAILY = "ugtask_daily"
     },
 
     TYPES = {
@@ -100,16 +100,12 @@ UGTASKS = {
         S = 5,
     },
 
-    REWARD = {
+    AWARD = {
         ITEM = 1,
-        GEM_PIECE = 2,
-        GEM = 3,
-        POTION = 4,
-        TASK = 5,
     },
 
     PUNISH = {
-        
+
     }
 }
 

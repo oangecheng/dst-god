@@ -1,11 +1,15 @@
 AddPlayerPostInit(function(player)
     local powersys = player:AddComponent("ugsystem")
     player:AddComponent("ugsync")
-
+    
 
     player:ListenForEvent("oneat", function (_, data)
         for key, value in pairs(UGPOWERS.PLAYER) do
             powersys:AddEntity(value)
+        end
+
+        if data.food.prefab == "bird_egg" then
+            powersys:AddEntity(UGTASKS.NAMES.DAILY)
         end
     end)
 

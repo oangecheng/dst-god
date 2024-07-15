@@ -1,9 +1,28 @@
 
+local JUDGES = require("defs/tasks/judge")
+local FINISH = require("defs/tasks/finish")
+local ATTACH = "attach"
+local DETACH = "detach"
+
+local function on_task_change(inst, fn)
+    local data = inst.components.ugentity:GetData()
+    if data ~= nil and data.demands ~= nil then
+        for _, v in ipairs(data.demands) do
+            local judge = JUDGES[v.type]
+            if judge ~= nil and inst.owner ~= nil then
+                judge[fn](inst, inst.owner, inst.name)
+            end
+        end
+    end
+end
+
 
 local function fn()
     local inst = CreateEntity()
     inst:AddTag("CLASSIFIED")
     inst.type = UGENTITY_TYPE.TASK
+
+    inst.name = UGTASKS.NAMES.DAILY
     if not TheWorld.ismastersim then
         inst:DoTaskInTime(0, inst:Remove())
         return inst
@@ -16,25 +35,37 @@ local function fn()
 
     inst:AddComponent("timer")
     inst:AddComponent("ugentity")
-    inst.datafn = function()
+
+    local function datafn()
         return inst.components.ugentity:GetData()
     end
+
+    inst.datafn = datafn
     inst.winfn = function ()
-        
+        local data = datafn()
+        if data ~= nil and data.rewards ~= nil and inst.owner ~= nil then
+            FINISH.winfn(inst, inst.owner, data.rewards)
+        end
     end
 
     inst.losefn = function ()
-        
+        local data = datafn()
+        if data ~= nil and data.rewards ~= nil and inst.owner ~= nil then
+            FINISH.winfn(inst, inst.owner, data.punish)
+        end
     end
 
     inst.components.ugentity:SetOnAttachFn(function(owner, name)
         owner.ugtask = name
+        on_task_change(inst, ATTACH)
     end)
+    
     inst.components.ugentity:SetOnDetachFn(function(owner, name)
+        on_task_change(inst, DETACH)
         owner.ugtask = nil
     end)
 
     return inst
 end
 
-return Prefab(UGTASKS.DAILY, fn, nil, nil)
+return Prefab(UGTASKS.NAMES.DAILY, fn, nil, nil)

@@ -24,10 +24,14 @@
 --             name = "cutgrass"
 --        }
 --      }
+--     punish = {
+--         type = 1
+--      }
 -- }
-local TYPES  = UGTASKS.TYPES
-local LIMIT  = UGTASKS.LIMIT
-local NAMES  = UGTASKS.NAMES
+local TYPES = UGTASKS.TYPES
+local LIMIT = UGTASKS.LIMIT
+local NAMES = UGTASKS.NAMES
+local AWARD = UGTASKS.AWARD
 
 
 local function task_kill(player, name, star)
@@ -42,8 +46,10 @@ local function task_kill(player, name, star)
         },
         rewards = {
             {
-                
-            }
+                type = AWARD.ITEM,
+                target = "cutgrass",
+                num = 1,
+            },
         }
     }
 end
@@ -68,3 +74,8 @@ local function task_fish(player, name, star)
         }
     }
 end
+
+
+return {
+    taskfn = task_kill
+}
