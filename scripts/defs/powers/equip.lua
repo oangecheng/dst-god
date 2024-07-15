@@ -310,18 +310,26 @@ end
 
 
 local function update_maxuse(inst, owner, detach)
+    if inst.max == nil then
+        return
+    end
+
     local lv = detach and 0 or inst.components.uglevel:GetLv()
 
     -- 处理衣帽的数据
     if owner.components.fuled ~= nil then
-        local m = 1 + (lv * 0.01)
-        PutUgData(owner, UGMARK.FULE_MULTI, m)
-        return
+        if owner.components.fuled ~= nil then
+            local v = inst.max * (lv * 0.25 + 1)
+            local percent =  owner.components.fuled:GetPercent()
+            owner.components.fuled.maxfuel = v
+            owner.components.fuled:SetPercent(percent)
+            return
+        end
     end
 
     -- 处理武器&护甲
     if inst.max ~= nil then
-        local mv = math.floor(inst.max * (lv * 0.25 + 1))
+        local mv = math.floor(inst.max * (lv * 0.5 + 1))
         if owner.components.finiteuses ~= nil then
             local pt = owner.components.finiteuses:GetPercent()
             owner.components.finiteuses:SetMaxUses(mv)
@@ -342,19 +350,38 @@ local _maxuse = {
     end,
 }
 
+_maxuse[FN_SAVE] = function (inst, data)
+    -- 衣帽需要存下当前的百分比
+    if inst.owner ~= nil and inst.owner.components.fuled then
+        data.percent = inst.owner.components.fuled:GetPercent()
+    end
+end
+
+_maxuse[FN_LOAD] = function (inst, data)
+    inst.percent = data.percent
+end
+
 
 _maxuse[FN_ATTACH] = function(inst, owner)
     owner:ListenForEvent("percentusedchange", on_percent_changed)
     owner:ListenForEvent("equipped", on_equip)
+    
     -- 衣帽的修理走修理包
     if owner.components.finiteuses ~= nil then
         owner.ugrepairfn = repair_fn
         AddUgTag(owner, UGTAGS.REPAIR, NAMES.MAXUSE)
         inst.max = owner.components.finiteuses.total
+
     elseif owner.components.armor ~= nil then
         owner.ugrepairfn = repair_fn
         AddUgTag(owner, UGTAGS.REPAIR, NAMES.MAXUSE)
         inst.max = owner.components.armor.maxcondition
+
+    elseif owner.components.fuled ~= nil then
+        inst.max = owner.components.fuled.maxfuel
+        if inst.percent ~= nil then
+            owner.components.fuled:SetPercent(inst.percent)
+        end
     end    
 end
 
@@ -366,6 +393,7 @@ _maxuse[FN_DETACH] = function(inst, owner)
     owner:RemoveEventCallback("equipped", on_equip)
     owner.ugowner = nil
     owner.ugrepairfn = nil
+    inst.percent = nil
 end
 
 
