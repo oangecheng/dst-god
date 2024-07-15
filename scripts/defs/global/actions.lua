@@ -27,9 +27,9 @@ local actions = {
         str = isch and "修理" or "Repair",
         state = "give",
         fn  = function (act)
-            local repair = act.target and act.target.components.ugrepair
+            local repair = act.target and act.target.ugrepairfn
             if act.doer and repair and act.invobject then
-                if repair:Repair(act.invobject, act.doer) then
+                if repair(act.target, act.invobject, act.doer) then
                     removeItem(act.invobject)
                     return true
                 end

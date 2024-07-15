@@ -85,4 +85,5 @@ UGMARK = {
     FISH_MULTI = "fish_multi",
     ATK_MISS   = "atk_miss",
     HEAL_MULTI = "heal_multi",
+    FULE_MULTI = "fule_multi";
 }

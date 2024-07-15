@@ -251,12 +251,77 @@ local _thorns = {
 
 
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local REPAIR_ITEMS = {
+    goldnugget = 0.2
+}
+
+
+-- 盔甲消耗的比较快，单独计算，20%以下就自动卸下
+local function repair_percent(inst)
+    if inst.components.armor then return 0.2 end
+    return 0.05 
+end
+
+
+local function on_percent_changed(inst, data)
+    if inst.ugowner and data.percent <= repair_percent(inst) then
+        local inventory = inst.owner.components.inventory
+        if inventory ~= nil then
+            local slot = inventory:IsItemEquipped(inst)
+            if slot ~= nil then
+                local item = inventory:Unequip(slot)
+                inventory:GiveItem(item)
+            end
+        end
+    end
+end
+
+
+local function on_equip(inst, data)
+    inst.ugowner = data.owner
+end
+
+
+local function repair_fn(inst, item, doer)
+    local delta = REPAIR_ITEMS[item.prefab]
+    if delta == nil then
+        return false
+    end
+    
+    -- 武器或者工具
+    local finiteuses = inst.components.finiteuses
+    if finiteuses ~= nil then
+        local percent = math.min(finiteuses:GetPercent() + delta, 1)
+        finiteuses:SetPercent(percent)
+        return true
+    end
+    
+    -- 盔甲
+    local armor = inst.components.armor
+    if armor then
+        local percent = math.min(armor:GetPercent() + delta, 1)
+        armor:SetPercent(percent)
+        return true
+    end
+
+    -- 衣帽使用针线包修复
+    return false
+end
+
 
 local function update_maxuse(inst, owner, detach)
-    local max = inst.max
-    if max ~= nil then
-        local lv = detach and 0 or inst.components.uglevel:GetLv()
-        local mv = max * (lv * 0.5 + 1)
+    local lv = detach and 0 or inst.components.uglevel:GetLv()
+
+    -- 处理衣帽的数据
+    if owner.components.fuled ~= nil then
+        local m = 1 + (lv * 0.01)
+        PutUgData(owner, UGMARK.FULE_MULTI, m)
+        return
+    end
+
+    -- 处理武器&护甲
+    if inst.max ~= nil then
+        local mv = math.floor(inst.max * (lv * 0.25 + 1))
         if owner.components.finiteuses ~= nil then
             local pt = owner.components.finiteuses:GetPercent()
             owner.components.finiteuses:SetMaxUses(mv)
@@ -272,17 +337,36 @@ end
 
 
 local _maxuse = {
-    [FN_UPDATE] = function(inst, owner) update_maxuse(inst, owner, false) end,
-    [FN_DETACH] = function(inst, owner) update_maxuse(inst, owner, true) end,
-    [FN_ATTACH] = function(inst, owner)
-        if owner.components.finiteuses ~= nil then
-            inst.max = owner.components.finiteuses.total
-        elseif owner.components.armor ~= nil then
-            inst.max = owner.components.armor.maxcondition
-        end
-    end
+    [FN_UPDATE] = function(inst, owner) 
+        update_maxuse(inst, owner, false) 
+    end,
 }
 
+
+_maxuse[FN_ATTACH] = function(inst, owner)
+    owner:ListenForEvent("percentusedchange", on_percent_changed)
+    owner:ListenForEvent("equipped", on_equip)
+    -- 衣帽的修理走修理包
+    if owner.components.finiteuses ~= nil then
+        owner.ugrepairfn = repair_fn
+        AddUgTag(owner, UGTAGS.REPAIR, NAMES.MAXUSE)
+        inst.max = owner.components.finiteuses.total
+    elseif owner.components.armor ~= nil then
+        owner.ugrepairfn = repair_fn
+        AddUgTag(owner, UGTAGS.REPAIR, NAMES.MAXUSE)
+        inst.max = owner.components.armor.maxcondition
+    end    
+end
+
+
+_maxuse[FN_DETACH] = function(inst, owner)
+    RemoveUgTag(owner, UGTAGS.REPAIR, NAMES.MAXUSE)
+    update_maxuse(inst, owner, true)
+    owner:RemoveEventCallback("percentusedchange", on_percent_changed)
+    owner:RemoveEventCallback("equipped", on_equip)
+    owner.ugowner = nil
+    owner.ugrepairfn = nil
+end
 
 
 
