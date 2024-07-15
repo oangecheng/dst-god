@@ -10,6 +10,7 @@ PrefabFiles = {
     "uggems",
     "ugtasks",
     "ugitems",
+    "ugpotions",
 }
 Assets = {
     Asset("ANIM", "images/items/uggems.xml"),
