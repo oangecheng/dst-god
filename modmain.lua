@@ -13,9 +13,28 @@ PrefabFiles = {
     "ugitems",
     "ugpotions",
 }
+
 Assets = {
-    Asset("ANIM", "images/items/uggems.xml"),
-    Asset("ANIM", "images/items/uggems.tex"),
+    Asset("ATLAS", "images/items/uggems.xml"),
+    Asset("IMAGE", "images/items/uggems.tex"),
+
+    Asset("ATLAS", "images/names_ugfoxgirl.xml"),
+    Asset("IMAGE", "images/names_ugfoxgirl.tex"),
+    Asset("IMAGE", "images/saveslot_portraits/ugfoxgirl.tex"),
+    Asset("ATLAS", "images/saveslot_portraits/ugfoxgirl.xml"),
+    Asset("ATLAS", "bigportraits/ugfoxgirl.xml"),
+    Asset("IMAGE", "bigportraits/ugfoxgirl.tex"),
+    Asset("IMAGE", "images/selectscreen_portraits/ugfoxgirl.tex"),
+    Asset("ATLAS", "images/selectscreen_portraits/ugfoxgirl.xml"),
+    Asset("IMAGE", "images/selectscreen_portraits/ugfoxgirl_silho.tex"),
+    Asset("ATLAS", "images/selectscreen_portraits/ugfoxgirl_silho.xml"),
+    Asset("IMAGE", "images/avatars/avatar_ugfoxgirl.tex"),
+    Asset("ATLAS", "images/avatars/avatar_ugfoxgirl.xml"),
+    Asset("IMAGE", "images/avatars/avatar_ghost_ugfoxgirl.tex"),
+    Asset("ATLAS", "images/avatars/avatar_ghost_ugfoxgirl.xml"),
+    Asset( "IMAGE", "images/map_icons/ugfoxgirl.tex" ),
+	Asset( "ATLAS", "images/map_icons/ugfoxgirl.xml" ),
+
 }
 
 modimport("scripts/strings/strings.lua")
@@ -25,7 +44,7 @@ modimport("scripts/ui/ugui.lua")
 modimport("scripts/mods/rpc.lua")
 
 
-AddMinimapAtlas("images/map_icons/carney.xml")
+AddMinimapAtlas("images/map_icons/ugfoxgirl.xml")
 AddModCharacter("ugfoxgirl","FEMALE")
 
 
