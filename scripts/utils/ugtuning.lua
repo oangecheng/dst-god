@@ -1,8 +1,8 @@
 
 UGCOFIG = {
-    CH  = true,
-    LOG = true,
-    TEST = true,
+    TEST = false,
+    CH   = true,
+    LOG  = true,
 }
 
 

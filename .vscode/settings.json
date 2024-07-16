@@ -90,7 +90,8 @@
         "RemoveUgTag",
         "FlattenTree",
         "AddMinimapAtlas",
-        "AddModCharacter"
+        "AddModCharacter",
+        "JoinArrays"
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",

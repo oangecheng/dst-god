@@ -42,6 +42,8 @@ modimport("scripts/strings/power.lua")
 modimport("scripts/mods/hookaction.lua")
 modimport("scripts/ui/ugui.lua")
 modimport("scripts/mods/rpc.lua")
+modimport("scripts/mods/hookuser.lua")
+
 
 
 AddMinimapAtlas("images/map_icons/ugfoxgirl.xml")
@@ -51,7 +53,6 @@ AddModCharacter("ugfoxgirl","FEMALE")
 
 if GLOBAL.TheNet:GetIsServer() then
     modimport("scripts/mods/hook.lua")
-    modimport("scripts/mods/hookuser.lua")
     modimport("scripts/mods/hookatk.lua")
 end
 

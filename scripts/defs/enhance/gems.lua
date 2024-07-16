@@ -109,6 +109,9 @@ local function enhance_fn(gem, item, name)
         return false
     end
     local xp = items[item.prefab]
+    if xp == nil then
+        return false
+    end
     if item.components.stackable ~= nil then
         xp = xp * item.components.stackable:StackSize()
     end
@@ -120,4 +123,5 @@ end
 return {
     caninlayfn = can_inlay_fn,
     enhancefn  = enhance_fn,
+    equips     = JoinArrays(weapons, armors, clothes)
 }
