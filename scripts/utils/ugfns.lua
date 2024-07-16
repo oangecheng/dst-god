@@ -125,3 +125,31 @@ function RemoveUgTag(owner, tag, source)
         end
     end
 end
+
+
+---comment 根据权重获取随机物品(权重表,随机值)
+---表格式{ key = { w = 1, num = 2 } }
+---@param loot table
+---@return string,integer
+function GetUgRandomItem(loot)
+	local function totalWeightFn(source)
+		local sum = 0
+		for _, v in pairs(source) do
+			sum = sum + v.w
+		end
+		return sum
+	end
+
+	local seed = math.random()
+	local threshold = seed * totalWeightFn(loot)
+
+	local target, cnt
+	for k, v in pairs(loot) do
+		threshold = threshold - v.w
+		if threshold <= 0 then return k, v.num or 1 end
+		target = k
+		cnt = v.num or 1
+	end
+
+	return target, cnt
+end
