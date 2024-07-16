@@ -87,7 +87,10 @@
         "AddStategraphPostInit",
         "AddActionQueuerAction",
         "UGTASKS",
-        "RemoveUgTag"
+        "RemoveUgTag",
+        "FlattenTree",
+        "AddMinimapAtlas",
+        "AddModCharacter"
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",

@@ -6,6 +6,7 @@ require("utils/uglog")
 --- 导入物品文件
 AddReplicableComponent("ugsync")
 PrefabFiles = {
+    "ugplayerfox",
     "ugpower",
     "uggems",
     "ugtasks",
@@ -17,10 +18,15 @@ Assets = {
     Asset("ANIM", "images/items/uggems.tex"),
 }
 
+modimport("scripts/strings/strings.lua")
 modimport("scripts/strings/power.lua")
 modimport("scripts/mods/hookaction.lua")
 modimport("scripts/ui/ugui.lua")
 modimport("scripts/mods/rpc.lua")
+
+
+AddMinimapAtlas("images/map_icons/carney.xml")
+AddModCharacter("ugfoxgirl","FEMALE")
 
 
 
