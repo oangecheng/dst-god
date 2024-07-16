@@ -13,19 +13,32 @@ local assets = {
 local enhance = require("defs/enhance/gems")
 
 
+---comment 镶嵌函数
+---@param doer table 玩家
+---@param target table 目标装备
+---@param gem table 宝石
+---@return boolean true 镶嵌成功
 local function inlayfn(doer, target, gem)
-    local sys =  target.components.ugsystem
-    if sys ~= nil and gem.power then
-        local ent = sys:GetEntity(gem.power)
-        if ent ~= nil then
-            return false           
-        else
-            local e = sys:AddEntity(gem.power)
-            e.components.uglevel:SetLv(gem.components.uglevel:GetLv())
-            e.components.uglevel:SetXp(gem.components.uglevel:GetXp())
-        end
-        return true
+    local sys = target.components.ugsystem
+    -- 合法性校验
+    if sys == nil or gem.power == nil then
+        return false
     end
+    -- 判断能不能添加，属性是否匹配
+    if not enhance.caninlayfn(target, gem.power) then
+        return false
+    end
+
+    -- 已有的不能重复添加
+    local ent = sys:GetEntity(gem.power)
+    if ent ~= nil then
+        return false
+    end
+
+    local e = sys:AddEntity(gem.power)
+    e.components.uglevel:SetLv(gem.components.uglevel:GetLv())
+    e.components.uglevel:SetXp(gem.components.uglevel:GetXp())
+    return true
 end
 
 
