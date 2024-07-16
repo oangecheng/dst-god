@@ -138,11 +138,11 @@ local UGITEMS = {
 
 
 local function create_reward(star)
-    local key = math.min(star, STARS.S)
+    local key = math.min(star or 1, STARS.S)
     local r_normals = ITEMS[key]
     local ret1, num1 = GetUgRandomItem(r_normals)
     local ret2, num2 = GetUgRandomItem(UGITEMS)
-    
+
     return {
         {
             type = AWARD.ITEM,
