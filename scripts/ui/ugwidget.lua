@@ -86,7 +86,7 @@ local MultiTabWidget = Class(Widget, function(self, owner)
 							local data = {
 								powers = v.powers,
 								target = v.target,
-								xml = "images/items/uggems.xml" 
+								xml = "images/inventoryimages/uggems.xml" 
 							}
 							return PowerPage(self, owner, data)
 						end

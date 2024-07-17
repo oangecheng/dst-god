@@ -15,8 +15,8 @@ PrefabFiles = {
 }
 
 Assets = {
-    Asset("ATLAS", "images/items/uggems.xml"),
-    Asset("IMAGE", "images/items/uggems.tex"),
+    Asset("ATLAS", "images/inventoryimages/uggems.xml"),
+    Asset("IMAGE", "images/inventoryimages/uggems.tex"),
 
     Asset("ATLAS", "images/names_ugfoxgirl.xml"),
     Asset("IMAGE", "images/names_ugfoxgirl.tex"),
@@ -43,6 +43,7 @@ modimport("scripts/mods/hookaction.lua")
 modimport("scripts/ui/ugui.lua")
 modimport("scripts/mods/rpc.lua")
 modimport("scripts/mods/hookuser.lua")
+modimport("scripts/mods/recipes.lua")
 
 
 

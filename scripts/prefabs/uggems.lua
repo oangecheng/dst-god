@@ -6,8 +6,8 @@ local prefabs = {
 
 local assets = {
     Asset("ANIM" , "anim/uggems.zip"),
-    Asset("ATLAS", "images/items/uggems.xml"),
-    Asset("IMAGE", "images/items/uggems.tex")
+    Asset("ATLAS", "images/inventoryimages/uggems.xml"),
+    Asset("IMAGE", "images/inventoryimages/uggems.tex")
 }
 
 local enhance = require("defs/enhance/gems")
@@ -74,7 +74,7 @@ local function MakeItem(prefab, data)
         inst:AddComponent("inventoryitem")
    
         inst.components.inventoryitem.imagename = prefab 
-        inst.components.inventoryitem.atlasname = "images/items/uggems.xml"
+        inst.components.inventoryitem.atlasname = "images/inventoryimages/uggems.xml"
         inst.components.inventoryitem:SetOnDroppedFn(function(_)
             inst.AnimState:PlayAnimation("idle")
         end)

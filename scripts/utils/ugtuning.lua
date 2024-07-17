@@ -119,3 +119,13 @@ UGMARK = {
     HEAL_MULTI = "heal_multi",
     FULE_MULTI = "fule_multi";
 }
+
+
+--- 珍贵程度
+UGRARITY = {
+    WHITE  = 1,
+    GREEN  = 2,
+    BLUE   = 3,
+    PURPLE = 4,
+    GOLD   = 5,
+}

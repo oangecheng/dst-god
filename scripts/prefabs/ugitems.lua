@@ -1,5 +1,5 @@
 
-local DIR = "images/items/ugitems"
+local DIR = "images/inventoryimages/ugitems"
 
 
 local assests = {
