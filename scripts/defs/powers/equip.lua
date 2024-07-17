@@ -265,7 +265,7 @@ end
 
 local function on_percent_changed(inst, data)
     if inst.ugowner and data.percent <= repair_percent(inst) then
-        local inventory = inst.owner.components.inventory
+        local inventory = inst.ugowner.components.inventory
         if inventory ~= nil then
             local slot = inventory:IsItemEquipped(inst)
             if slot ~= nil then
@@ -535,6 +535,7 @@ local function update_choper(inst, owner, detach)
     local lv = detach and 0 or inst.components.uglevel:GetLv()
     local mv = math.max(chopmax - lv * 0.15, 1)
     local multi = math.floor(chopmax/mv + 0.5)
+    UgLog("update_choper", lv, mv)
     owner.components.tool:SetAction(ACTIONS.CHOP, multi)
     if owner.components.finiteuses ~= nil then
         owner.components.finiteuses:SetConsumption(ACTIONS.CHOP, 1)

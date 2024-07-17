@@ -70,7 +70,7 @@ end
 ---@param ingredients table 配方
 ---@param data table|nil 补充数据
 local function add_normal_recipe(prefab,  tech, filters, ingredients, data)
-    add_recipe_fn(prefab, "ugitems", data)
+    add_recipe_fn(prefab, "ugitems", tech, filters, ingredients, data)
 end
 
 
@@ -84,14 +84,16 @@ local function add_gem_recipe(power, ingredients, data)
     local gem = power.."_gem"
     local rarity = GEMS[gem].rarity or UGRARITY.WHITE
     ingredients["uggem_piece"] = rarity * 5
-    add_normal_recipe(gem, TECH.SCIENCE_TWO, { "REFINE" }, ingredients, data)
+    add_recipe_fn(gem, "uggems", TECH.SCIENCE_TWO, { "REFINE" }, ingredients, data)
 end
 
 
 local EQUIPS = UGPOWERS.EQUIPS
 add_gem_recipe(EQUIPS.ABSORB, { armorgrass = 1, armorwood = 1, armormarble = 1 })  -- 草甲x1 木甲x1  大理石甲x1
-add_gem_recipe(EQUIPS.BLINDR, { townportaltalisman = 5 })
+add_gem_recipe(EQUIPS.BLINDR, { townportaltalisman = 10 })
 add_gem_recipe(EQUIPS.CHOPER, { goldenaxe = 1, log = 20 })
 add_gem_recipe(EQUIPS.CRITER, { houndstooth = 10 })
+add_gem_recipe(EQUIPS.DAMAGE, { ruins_bat = 1, nightsword = 1, glasscutter = 1 })
+add_gem_recipe(EQUIPS.DAPPER, { walrushat = 1, spiderhat = 1 })
 
 

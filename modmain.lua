@@ -17,6 +17,9 @@ PrefabFiles = {
 Assets = {
     Asset("ATLAS", "images/inventoryimages/uggems.xml"),
     Asset("IMAGE", "images/inventoryimages/uggems.tex"),
+    Asset("ATLAS", "images/inventoryimages/ugitems.xml"),
+    Asset("IMAGE", "images/inventoryimages/ugitems.tex"),
+
 
     Asset("ATLAS", "images/names_ugfoxgirl.xml"),
     Asset("IMAGE", "images/names_ugfoxgirl.tex"),

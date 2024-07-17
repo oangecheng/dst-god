@@ -13,10 +13,10 @@ ITEMS[EQUIPS.THORNS] = { cactus_flower = 20 }
 ITEMS[EQUIPS.DAMAGE] = { houndstooth = 5, stinger = 5 }
 ITEMS[EQUIPS.MAXUSE] = { dragon_scales = 30 }
 ITEMS[EQUIPS.WARMER] = { trunk_winter = 100, trunk_summer = 80, silk = 5, beefalowool = 5 }
-ITEMS[EQUIPS.DAPPER] = { spiderhat = 10,  walrushat = 30 }
+ITEMS[EQUIPS.DAPPER] = { spiderhat = 10, walrushat = 30 }
 ITEMS[EQUIPS.PROOFR] = { pigskin = 1, tentaclespots = 10 }
 ITEMS[EQUIPS.CHOPER] = { livinglog = 50, log = 10 }
-ITEMS[EQUIPS.MINING] = { marble = 50, nitre = 100,  flint = 10, rocks = 10, goldnugget = 20 }
+ITEMS[EQUIPS.MINING] = { marble = 50, nitre = 100, flint = 10, rocks = 10, goldnugget = 20 }
 ITEMS[EQUIPS.SPEEDR] = { walrus_tusk = 300 }
 ITEMS[EQUIPS.ABSORB] = { steelwool = 100 }
 
