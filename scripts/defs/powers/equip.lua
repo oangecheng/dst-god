@@ -159,7 +159,7 @@ local _splash = {
     [FN_ATTACH] = function (inst)
         inst.attackfn = attack_splash
     end,
-    [FN_ATTACH] = function (inst)
+    [FN_DETACH] = function (inst)
         inst.attackfn = nil
     end,
 }

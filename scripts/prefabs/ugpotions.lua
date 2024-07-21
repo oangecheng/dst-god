@@ -1,5 +1,5 @@
 
-local DIR = "images/inventoryimages/ugitems"
+local DIR = "images/inventoryimages/ugpotions"
 
 
 local assests = {
@@ -34,6 +34,8 @@ local function MakeItem(prefab, data)
         inst.AnimState:PlayAnimation("idle", data.loop)
         inst.AnimState:OverrideSymbol("swap_item", "ugpotions", data.power)
 
+        inst:AddTag(UGTAGS.POTION)
+
         if data.tags then
             for _, v in ipairs(data.tags) do
                 inst:AddTag(v)
@@ -60,6 +62,20 @@ local function MakeItem(prefab, data)
 
         inst:AddComponent("stackable")
         inst.components.stackable.maxsize = data.stacksize or TUNING.STACK_SIZE_SMALLITEM
+
+
+        inst.drinkfn = function(doer)
+            local sys = doer.components.ugsystem
+            if sys ~= nil then
+                local ent = sys:GetEntity(data.power)
+                if ent == nil then
+                    sys:AddEntity(data.power)
+                    return true
+                end
+            end
+            return false
+        end
+
         return inst
     end
 

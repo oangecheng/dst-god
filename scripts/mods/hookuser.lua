@@ -12,9 +12,6 @@ AddPlayerPostInit(function(player)
     player:DoTaskInTime(0.1, function ()
         player.components.ugsync:SyncPower()
     end)
-    for _, v in pairs(UGPOWERS.PLAYER) do
-        sys:AddEntity(v)
-    end
 end)
 
 

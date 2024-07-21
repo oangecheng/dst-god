@@ -109,13 +109,13 @@ local _health = {
     [FN_LOAD] = function (inst, data) inst.percent = data.percent or nil end
 }
 
-_health[FN_ATTACH] = function (inst, owner, name)
+_health[FN_ATTACH] = function(inst, owner, name)
     owner:ListenForEvent("killed", on_kill_other)
     local health = owner.components.health
-        inst.maxhealth = health.maxhealth
-        if inst.percent then
-            health:SetPercent(inst.percent)
-        end
+    inst.maxhealth = health.maxhealth
+    if inst.percent then
+        health:SetPercent(inst.percent)
+    end
 end
 
 _health[FN_DETACH] = function (inst, owner, name)

@@ -1,0 +1,16 @@
+<Atlas>
+	<Texture filename="ugpotions.tex" />
+    <Elements>
+        <Element name="ugplayer_cooker.tex" u1="0" u2="0.03125" v1="0.96875" v2="1" />
+        <Element name="ugplayer_doctor.tex" u1="0.03125" u2="0.0625" v1="0.96875" v2="1" />
+        <Element name="ugplayer_dryerr.tex" u1="0.0625" u2="0.09375" v1="0.96875" v2="1" />
+        <Element name="ugplayer_farmer.tex" u1="0.09375" u2="0.125" v1="0.96875" v2="1" />
+        <Element name="ugplayer_fisher.tex" u1="0.125" u2="0.15625" v1="0.96875" v2="1" />
+        <Element name="ugplayer_health.tex" u1="0.15625" u2="0.1875" v1="0.96875" v2="1" />
+        <Element name="ugplayer_hunger.tex" u1="0.1875" u2="0.21875" v1="0.96875" v2="1" />
+        <Element name="ugplayer_hunter.tex" u1="0.21875" u2="0.25" v1="0.96875" v2="1" />
+        <Element name="ugplayer_picker.tex" u1="0.25" u2="0.28125" v1="0.96875" v2="1" />
+        <Element name="ugplayer_runner.tex" u1="0.28125" u2="0.3125" v1="0.96875" v2="1" />
+        <Element name="ugplayer_sanity.tex" u1="0.3125" u2="0.34375" v1="0.96875" v2="1" />
+    </Elements>
+</Atlas>

@@ -16,6 +16,7 @@ UGTAGS = {
     LEVEL = "uglevel",
     GEM = "uggems",
     REPAIR = "repair",
+    POTION = "ugpotion",
 }
 
 

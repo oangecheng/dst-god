@@ -1,19 +1,17 @@
+local PLAYER = UGPOWERS.PLAYER
 
---- 建家石
-local picker = "ugplayer_picker_potion"
-local picker_data = {
-    loop = true,
-    power = "ugplayer_picker"
+local potions = {
+
 }
 
-local sanity = "ugplayer_sanity_potion"
-local sanity_data = {
-    loop = true,
-    power = "ugplayer_sanity"
-}
+for k, v in pairs(PLAYER) do
+    potions[v.."_potion"] = {
+        loop = true,
+        power = v,
+    }
+end
 
 
-return {
-    [picker] = picker_data,
-    [sanity] = sanity_data,
-}
+
+
+return potions

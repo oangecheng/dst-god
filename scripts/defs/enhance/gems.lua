@@ -77,6 +77,7 @@ local armors = {
     "armordragonfly",
     "armormarble",
     "armorruins",
+    "wathgrithrhat",
 }
 
 

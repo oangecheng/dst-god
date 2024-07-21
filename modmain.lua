@@ -3,6 +3,12 @@ require("utils/ugtuning")
 require("utils/ugfns")
 require("utils/uglog")
 
+
+TUNING.STACK_SIZE_LARGEITEM = 99
+TUNING.STACK_SIZE_MEDITEM = 99
+TUNING.STACK_SIZE_SMALLITEM = 99
+TUNING.STACK_SIZE_TINYITEM = 99
+
 --- 导入物品文件
 AddReplicableComponent("ugsync")
 PrefabFiles = {

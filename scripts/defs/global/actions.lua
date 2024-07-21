@@ -5,6 +5,7 @@ local IDS = {
     REPAIR  = "UGREPAIR",
     INLAY   = "UGINLAY",
     ENHANCE = "UGENHANCE", 
+    DRINK   = "UGDRINK",
 }
 
 
@@ -69,8 +70,22 @@ local actions = {
             end
             return false
         end
+    },
+
+    {
+        id    = IDS.DRINK,
+        str   = isch and "服下" or "Drink",
+        state = "dolongaction",
+        fn    = function(act)
+            if act.doer and act.invobject and act.invobject.drinkfn then
+                if act.invobject.drinkfn(act.doer) then
+                    removeItem(act.invobject)
+                    return true
+                end
+            end
+            return false
+        end
     }
-    
 }
 
 
@@ -98,7 +113,20 @@ local component_actions = {
                 testfn = function (inst, doer, target, acts, right)
                     return target:HasTag(UGTAGS.GEM)
                 end
-            }
+            },
+        }
+    },
+
+    {
+        type = "INVENTORY",
+        component = "inventoryitem",
+        tests = {
+            {
+                action = IDS.DRINK,
+                testfn = function(inst, doer, actions, right)
+                    return inst:HasTag(UGTAGS.POTION)
+                end
+            },
         }
     }
 
