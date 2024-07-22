@@ -249,6 +249,8 @@ end
 local PICK_MAX = 5 
 local PICKABLE_DEFS = (require "defs/items/ugitems").pick
 
+local QUICK_PICKER_LEVEL = 5
+
 ---comment 计算倍率，最高5倍采集
 ---@param powerlv number 属性等级
 ---@return number 额外掉落物，累加计数
@@ -348,6 +350,16 @@ local function on_pick_plant(player, data)
 end
 
 
+local function update_picker(inst, owner, detach)
+    local lv = detach and 0 or inst.components.uglevel:GetLv()
+    if lv >= QUICK_PICKER_LEVEL then
+        AddUgTag(owner, "fastpicker", NAMES.PICKER)
+    else
+        RemoveUgTag(owner, "fastpicker", NAMES.PICKER)
+    end
+end
+
+
 local _picker = {}
 _picker[FN_ATTACH] = function (inst, owner)
     owner:ListenForEvent("picksomething", on_pick_plant)
@@ -355,8 +367,13 @@ _picker[FN_ATTACH] = function (inst, owner)
 end
 
 _picker[FN_DETACH] = function (inst, owner)
+    update_picker(inst, owner, true)
     owner:RemoveEventCallback("picksomething", on_pick_plant)
     owner:RemoveEventCallback(UGEVENTS.PICK_STH, on_pick_plant)
+end
+
+_picker[FN_UPDATE] = function (inst, owner)
+    update_picker(inst, owner, false)
 end
 
 

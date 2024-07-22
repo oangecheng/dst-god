@@ -8,7 +8,7 @@ end
 
 local Entity = Class(function (self, inst)
     self.inst = inst
-    self.data = nil
+    self.data = {}
 end)
 
 
@@ -27,13 +27,6 @@ end
 function Entity:GetValue(key)
     if self.data ~= nil then
         return self.data[key]
-    end
-end
-
-
-function Entity:Trans(to)
-    if self.data ~= nil and to.components.ugentity ~= nil then
-        to.components.ugentity.data = self.data
     end
 end
 
@@ -59,9 +52,10 @@ function Entity:Attach(owner, name, data)
     self.name  = name
 
     -- data只赋值一次，后期交给 entity 自己维护
-    if self.data == nil then
-        self.data = data
+    if data ~= nil then
+        self.data["init"] = data
     end
+
     notify(self, self.onattch)
 end
 
@@ -91,7 +85,7 @@ end
 
 
 function Entity:OnLoad(data)
-    self.data = data.data or nil
+    self.data = data.data or {}
 end
 
 

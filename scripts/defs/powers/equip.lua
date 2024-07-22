@@ -35,9 +35,11 @@ end
 local function init_value(power, key, value)
     local entity = power.components.ugentity
     if entity ~= nil and entity:GetValue(key) == nil then
+        UgLog("init_value", power, key, value)
         entity:PutValue(key, value)
         return true
     end
+    UgLog("init_value nil")
     return false
 end
 
@@ -438,14 +440,14 @@ local KEY_ACTIVED = "switch_actived"
 local KEY_MODE = "warmer_mode"
 
 local function update_warmer(inst, owner, detach)
-    if inst.insulator ~= nil and inst.type ~= nil then
+    if inst.insulation ~= nil and inst.mode ~= nil then
         local lv = detach and 0 or inst.components.uglevel:GetLv()
-        local iv = inst.insulator + lv * 10
-        local ty = detach and inst.type or get_value(inst, KEY_MODE)
-        owner.components.SetInsulation(iv)
-        if ty == SEASONS.SUMMER then
+        local iv = inst.insulation + lv * 10
+        local mode = detach and inst.mode or get_value(inst, KEY_MODE)
+        owner.components.insulator:SetInsulation(iv)
+        if mode == SEASONS.SUMMER then
             owner.components.insulator:SetSummer()
-        elseif ty == SEASONS.WINTER then
+        elseif mode == SEASONS.WINTER then
             owner.components.insulator:SetWinter()
         end
     end
@@ -454,7 +456,7 @@ local function update_warmer(inst, owner, detach)
         RemoveUgTag(owner, UGTAGS.ACTIVE, NAMES.WARMER)
         RemoveUgTag(owner, UGTAGS.SWICTH, NAMES.WARMER)
     else
-        if get_value(inst, KEY_ACTIVED)  then
+        if get_value(inst, KEY_ACTIVED) then
             RemoveUgTag(owner, UGTAGS.ACTIVE, NAMES.WARMER)
             AddUgTag(owner, UGTAGS.SWICTH, NAMES.WARMER)
         else
@@ -505,11 +507,11 @@ _warmer[FN_ATTACH] = function(inst, owner)
     AddUgComponent(owner, "insulator", NAMES.WARMER)
 
     if owner.components.insulator then
-        local value, type = owner.components.insulator:GetInsulation()
-        init_value(inst, KEY_MODE, type)
+        local value, mode = owner.components.insulator:GetInsulation()
+        init_value(inst, KEY_MODE, mode)
         -- 缓存原始状态和属性
         inst.insulation = value
-        inst.type = type
+        inst.mode = mode
     end
 end
 

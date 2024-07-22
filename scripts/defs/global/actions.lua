@@ -100,7 +100,10 @@ local actions = {
                 end
             end
             return false
-        end
+        end,
+        actiondata = {
+            priority = 10,
+        } 
     },
     {
         id    = IDS.SWICTH,
@@ -114,7 +117,10 @@ local actions = {
                 end
             end
             return false
-        end
+        end,
+        actiondata = {
+            priority = 10,
+        } 
     }
 }
 

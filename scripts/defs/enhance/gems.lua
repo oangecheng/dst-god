@@ -10,8 +10,8 @@ ITEMS[EQUIPS.SPLASH] = { minotaurhorn = 200 }
 ITEMS[EQUIPS.BLINDR] = { deerclops_eyeball = 100 }
 ITEMS[EQUIPS.POISON] = { glommerfuel = 20 }
 ITEMS[EQUIPS.THORNS] = { cactus_flower = 20 }
-ITEMS[EQUIPS.DAMAGE] = { houndstooth = 5, stinger = 5 }
-ITEMS[EQUIPS.MAXUSE] = { dragon_scales = 30 }
+ITEMS[EQUIPS.DAMAGE] = { houndstooth = 5, stinger = 5, ruins_bat = 300, nightsword = 100, tentaclespike = 50 }
+ITEMS[EQUIPS.MAXUSE] = { dragon_scales = 50 }
 ITEMS[EQUIPS.WARMER] = { trunk_winter = 100, trunk_summer = 80, silk = 5, beefalowool = 5 }
 ITEMS[EQUIPS.DAPPER] = { spiderhat = 10, walrushat = 30 }
 ITEMS[EQUIPS.PROOFR] = { pigskin = 1, tentaclespots = 10 }

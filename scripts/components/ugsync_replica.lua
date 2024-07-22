@@ -38,6 +38,9 @@ end)
 ---comment 同步客户端数据，inst所有相关的数据
 ---@param data string json数据, 需要encode
 function Sync:SyncData(data)
+    if self.inst.prefab == "winterhat" then
+        UgLog("SyncData", data)
+    end
     self._itemdatas:set_local(data)
     self._itemdatas:set(data)
 end
