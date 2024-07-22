@@ -27,6 +27,7 @@ local function unload_gem_fn(doer, inst, powername)
             if gem ~= nil then
                 gem.components.uglevel:SetLv(lv)
                 gem.components.uglevel:SetXp(xp)
+                gem.tempdata = ent.components.ugentity:GetData()
                 doer.components.inventory:GiveItem(gem)
                 ent:Remove()
             end

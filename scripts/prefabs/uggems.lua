@@ -35,7 +35,7 @@ local function inlayfn(doer, target, gem)
         return false
     end
 
-    local e = sys:AddEntity(gem.power)
+    local e = sys:AddEntity(gem.power, gem.tempdata)
     e.components.uglevel:SetLv(gem.components.uglevel:GetLv())
     e.components.uglevel:SetXp(gem.components.uglevel:GetXp())
     return true
@@ -72,6 +72,7 @@ local function MakeItem(prefab, data)
         inst:AddComponent("uglevel")
         inst:AddComponent("inspectable")
         inst:AddComponent("inventoryitem")
+        inst.tempdata = nil
    
         inst.components.inventoryitem.imagename = prefab 
         inst.components.inventoryitem.atlasname = "images/inventoryimages/uggems.xml"
@@ -82,6 +83,13 @@ local function MakeItem(prefab, data)
         inst.inlayfn = inlayfn
         inst.enhancefn = function (item)
             return enhance.enhancefn(inst, item, data.power)
+        end
+
+        inst.OnSave = function (_, d)
+            d.tempdata = inst.tempdata
+        end
+        inst.OnLoad = function (_, d)
+            inst.tempdata = d.tempdata
         end
 
         return inst

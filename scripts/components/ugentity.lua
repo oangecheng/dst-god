@@ -17,6 +17,27 @@ function Entity:GetData()
 end
 
 
+function Entity:PutValue(key, value)
+    if self.data ~= nil then
+        self.data[key] = value
+    end
+end
+
+
+function Entity:GetValue(key)
+    if self.data ~= nil then
+        return self.data[key]
+    end
+end
+
+
+function Entity:Trans(to)
+    if self.data ~= nil and to.components.ugentity ~= nil then
+        to.components.ugentity.data = self.data
+    end
+end
+
+
 function Entity:SetOnAttachFn(fn)
     self.onattch = fn
 end

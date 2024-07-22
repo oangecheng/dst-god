@@ -6,6 +6,8 @@ local IDS = {
     INLAY   = "UGINLAY",
     ENHANCE = "UGENHANCE", 
     DRINK   = "UGDRINK",
+    ACTIVE  = "UGACTIVE",
+    SWICTH  = "UGSWITCH",
 }
 
 
@@ -85,6 +87,34 @@ local actions = {
             end
             return false
         end
+    },
+    {
+        id    = IDS.ACTIVE,
+        str   = isch and "激活" or "Activate",
+        state = "dolongaction",
+        fn    = function(act)
+            if act.doer and act.target and act.target.ugactivefn then
+                if act.target.ugactivefn(act.doer, {}) then
+                    removeItem(act.invobject)
+                    return true
+                end
+            end
+            return false
+        end
+    },
+    {
+        id    = IDS.SWICTH,
+        str   = isch and "切换" or "Switch",
+        state = "dolongaction",
+        fn    = function(act)
+            if act.doer and act.target and act.target.ugactivefn then
+                if act.target.ugswitchfn(act.doer, {}) then
+                    removeItem(act.invobject)
+                    return true
+                end
+            end
+            return false
+        end
     }
 }
 
@@ -114,6 +144,18 @@ local component_actions = {
                     return target:HasTag(UGTAGS.GEM)
                 end
             },
+            {
+                action = IDS.ACTIVE,
+                testfn = function (inst, doer, target, acts, right)
+                    return target:HasTag(UGTAGS.ACTIVE) and inst.prefab == "purplegem"
+                end
+            },
+            {
+                action = IDS.SWICTH,
+                testfn = function (inst, doer, target, acts, right)
+                    return target:HasTag(UGTAGS.SWICTH) and inst.prefab == "redgem"
+                end
+            }
         }
     },
 

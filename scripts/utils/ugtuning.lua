@@ -11,14 +11,14 @@ UGENTITY_TYPE = {
     TASK = 2,
 }
 
-
 UGTAGS = {
-    LEVEL = "uglevel",
-    GEM = "uggems",
-    REPAIR = "repair",
+    LEVEL  = "uglevel",
+    GEM    = "uggems",
+    REPAIR = "ugrepair",
     POTION = "ugpotion",
+    SWICTH = "ugswitch",
+    ACTIVE = "ugactive",
 }
-
 
 UGEVENTS = {
     POWER_UPDATE = "ugpower_update",

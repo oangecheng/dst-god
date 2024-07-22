@@ -6,6 +6,41 @@ local FN_SAVE   = "save"
 local FN_LOAD   = "load"
 
 
+---comment 缓存数据
+---@param power table 属性
+---@param key string key
+---@param value any 数据
+local function put_value(power, key, value)
+    if power.components.ugentity ~= nil then
+        power.components.ugentity:PutValue(key, value)
+    end
+end
+
+---comment 读取缓存的数据
+---@param power table 属性
+---@param key string key
+---@return any value 数据
+local function get_value(power, key)
+    if power.components.ugentity ~= nil then
+        return power.components.ugentity:GetValue(key)
+    end
+end
+
+
+---comment 初始化数据
+---@param power table 属性
+---@param key string key
+---@param value any 数据
+---@return boolean true 初始化成功
+local function init_value(power, key, value)
+    local entity = power.components.ugentity
+    if entity ~= nil and entity:GetValue(key) == nil then
+        entity:PutValue(key, value)
+        return true
+    end
+    return false
+end
+
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
 
 local function update_damage(inst, owner, detach)
@@ -399,11 +434,14 @@ end
 
 
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
+local KEY_ACTIVED = "switch_actived"
+local KEY_MODE = "warmer_mode"
+
 local function update_warmer(inst, owner, detach)
-    if inst.modtype ~= nil and inst.insulator ~= nil and inst.type ~= nil then
+    if inst.insulator ~= nil and inst.type ~= nil then
         local lv = detach and 0 or inst.components.uglevel:GetLv()
         local iv = inst.insulator + lv * 10
-        local ty = detach and inst.type or inst.modtype
+        local ty = detach and inst.type or get_value(inst, KEY_MODE)
         owner.components.SetInsulation(iv)
         if ty == SEASONS.SUMMER then
             owner.components.insulator:SetSummer()
@@ -411,58 +449,67 @@ local function update_warmer(inst, owner, detach)
             owner.components.insulator:SetWinter()
         end
     end
+
+    if detach then
+        RemoveUgTag(owner, UGTAGS.ACTIVE, NAMES.WARMER)
+        RemoveUgTag(owner, UGTAGS.SWICTH, NAMES.WARMER)
+    else
+        if get_value(inst, KEY_ACTIVED)  then
+            RemoveUgTag(owner, UGTAGS.ACTIVE, NAMES.WARMER)
+            AddUgTag(owner, UGTAGS.SWICTH, NAMES.WARMER)
+        else
+            AddUgTag(owner, UGTAGS.ACTIVE, NAMES.WARMER)
+            RemoveUgTag(owner, UGTAGS.SWICTH, NAMES.WARMER)
+        end
+    end
 end
 
 
 local _warmer = {
+
     [FN_UPDATE] = function(inst, owner)
         update_warmer(inst, owner, false)
     end,
-    [FN_LOAD]   = function(inst, data)
-        inst.modtype = data.modtype
-        inst.actived = data.actived
-    end,
-    [FN_SAVE]   = function(inst, data)
-        data.modtype = inst.modtype
-        data.actived = inst.actived
-    end,
+
     [FN_DETACH] = function(inst, owner)
         update_warmer(inst, owner, true)
         RemoveUgComponent(owner, "insulator", NAMES.WARMER)
-        inst.ugswitchfn = nil
-        inst.ugactivefn = nil
+        owner.ugswitchfn = nil
+        owner.ugactivefn = nil
     end
 }
 
 _warmer[FN_ATTACH] = function(inst, owner)
+
     -- 激活函数
     owner.ugactivefn = function(doer, data)
-        if inst.actived then
-            return false
-        else
-            inst.actived = true
+        if init_value(inst, KEY_ACTIVED, true) then
+            update_warmer(inst, owner, false)
             return true
         end
+        return false
     end
 
     -- 切换函数
     owner.ugswitchfn = function(doer, data)
-        if inst.actived and inst.modtype ~= nil then
-            inst.modtype = (inst.modtype == SEASONS.SUMMER) and SEASONS.WINTER or SEASONS.SUMMER
-            update_warmer(inst, owner)
+        local mode = get_value(inst, KEY_MODE)
+        if get_value(inst, KEY_ACTIVED) and mode ~= nil then
+            mode = (mode == SEASONS.SUMMER) and SEASONS.WINTER or SEASONS.SUMMER
+            put_value(inst, KEY_MODE, mode)
+            update_warmer(inst, owner, false)
             return true
         end
         return false
     end
 
     AddUgComponent(owner, "insulator", NAMES.WARMER)
+
     if owner.components.insulator then
         local value, type = owner.components.insulator:GetInsulation()
+        init_value(inst, KEY_MODE, type)
+        -- 缓存原始状态和属性
         inst.insulation = value
         inst.type = type
-        if inst.modtype == nil then
-            inst.modtype = type
-        end
     end
 end
 
