@@ -70,6 +70,7 @@ local function MakeItem(prefab, data)
         end
 
         inst:AddComponent("uglevel")
+        inst.components.uglevel.expfn = data.xpfn
         inst:AddComponent("inspectable")
         inst:AddComponent("inventoryitem")
         inst.tempdata = nil

@@ -24,10 +24,17 @@ local POWER_RARITY = {
 
 local GEMS = {}
 for k, v in pairs(EQUIPS) do
-    GEMS[v.."_gem"] = {
+    local data = {
         power = v,
-        rarity = POWER_RARITY[v]
+        rarity = POWER_RARITY[v],
     }
+ 
+    if v == EQUIPS.CHOPER or v == EQUIPS.MINING or v == EQUIPS.PROOFR then
+        data["xpfn"] = function (lv)
+            return 10
+        end
+    end
+    GEMS[v.."_gem"] = data
 end
 
 return GEMS

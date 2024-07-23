@@ -389,8 +389,14 @@ local _maxuse = {
 
 _maxuse[FN_SAVE] = function (inst, data)
     -- 衣帽需要存下当前的百分比
-    if inst.owner ~= nil and inst.owner.components.fuled then
-        data.percent = inst.owner.components.fuled:GetPercent()
+    if inst.owner ~= nil then
+        if inst.owner.components.fuled then
+            data.percent = inst.owner.components.fuled:GetPercent()
+        elseif inst.owner.components.finiteuses then
+            data.percent = inst.owner.components.finiteuses:GetPercent()
+        elseif inst.owner.components.armor then
+            data.percent = inst.owner.components.armor:GetPercent()
+        end
     end
 end
 
@@ -408,11 +414,17 @@ _maxuse[FN_ATTACH] = function(inst, owner)
         owner.ugrepairfn = repair_fn
         AddUgTag(owner, UGTAGS.REPAIR, NAMES.MAXUSE)
         inst.max = owner.components.finiteuses.total
+        if inst.percent ~= nil then
+            owner.components.finiteuses:SetPercent(inst.percent)
+        end
 
     elseif owner.components.armor ~= nil then
         owner.ugrepairfn = repair_fn
         AddUgTag(owner, UGTAGS.REPAIR, NAMES.MAXUSE)
         inst.max = owner.components.armor.maxcondition
+        if inst.percent ~= nil then
+            owner.components.armor:SetPercent(inst.percent)
+        end
 
     elseif owner.components.fuled ~= nil then
         inst.max = owner.components.fuled.maxfuel
@@ -597,7 +609,7 @@ local _choper = {
         update_choper(inst, owner, false)
     end,
     [FN_DETACH] = function (inst, owner)
-        UgLog("chop detach", owner.prefab)
+        inst.components.uglevel.expfn = function () return 10 end
         update_choper(inst, owner, true)
         RemoveUgComponent(owner, "tool", NAMES.CHOPER)
         if owner.components.tool ~= nil then
@@ -635,6 +647,7 @@ local _mining = {
         RemoveUgComponent(owner, "tool", NAMES.MINING)
     end,
     [FN_ATTACH] = function (inst, owner)
+        inst.components.uglevel.expfn = function () return 10 end
         AddUgComponent(owner, "tool", NAMES.MINING)
     end
 }
