@@ -1,6 +1,6 @@
 
-local JUDGES = require("defs/tasks/judge")
-local FINISH = require("defs/tasks/finish")
+local JUDGES = require("task/judge")
+local FINISH = require("task/finish")
 local ATTACH = "attach"
 local DETACH = "detach"
 
