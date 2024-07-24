@@ -1,3 +1,14 @@
+
+---comment 说话
+---@param inst table 目标
+---@param msg string 消息
+function UgSay(inst, msg)
+    if inst ~= nil and inst.components.talker ~= nil then
+        inst.components.talker:Say(msg)
+    end
+end
+
+
 ---comment 获取一个实例
 ---@param owner table 目标
 ---@param name string key

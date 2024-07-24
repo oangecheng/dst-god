@@ -2,7 +2,10 @@
 local function attach(system, name, ent, data)
     if ent.components.ugentity then
         ent.persists = false
-        ent.components.ugentity:Attach(system.inst, name, data)
+        -- 可以attach再attach
+        if system.attach_test_fn == nil or system.attach_test_fn(name, ent) then
+            ent.components.ugentity:Attach(system.inst, name, data)
+        end
         system.entities[name] = {
             inst = ent,
             type = ent.type
@@ -36,6 +39,11 @@ local System = Class(function (self, inst)
     self.inst = inst
     self.entities = {}
 end)
+
+
+function System:SetAttachTestFn(fn)
+    self.attach_test_fn = fn
+end
 
 
 ---添加实体
