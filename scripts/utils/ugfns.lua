@@ -9,6 +9,14 @@ function UgSay(inst, msg)
 end
 
 
+---comment 获取名称
+---@param prefab string 预制物代码
+---@return string name 名称
+function UgName(prefab)
+    return STRINGS.UGNAMES(prefab) or STRINGS.NAMES[string.upper(prefab)]
+end
+
+
 ---comment 获取一个实例
 ---@param owner table 目标
 ---@param name string key

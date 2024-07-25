@@ -79,7 +79,7 @@ UGPOWERS = {
 UGTASKS = {
 
     NAMES = {
-        DAILY = "ugtask_daily"
+        BOUNTY = "ugtask_bounty"
     },
 
     TYPES = {
