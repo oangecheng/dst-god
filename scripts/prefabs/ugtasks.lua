@@ -5,7 +5,7 @@ local ATTACH = "attach"
 local DETACH = "detach"
 
 local function on_task_change(inst, fn)
-    local data = inst.components.ugentity:GetValue("init")
+    local data = inst.components.ugentity:GetData()
     if data ~= nil and data.demands ~= nil then
         for _, v in ipairs(data.demands) do
             local judge = JUDGES[v.type]
@@ -44,7 +44,7 @@ local function fn()
     inst:AddComponent("ugentity")
 
     local function datafn()
-        return inst.components.ugentity:GetValue("init")
+        return inst.components.ugentity:GetData()
     end
 
     inst.datafn = datafn

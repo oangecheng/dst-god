@@ -15,7 +15,7 @@ PrefabFiles = {
     "ugplayerfox",
     "ugpower",
     "uggems",
-    "ugtasks",
+    -- "ugtasks",
     "ugitems",
     "ugpotions",
 }

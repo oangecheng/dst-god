@@ -53,7 +53,7 @@ function Entity:Attach(owner, name, data)
 
     -- data只赋值一次，后期交给 entity 自己维护
     if data ~= nil then
-        self.data["init"] = data
+        self.data = data
     end
 
     notify(self, self.onattch)
