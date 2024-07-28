@@ -1,66 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="b5">
-    <folder id="0" name="swapgem">
-        <file id="0" name="swapgem/ugequips_absorb_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="0" name="image">
+        <file id="0" name="image/gem.png" width="200" height="200" pivot_x="0.5" pivot_y="0.2"/>
     </folder>
-    <folder id="1" name="ugequips_absorb_gem">
-        <file id="0" name="ugequips_absorb_gem/ugequips_absorb_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="1" name="swap_item">
+        <file id="0" name="swap_item/axe.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="2" name="ugequips_blindr_gem">
-        <file id="0" name="ugequips_blindr_gem/ugequips_blindr_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="2" name="/ugequips_absorb_gem">
+        <file id="0" name="/ugequips_absorb_gem/armor.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="3" name="ugequips_choper_gem">
-        <file id="0" name="ugequips_choper_gem/ugequips_choper_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="3" name="/ugequips_blindr_gem">
+        <file id="0" name="/ugequips_blindr_gem/ugequips_blindr_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="4" name="ugequips_criter_gem">
-        <file id="0" name="ugequips_criter_gem/ugequips_criter_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="4" name="/ugequips_choper_gem">
+        <file id="0" name="/ugequips_choper_gem/chopper.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="5" name="ugequips_damage_gem">
-        <file id="0" name="ugequips_damage_gem/ugequips_damage_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="5" name="/ugequips_criter_gem">
+        <file id="0" name="/ugequips_criter_gem/ugequips_criter_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="6" name="ugequips_dapper_gem">
-        <file id="0" name="ugequips_dapper_gem/ugequips_dapper_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="6" name="/ugequips_damage_gem">
+        <file id="0" name="/ugequips_damage_gem/ugequips_damage_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="7" name="ugequips_dodger_gem">
-        <file id="0" name="ugequips_dodger_gem/ugequips_dodger_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="7" name="/ugequips_dapper_gem">
+        <file id="0" name="/ugequips_dapper_gem/sanity.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="8" name="ugequips_maxuse_gem">
-        <file id="0" name="ugequips_maxuse_gem/ugequips_maxuse_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="8" name="/ugequips_dodger_gem">
+        <file id="0" name="/ugequips_dodger_gem/ugequips_dodger_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="9" name="ugequips_mining_gem">
-        <file id="0" name="ugequips_mining_gem/ugequips_mining_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="9" name="/ugequips_maxuse_gem">
+        <file id="0" name="/ugequips_maxuse_gem/ugequips_maxuse_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="10" name="ugequips_poison_gem">
-        <file id="0" name="ugequips_poison_gem/ugequips_poison_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="10" name="/ugequips_mining_gem">
+        <file id="0" name="/ugequips_mining_gem/pickaxe.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="11" name="ugequips_proofr_gem">
-        <file id="0" name="ugequips_proofr_gem/ugequips_proofr_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="11" name="/ugequips_poison_gem">
+        <file id="0" name="/ugequips_poison_gem/ugequips_poison_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="12" name="ugequips_speedr_gem">
-        <file id="0" name="ugequips_speedr_gem/ugequips_speedr_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="12" name="/ugequips_proofr_gem">
+        <file id="0" name="/ugequips_proofr_gem/ugequips_proofr_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="13" name="ugequips_splash_gem">
-        <file id="0" name="ugequips_splash_gem/ugequips_splash_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="13" name="/ugequips_speedr_gem">
+        <file id="0" name="/ugequips_speedr_gem/ugequips_speedr_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="14" name="ugequips_thorns_gem">
-        <file id="0" name="ugequips_thorns_gem/ugequips_thorns_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="14" name="/ugequips_splash_gem">
+        <file id="0" name="/ugequips_splash_gem/ugequips_splash_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="15" name="ugequips_vampir_gem">
-        <file id="0" name="ugequips_vampir_gem/ugequips_vampir_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="15" name="/ugequips_thorns_gem">
+        <file id="0" name="/ugequips_thorns_gem/ugequips_thorns_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
-    <folder id="16" name="ugequips_warmer_gem">
-        <file id="0" name="ugequips_warmer_gem/ugequips_warmer_gem.png" width="300" height="300" pivot_x="0.5" pivot_y="0.15"/>
+    <folder id="16" name="/ugequips_vampir_gem">
+        <file id="0" name="/ugequips_vampir_gem/ugequips_vampir_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
+    </folder>
+    <folder id="17" name="/ugequips_warmer_gem">
+        <file id="0" name="/ugequips_warmer_gem/ugequips_warmer_gem.png" width="64" height="64" pivot_x="0.5" pivot_y="0.5"/>
     </folder>
     <entity id="0" name="uggems">
-        <animation id="0" name="idle" length="1000">
+        <animation id="0" name="idle" length="3000">
             <mainline>
                 <key id="0">
-                    <object_ref id="0" name="ugequips_absorb_gem" folder="0" file="0" abs_x="0" abs_y="0" abs_pivot_x="0.5" abs_pivot_y="0.15" abs_angle="360" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="0" name="gem" folder="0" file="0" abs_x="0" abs_y="0" abs_pivot_x="0.5" abs_pivot_y="0.2" abs_angle="360" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" name="axe" folder="1" file="0" abs_x="1" abs_y="65" abs_pivot_x="0.5" abs_pivot_y="0.5" abs_angle="360" abs_scale_x="1.6" abs_scale_y="1.6" abs_a="0.8" timeline="1" key="0" z_index="1"/>
+                </key>
+                <key id="1" time="1500">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="1" z_index="1"/>
                 </key>
             </mainline>
-            <timeline id="0" name="ugequips_absorb_gem">
+            <timeline id="0" name="gem">
                 <key id="0" spin="0">
                     <object folder="0" file="0"/>
+                </key>
+            </timeline>
+            <timeline id="1" name="axe">
+                <key id="0" spin="0">
+                    <object folder="1" file="0" x="1" y="65" scale_x="1.6" scale_y="1.6" a="0.8"/>
+                </key>
+                <key id="1" time="1500" spin="0">
+                    <object folder="1" file="0" x="1" y="65" scale_x="1.8" scale_y="1.8" a="0.8"/>
                 </key>
             </timeline>
         </animation>

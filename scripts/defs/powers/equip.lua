@@ -577,7 +577,7 @@ local _proofr = {
 
 _proofr[FN_ATTACH] = function (inst, owner)
     -- 修改下升级函数，防水升级到100比较困难
-    inst.components.uglevel.expfn = function () return 10 end
+    inst.components.uglevel.expfn = function () return 1 end
     AddUgComponent(owner, "waterproofer", NAMES.PROOFR)
     local waterproofer = owner.components.waterproofer
     if GetUgData(waterproofer, NAMES.PROOFR) then

@@ -14,7 +14,7 @@ ITEMS[EQUIPS.DAMAGE] = { houndstooth = 5, stinger = 5, ruins_bat = 300, nightswo
 ITEMS[EQUIPS.MAXUSE] = { dragon_scales = 50 }
 ITEMS[EQUIPS.WARMER] = { trunk_winter = 100, trunk_summer = 80, silk = 5, beefalowool = 5 }
 ITEMS[EQUIPS.DAPPER] = { spiderhat = 10, walrushat = 30 }
-ITEMS[EQUIPS.PROOFR] = { pigskin = 1, tentaclespots = 10 }
+ITEMS[EQUIPS.PROOFR] = { pigskin = 10, tentaclespots = 100 }
 ITEMS[EQUIPS.CHOPER] = { livinglog = 10, log = 1 }
 ITEMS[EQUIPS.MINING] = { marble = 50, nitre = 100, flint = 10, rocks = 10, goldnugget = 20 }
 ITEMS[EQUIPS.SPEEDR] = { walrus_tusk = 300 }

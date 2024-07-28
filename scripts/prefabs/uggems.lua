@@ -57,14 +57,14 @@ local function MakeItem(prefab, data)
 
         inst.AnimState:SetBank("uggems")
         inst.AnimState:SetBuild("uggems")
-        inst.AnimState:SetScale(0.4, 0.4, 0.4)
-        inst.AnimState:PlayAnimation("idle")
+        inst.AnimState:SetScale(0.6, 0.6, 0.6)
+        inst.AnimState:PlayAnimation("idle", true)
         
         inst:AddTag(UGTAGS.GEM)
         inst:AddTag(UGTAGS.LEVEL)
         inst.power = data.power
 
-        inst.AnimState:OverrideSymbol("swapgem", "uggems", prefab)
+        inst.AnimState:OverrideSymbol("swap_item", "uggems", prefab)
         if not TheWorld.ismastersim then
             return inst
         end
@@ -78,7 +78,7 @@ local function MakeItem(prefab, data)
         inst.components.inventoryitem.imagename = prefab 
         inst.components.inventoryitem.atlasname = "images/inventoryimages/uggems.xml"
         inst.components.inventoryitem:SetOnDroppedFn(function(_)
-            inst.AnimState:PlayAnimation("idle")
+            inst.AnimState:PlayAnimation("idle", true)
         end)
 
         inst.inlayfn = inlayfn

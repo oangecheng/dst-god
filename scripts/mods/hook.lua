@@ -120,22 +120,23 @@ AddComponentPostInit("fishingrod", function(fishingrod)
     local oldWaitForFish = fishingrod.WaitForFish
     fishingrod.WaitForFish = function(self)
         local mult = GetUgData(self.fisherman, UGMARK.FISH_MULTI)
+        UgLog("WaitForFish", mult)
+        local oldmin = self.minwaittime
+        local oldmax = self.maxwaittime
         if mult ~= nil then
-            local oldmin = self.minwaittime
-            local oldmax = self.maxwaittime
             -- 根据源码，这里同步缩小 min和max值 就能实现缩短时间，不需要copy代码
             if oldmin ~= nil and oldmax ~= nil then
                 self.minwaittime = oldmin * mult
                 self.maxwaittime = oldmax * mult
             end
-
-            if oldWaitForFish ~= nil then
-                oldWaitForFish(self)
-            end
-
-            self.minwaittime = oldmin
-            self.maxwaittime = oldmax
         end
+        
+        if oldWaitForFish ~= nil then
+            oldWaitForFish(self)
+        end
+
+        self.minwaittime = oldmin
+        self.maxwaittime = oldmax
     end
 end)
 
