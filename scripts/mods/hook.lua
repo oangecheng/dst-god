@@ -142,21 +142,25 @@ end)
 
 
 
-
 --- hook治疗组件
-AddComponentPostInit("healer", function(self)
-    local old_heal = self.Heal
-    self.Heal = function(_, target, doer)
-        local old_health = self.health
+local old_heal_fn = ACTIONS.HEAL.fn
+ACTIONS.HEAL.fn = function(act)
+    local doer = act.doer
+    local old_health = nil
+    local healer = act.invobject and act.invobject.components.healer
+    if doer ~= nil and healer ~= nil then
         local mult = GetUgData(doer, UGMARK.HEAL_MULTI)
-        if mult ~= nil then
-            self.health = math.floor(old_health * mult)
+        old_health = healer.health
+        if old_health ~= nil then
+            doer:PushEvent(UGEVENTS.HEAL, { target = act.target, health = old_health })
+            if mult ~= nil then
+                healer.health = old_health * mult
+            end
         end
-        local success, v2 = old_heal(self, target, doer)
-        self.health = old_health
-        if success then
-            doer:PushEvent(UGEVENTS.HEAL, { target = target, health = old_health })
-        end
-        return success, v2
     end
-end)
+    local ret, str = old_heal_fn(act)
+    if healer ~= nil and old_health ~= nil then
+        healer.health = old_health
+    end
+    return ret, str
+end
