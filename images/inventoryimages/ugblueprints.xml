@@ -1,0 +1,7 @@
+<Atlas>
+	<Texture filename="ugblueprints.tex" />
+    <Elements>
+        <Element name="ugblueprints_beebox.tex" u1="0" u2="0.0625" v1="0.9375" v2="1" />
+        <Element name="ugblueprints_meatrack.tex" u1="0.0625" u2="0.125" v1="0.9375" v2="1" />
+    </Elements>
+</Atlas>

@@ -8,6 +8,7 @@ local IDS = {
     DRINK   = "UGDRINK",
     ACTIVE  = "UGACTIVE",
     SWICTH  = "UGSWITCH",
+    UPGRADE = "UGUPGRADE",
 }
 
 
@@ -121,6 +122,21 @@ local actions = {
         actiondata = {
             priority = 10,
         } 
+    },
+
+    {
+        id    = IDS.UPGRADE,
+        str   = isch and "升级" or "Upgrade",
+        state = "dolongaction",
+        fn    = function(act)
+            if act.doer and act.invobject and act.invobject.upgradefn then
+                if act.invobject.upgradefn(act.doer, act.target) then
+                    removeItem(act.invobject)
+                    return true
+                end
+            end
+            return false
+        end,
     }
 }
 
@@ -160,6 +176,12 @@ local component_actions = {
                 action = IDS.SWICTH,
                 testfn = function (inst, doer, target, acts, right)
                     return target:HasTag(UGTAGS.SWICTH) and inst.prefab == "redgem"
+                end
+            },
+            {
+                action = IDS.UPGRADE,
+                testfn = function (inst, doer, target, acts, right)
+                    return inst:HasTag(UGTAGS.BLUEPRINTS) and target:HasTag(UGTAGS.UPGRADE)
                 end
             }
         }

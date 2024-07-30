@@ -40,6 +40,33 @@ AddComponentPostInit("dryable", function(self)
 end)
 
 
+local BATCH_KEY = "ugbatch_key"
+local function batc_dry(inst, dryable)
+    if inst.components.ugmark ~= nil then
+        local lv = inst.components.uglevel:GetLv()
+        local st = dryable.components.stackable
+        if lv > 0 and st ~= nil then
+            local size = st:StackSize() - 1
+            local cnt = math.min(lv, size)
+            st:Get(cnt):Remove()
+            inst.components.ugmark:Put(BATCH_KEY, cnt)
+            return cnt
+        end
+    end
+    return 0
+end
+
+AddPrefabPostInit("meatrack", function (inst)
+    inst:AddComponent("uglevel")
+    inst:AddComponent("ugmark")
+    inst:AddTag(UGTAGS.UPGRADE)
+    inst:ListenForEvent("onremove", function ()
+        if inst.components.uglevel then
+            
+        end
+    end)
+end)
+
 AddComponentPostInit("dryer", function(self)
     local oldSartDrying = self.StartDrying
     self.StartDrying = function(_, dryable)
@@ -52,24 +79,51 @@ AddComponentPostInit("dryer", function(self)
     --- 推送收获事件
     local oldHarvest = self.Harvest
     self.Harvest = function(self, harvester)
+        local product = self.product
         local success = oldHarvest(self, harvester)
-        if success then
-            harvester:PushEvent(UGEVENTS.HARVEST_DRY, { product = self.product })
+        if success and product ~= nil then
+            harvester:PushEvent(UGEVENTS.HARVEST_DRY, { product = product })
+            if self.inst.components.ugmark ~= nil then
+                local cnt = self.inst.components.ugmark:Poll(BATCH_KEY)
+                if cnt ~= nil and cnt > 0 and harvester.components.inventory then
+                    for i = 1, cnt do
+                        local item = SpawnPrefab(product)
+                        if item ~= nil then
+                            harvester.components.inventory:GiveItem(item)
+                        end
+                    end
+                end
+            end
         end
         return success
     end
 end)
 
+
 --- hook 动作
-local oldDrnfn = ACTIONS.DRY.fn
+local oldDrnfn = ACTIONS.DRY.fn 
 ACTIONS.DRY.fn = function(act)
-    if act.target and act.doer then
-        act.target.drymulti = GetUgData(act.doer, UGMARK.DRY_MULTI)
+
+    local obj = act.invobject
+    local target = act.target
+    local cnt = batc_dry(target, obj)
+
+    if target and act.doer then
+        target.drymulti = GetUgData(act.doer, UGMARK.DRY_MULTI) or 1
+        if cnt > 0 and target.drymulti ~= nil then
+            target.drymulti = target.drymulti * (cnt + 1)
+        end
     end
+
     local ret, str = oldDrnfn(act)
     if act.target and act.doer then
         act.target.drymulti = nil
     end
+
+    if not ret and cnt > 0 then
+        target.components.ugmark:Clear(BATCH_KEY)
+    end
+
     return ret, str
 end
 
