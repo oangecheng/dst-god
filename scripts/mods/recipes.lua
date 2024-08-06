@@ -91,9 +91,18 @@ end
 local EQUIPS = UGPOWERS.EQUIPS
 add_gem_recipe(EQUIPS.ABSORB, { armorgrass = 1, armorwood = 1, armormarble = 1 })  -- 草甲x1 木甲x1  大理石甲x1
 add_gem_recipe(EQUIPS.BLINDR, { townportaltalisman = 10 })
-add_gem_recipe(EQUIPS.CHOPER, { goldenaxe = 1, log = 20 })
-add_gem_recipe(EQUIPS.CRITER, { houndstooth = 10 })
+add_gem_recipe(EQUIPS.CHOPER, { goldenaxe = 1, log = 10, livinglog = 3, purplegem = 1 })
+add_gem_recipe(EQUIPS.CRITER, { houndstooth = 10, whip = 1, gunpowder = 5 })
 add_gem_recipe(EQUIPS.DAMAGE, { ruins_bat = 1, nightsword = 1, glasscutter = 1 })
-add_gem_recipe(EQUIPS.DAPPER, { walrushat = 1, spiderhat = 1 })
-
+add_gem_recipe(EQUIPS.DAPPER, { walrushat = 1, spiderhat = 1, hivehat = 1 })
+add_gem_recipe(EQUIPS.DODGER, { armorskeleton = 1, thulecite = 3 })
+add_gem_recipe(EQUIPS.MAXUSE, { dragon_scales = 1, greengem = 1 })
+add_gem_recipe(EQUIPS.MINING, { goldenpickaxe = 1, nitre = 1, marble = 1, purplegem = 1})
+add_gem_recipe(EQUIPS.POISON, { firenettles = 2, slurtleslime = 3, phlegm = 3 })
+add_gem_recipe(EQUIPS.PROOFR, { eyebrellahat = 1, tentaclespots = 2 })
+add_gem_recipe(EQUIPS.SPEEDR, { cane = 1, orangestaff = 1 })
+add_gem_recipe(EQUIPS.SPLASH, { opalpreciousgem = 1, bearger_fur = 1, deerclops_eyeball = 1, dragon_scales = 1, goose_feather = 5 })
+add_gem_recipe(EQUIPS.THORNS, { durian = 5, cactus_flower = 10, stinger = 20 })
+add_gem_recipe(EQUIPS.VAMPIR, { mosquitosack = 10, lifeinjector = 1, amulet = 2 })
+add_gem_recipe(EQUIPS.WARMER, { blueamulet = 1,  goose_feather = 5, trunk_summer = 1, trunk_winter = 1 })
 
