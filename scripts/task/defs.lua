@@ -1,4 +1,4 @@
-local STARS = UGTASKS.STARS
+local STARS = UGSTARS
 local AWARD = UGTASKS.AWARD
 
 

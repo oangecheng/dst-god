@@ -78,6 +78,15 @@ UGPOWERS = {
 }
 
 
+UGSTARS = {
+    D = 1,
+    C = 2,
+    B = 3,
+    A = 4,
+    S = 5,
+}
+
+
 UGTASKS = {
 
     NAMES = {
@@ -94,14 +103,6 @@ UGTASKS = {
         TIME = 1,
         MOON = 2,
         AREA = 3,
-    },
-
-    STARS = {
-        D = 1,
-        C = 2,
-        B = 3,
-        A = 4,
-        S = 5,
     },
 
     AWARD = {
@@ -121,14 +122,4 @@ UGMARK = {
     ATK_MISS   = "atk_miss",
     HEAL_MULTI = "heal_multi",
     FULE_MULTI = "fule_multi";
-}
-
-
---- 珍贵程度
-UGRARITY = {
-    WHITE  = 1,
-    GREEN  = 2,
-    BLUE   = 3,
-    PURPLE = 4,
-    GOLD   = 5,
 }

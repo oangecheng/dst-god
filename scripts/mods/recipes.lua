@@ -82,7 +82,7 @@ local GEMS = require("defs/items/gemsdef")
 ---@param data any
 local function add_gem_recipe(power, ingredients, data)
     local gem = power.."_gem"
-    local rarity = GEMS[gem].rarity or UGRARITY.WHITE
+    local rarity = GEMS[gem].rarity or UGSTARS.D
     ingredients["uggem_piece"] = rarity * 5
     add_recipe_fn(gem, "uggems", TECH.SCIENCE_TWO, { "REFINE" }, ingredients, data)
 end
