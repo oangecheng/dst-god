@@ -15,7 +15,7 @@ local function on_eat(eater, data)
         local hungerexp = edible:GetHunger(eater)
         local healthexp = edible:GetHealth(eater)
         local sanityexp = edible:GetSanity(eater)
-        local exp = 0.2 * hungerexp + healthexp * 0.3 + sanityexp * 0.5
+        local exp = 0.4* hungerexp + healthexp * 0.6 + sanityexp * 1
         GainUgPowerXp(eater, NAMES.HUNGER, exp)
     end
 end
@@ -132,15 +132,15 @@ end
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
 
 local function on_build_item(player)
-    GainUgPowerXp(player, NAMES.SANITY,  math.random(3, 5))
+    GainUgPowerXp(player, NAMES.SANITY,  math.random(5, 10))
 end
 
 local function on_build_structure(player)
-    GainUgPowerXp(player, NAMES.SANITY,  math.random(6, 10))
+    GainUgPowerXp(player, NAMES.SANITY,  math.random(10, 20))
 end
 
 local function on_unlock_recipe(player)
-    GainUgPowerXp(player, NAMES.SANITY, 20)
+    GainUgPowerXp(player, NAMES.SANITY, 50)
 end
 
 
