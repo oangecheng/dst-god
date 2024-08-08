@@ -78,6 +78,13 @@ UGPOWERS = {
 }
 
 
+UGMAGICS = {
+    PLANT_BUSH = "ugmagic_plant_bush",
+    MEAT_RACK  = "ugmagic_meat_rack" ,
+    
+}
+
+
 UGSTARS = {
     D = 1,
     C = 2,
