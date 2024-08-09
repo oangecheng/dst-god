@@ -60,6 +60,10 @@ local function MakeItem(prefab, data)
 
         inst:AddComponent("stackable")
         inst.components.stackable.maxsize = data.stacksize or TUNING.STACK_SIZE_SMALLITEM
+
+        inst.givefn = data.givefn
+        inst.usefn = data.usefn
+
         return inst
     end
 

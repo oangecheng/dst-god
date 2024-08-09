@@ -88,3 +88,18 @@ local equips = require("defs/enhance/gems").equips
 for _, v in ipairs(equips) do
     AddPrefabPostInit(v, init_equip_fn)
 end
+
+
+
+
+
+local berrybushs = {
+    "berrybush_juicy",
+    "berrybush",
+    "berrybush2"
+}
+for _, v in ipairs(berrybushs) do
+    AddPrefabPostInit(v, function (inst)
+        inst:AddTag(UGTAGS.ENERGY_TARGET)
+    end)
+end

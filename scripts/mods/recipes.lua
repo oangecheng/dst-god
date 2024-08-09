@@ -74,6 +74,10 @@ local function add_normal_recipe(prefab,  tech, filters, ingredients, data)
 end
 
 
+local i = { dug_grass = 1, seeds = 3, rock_avocado_fruit_sprout = 1, dug_berrybush = 1 }
+add_normal_recipe("ugmagic_plant_energy", TECH.MAGIC_TWO, { "REFINE" }, i)
+
+
 
 local GEMS = require("defs/items/gemsdef")
 ---comment 添加宝石的合成配方

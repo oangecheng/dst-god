@@ -9,6 +9,7 @@ local IDS = {
     ACTIVE  = "UGACTIVE",
     SWICTH  = "UGSWITCH",
     UPGRADE = "UGUPGRADE",
+    ENERGY  = "UGENERGY"
 }
 
 
@@ -137,6 +138,21 @@ local actions = {
             end
             return false
         end,
+    },
+
+    {
+        id    = IDS.ENERGY,
+        str   = isch and "生机焕发" or "NewLife",
+        state = "dolongaction",
+        fn    = function(act)
+            if act.doer and act.invobject and act.invobject.givefn then
+                if act.invobject.givefn(act.invobject, act.target, act.doer) then
+                    removeItem(act.invobject)
+                    return true
+                end
+            end
+            return false
+        end,
     }
 }
 
@@ -183,7 +199,13 @@ local component_actions = {
                 testfn = function (inst, doer, target, acts, right)
                     return inst:HasTag(UGTAGS.BLUEPRINTS) and target:HasTag(UGTAGS.UPGRADE)
                 end
-            }
+            },
+            {
+                action = IDS.ENERGY,
+                testfn = function (inst, doer, target, acts, right)
+                    return inst:HasTag(UGTAGS.ENERGY) and target:HasTag(UGTAGS.ENERGY_TARGET)
+                end
+            },
         }
     },
 

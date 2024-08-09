@@ -28,6 +28,14 @@ STRINGS.UGNAMES = {
 }
 
 
+local function register_name(name, chstr, enstr)
+    STRINGS.NAMES[string.upper(name)] = ch and chstr or enstr
+end
+
+register_name("uggem_piece", "宝石碎片", "Gem Piece")
+register_name("ugmagic_plant_energy","植物精华", "Plant Energy")
+
+
 STRINGS.UGTASK_STRS = {
     DEMAND = ch and "任务要求" or "Task Demand",
     KILL   = ch and "狩猎" or "Kill",

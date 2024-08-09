@@ -12,14 +12,16 @@ UGENTITY_TYPE = {
 }
 
 UGTAGS = {
-    LEVEL      = "uglevel",
-    BLUEPRINTS = "ugblueprints",
-    GEM        = "uggems",
-    REPAIR     = "ugrepair",
-    POTION     = "ugpotion",
-    SWICTH     = "ugswitch",
-    ACTIVE     = "ugactive",
-    UPGRADE    = "ugupgrade",
+    LEVEL         = "uglevel",
+    BLUEPRINTS    = "ugblueprints",
+    GEM           = "uggems",
+    REPAIR        = "ugrepair",
+    POTION        = "ugpotion",
+    SWICTH        = "ugswitch",
+    ACTIVE        = "ugactive",
+    UPGRADE       = "ugupgrade",
+    ENERGY        = "ugbushenergy",
+    ENERGY_TARGET = "ugenergy_target"
 }
 
 UGEVENTS = {

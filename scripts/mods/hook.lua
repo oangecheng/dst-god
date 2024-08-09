@@ -67,6 +67,7 @@ AddPrefabPostInit("meatrack", function (inst)
     end)
 end)
 
+
 AddComponentPostInit("dryer", function(self)
     local oldSartDrying = self.StartDrying
     self.StartDrying = function(_, dryable)
