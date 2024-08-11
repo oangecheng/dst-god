@@ -9,6 +9,9 @@
     <folder id="2" name="ugmagic_plant_energy">
         <file id="0" name="ugmagic_plant_energy/plant_potion.png" width="150" height="200" pivot_x="0.368421" pivot_y="0.242574"/>
     </folder>
+    <folder id="3" name="ugmagic_meat_rack">
+        <file id="0" name="ugmagic_meat_rack/meat_rack.png" width="200" height="200" pivot_x="0.450495" pivot_y="0.232673"/>
+    </folder>
     <entity id="0" name="ugitems">
         <animation id="0" name="idle" length="1000">
             <mainline>

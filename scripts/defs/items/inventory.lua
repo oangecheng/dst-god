@@ -22,5 +22,8 @@ return {
             return true
         end
 
+    },
+    ["ugmagic_meat_rack"] = {
+        
     }
 }

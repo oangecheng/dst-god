@@ -34,6 +34,7 @@ end
 
 register_name("uggem_piece", "宝石碎片", "Gem Piece")
 register_name("ugmagic_plant_energy","植物精华", "Plant Energy")
+register_name("ugmagic_meat_rack", "晾肉架升级套件", "meat rack tool")
 
 
 STRINGS.UGTASK_STRS = {
