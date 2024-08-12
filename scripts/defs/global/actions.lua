@@ -8,7 +8,6 @@ local IDS = {
     DRINK   = "UGDRINK",
     ACTIVE  = "UGACTIVE",
     SWICTH  = "UGSWITCH",
-    ENERGY  = "UGENERGY",
     MAGIC   = "UGMAGIC",
 }
 
