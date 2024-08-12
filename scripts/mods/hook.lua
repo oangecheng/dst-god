@@ -59,7 +59,7 @@ end
 AddPrefabPostInit("meatrack", function (inst)
     inst:AddComponent("uglevel")
     inst:AddComponent("ugmark")
-    inst:AddTag(UGTAGS.UPGRADE)
+    inst:AddTag(UGTAGS.MAGIC_TARGET)
     inst:ListenForEvent("onremove", function ()
         if inst.components.uglevel then
             

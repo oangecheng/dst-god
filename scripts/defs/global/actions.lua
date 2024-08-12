@@ -8,8 +8,8 @@ local IDS = {
     DRINK   = "UGDRINK",
     ACTIVE  = "UGACTIVE",
     SWICTH  = "UGSWITCH",
-    UPGRADE = "UGUPGRADE",
-    ENERGY  = "UGENERGY"
+    ENERGY  = "UGENERGY",
+    MAGIC   = "UGMAGIC",
 }
 
 
@@ -126,12 +126,12 @@ local actions = {
     },
 
     {
-        id    = IDS.UPGRADE,
+        id    = IDS.MAGIC,
         str   = isch and "升级" or "Upgrade",
         state = "dolongaction",
         fn    = function(act)
-            if act.doer and act.invobject and act.invobject.upgradefn then
-                if act.invobject.upgradefn(act.doer, act.target) then
+            if act.doer and act.invobject and act.invobject.givefn then
+                if act.invobject.givefn(act.invobject, act.target, act.doer) then
                     removeItem(act.invobject)
                     return true
                 end
@@ -195,9 +195,9 @@ local component_actions = {
                 end
             },
             {
-                action = IDS.UPGRADE,
+                action = IDS.MAGIC,
                 testfn = function (inst, doer, target, acts, right)
-                    return inst:HasTag(UGTAGS.BLUEPRINTS) and target:HasTag(UGTAGS.UPGRADE)
+                    return inst:HasTag(UGTAGS.MAGIC_ITEM) and target:HasTag(UGTAGS.MAGIC_TARGET)
                 end
             },
             {

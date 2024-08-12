@@ -19,9 +19,10 @@ UGTAGS = {
     POTION        = "ugpotion",
     SWICTH        = "ugswitch",
     ACTIVE        = "ugactive",
-    UPGRADE       = "ugupgrade",
     ENERGY        = "ugbushenergy",
-    ENERGY_TARGET = "ugenergy_target"
+    ENERGY_TARGET = "ugenergy_target",
+    MAGIC_ITEM    = "ugmagic_item",
+    MAGIC_TARGET  = "ugmagic_target"
 }
 
 UGEVENTS = {

@@ -1,6 +1,6 @@
 
 
---- 建家石
+--- 宝石碎片
 local GEM_PIECE = "uggem_piece"
 local gem_piece = {
     tags  = { "molebait" },
@@ -8,22 +8,33 @@ local gem_piece = {
 }
 
 
+--- 植物精华
+local PLANT_ENERGY  = { key = "ugmagic_plant_energy" }
+PLANT_ENERGY.tags   = { UGTAGS.ENERGY }
+PLANT_ENERGY.givefn = function(inst, target, doer)
+    local pickable = target.components.pickable
+    if pickable and pickable:CanBeFertilized() and pickable.transplanted then
+        pickable.cycles_left = nil
+        pickable.transplanted = nil
+        return true
+    end
+    return false
+end
+
+
+--- 晾肉架升级包
+local MAGIC_MEAT_RACK = { key = "ugmagic_meat_rack"}
+MAGIC_MEAT_RACK.tags  = { UGTAGS.MAGIC_ITEM }
+MAGIC_MEAT_RACK.givefn = function (inst, target, doer)
+    if target.components.uglevel ~= nil then
+        target.components.uglevel:LvDelta(1)
+        return true
+    end
+end
+
+
 return {
     [GEM_PIECE] = gem_piece,
-    ["ugmagic_plant_energy"] = {
-        tags = { UGTAGS.ENERGY },
-        givefn = function (inst, target, doer)
-            local pickable = target.components.pickable
-            if pickable == nil or not pickable.transplanted then
-                return false
-            end
-            pickable.cycles_left = nil
-            pickable.transplanted = nil
-            return true
-        end
-
-    },
-    ["ugmagic_meat_rack"] = {
-        
-    }
+    [PLANT_ENERGY.key] = PLANT_ENERGY,
+    [MAGIC_MEAT_RACK.key] = MAGIC_MEAT_RACK,
 }

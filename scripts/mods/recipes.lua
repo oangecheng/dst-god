@@ -76,7 +76,7 @@ end
 
 local i = { dug_grass = 1, seeds = 3, rock_avocado_fruit_sprout = 1, dug_berrybush = 1 }
 add_normal_recipe("ugmagic_plant_energy", TECH.MAGIC_TWO, { "REFINE" }, i)
-add_normal_recipe("ugmagic_meat_rack", TECH.MAGIC_TWO, { "REFINE" }, { charcoal = 5 })
+add_normal_recipe("ugmagic_meat_rack", TECH.MAGIC_TWO, { "REFINE" }, { charcoal = 4, twigs = 3, rope = 2 })
 
 
 

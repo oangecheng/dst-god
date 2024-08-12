@@ -18,7 +18,6 @@ PrefabFiles = {
     -- "ugtasks",
     "ugitems",
     "ugpotions",
-    -- "ugblueprints",
 }
 
 Assets = {
