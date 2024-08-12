@@ -13,6 +13,12 @@ local IDS = {
 }
 
 
+STRINGS.ACTIONS[IDS.MAGIC] = {
+    GENERIC = isch and "升级" or "Upgrade",
+    PLANT   = isch and "生机焕发" or "NewLife"
+}
+
+
 
 --移除预制物(预制物,数量)
 local function removeItem(item, num)
@@ -127,8 +133,8 @@ local actions = {
 
     {
         id    = IDS.MAGIC,
-        str   = isch and "升级" or "Upgrade",
-        state = "dolongaction",
+        str   = STRINGS.ACTIONS[IDS.MAGIC],
+        state = "dolongaction", 
         fn    = function(act)
             if act.doer and act.invobject and act.invobject.givefn then
                 if act.invobject.givefn(act.invobject, act.target, act.doer) then
@@ -138,22 +144,15 @@ local actions = {
             end
             return false
         end,
+        actiondata = {
+            strfn = function (act)
+                if act.invobject and act.invobject.prefab == "ugmagic_plant_energy" then
+                    return "PLANT"
+                end
+                return "GENERIC"
+            end,
+        }
     },
-
-    {
-        id    = IDS.ENERGY,
-        str   = isch and "生机焕发" or "NewLife",
-        state = "dolongaction",
-        fn    = function(act)
-            if act.doer and act.invobject and act.invobject.givefn then
-                if act.invobject.givefn(act.invobject, act.target, act.doer) then
-                    removeItem(act.invobject)
-                    return true
-                end
-            end
-            return false
-        end,
-    }
 }
 
 
@@ -198,12 +197,6 @@ local component_actions = {
                 action = IDS.MAGIC,
                 testfn = function (inst, doer, target, acts, right)
                     return inst:HasTag(UGTAGS.MAGIC_ITEM) and target:HasTag(UGTAGS.MAGIC_TARGET)
-                end
-            },
-            {
-                action = IDS.ENERGY,
-                testfn = function (inst, doer, target, acts, right)
-                    return inst:HasTag(UGTAGS.ENERGY) and target:HasTag(UGTAGS.ENERGY_TARGET)
                 end
             },
         }

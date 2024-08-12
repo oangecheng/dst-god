@@ -100,6 +100,6 @@ local berrybushs = {
 }
 for _, v in ipairs(berrybushs) do
     AddPrefabPostInit(v, function (inst)
-        inst:AddTag(UGTAGS.ENERGY_TARGET)
+        inst:AddTag(UGTAGS.MAGIC_TARGET)
     end)
 end

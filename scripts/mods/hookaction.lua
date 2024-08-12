@@ -11,12 +11,20 @@ if actions_status then
     -- 导入自定义动作
     if actions_data.actions then
         for _, act in pairs(actions_data.actions) do
-            local action = AddAction(act.id, act.str, act.fn)
+
+            local action = Action()
+            action.id = act.id
+            action.str = act.str
+            action.fn = act.fn
+
             if act.actiondata then
                 for k, data in pairs(act.actiondata) do
                     action[k] = data
                 end
             end
+
+            AddAction(action)
+
             --兼容排队论
             if act.canqueuer then
                 queueractlist[act.id] = act.canqueuer

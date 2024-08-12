@@ -10,10 +10,11 @@ local gem_piece = {
 
 --- 植物精华
 local PLANT_ENERGY  = { key = "ugmagic_plant_energy" }
-PLANT_ENERGY.tags   = { UGTAGS.ENERGY }
+PLANT_ENERGY.tags   = { UGTAGS.MAGIC_ITEM }
 PLANT_ENERGY.givefn = function(inst, target, doer)
     local pickable = target.components.pickable
     if pickable and pickable:CanBeFertilized() and pickable.transplanted then
+        pickable:Fertilize(inst, doer)
         pickable.cycles_left = nil
         pickable.transplanted = nil
         return true
