@@ -102,12 +102,15 @@ end
 ---将所有实体迁移至另一个目标
 ---@param target table 目标
 function System:Transform(target)
-    local target_system = target.components.system
+    local target_system = target.components.ugsystem
     if target_system ~= nil then
-        target_system.entities = {}
         for k, v in pairs(self.entities) do
-            local ent = detach(self, k)
-            attach(target_system, k, ent)
+            local lv = v.inst and v.inst.components.uglevel
+            local l = lv:GetLv()
+            local e = lv:GetXp()
+            local ent = target_system:AddEntity(k)
+            ent.components.uglevel:SetLv(l)
+            ent.components.uglevel:SetXp(e)
         end
     end
 end

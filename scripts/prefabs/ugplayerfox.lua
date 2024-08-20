@@ -24,6 +24,15 @@ local function master_postinit(inst)
     inst.components.health:SetMaxHealth(150)
     inst.components.hunger:SetMax(150)
     inst.components.sanity:SetMax(200)
+
+    local sys = inst:AddComponent("ugsystem")
+    inst:AddComponent("ugsync")
+    inst:ListenForEvent(UGEVENTS.TASK_FINISH, function (inst, data)
+        sys:RemoveEntity(data.name)
+    end)
+    inst:DoTaskInTime(0.1, function ()
+        inst.components.ugsync:SyncPower()
+    end)
 end
 
 return MakePlayerCharacter("ugfoxgirl", prefabs, assets, common_postinit, master_postinit)

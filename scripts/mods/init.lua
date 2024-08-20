@@ -26,9 +26,30 @@ local function init_player_fn(player)
 end
 
 AddPlayerPostInit(function(player)
-    if TheWorld.ismastersim then
+    if TheWorld.ismastersim and player.prefab ~= "ugfoxgirl" then
         init_player_fn(player)
     end 
+end)
+
+
+
+
+
+AddPrefabPostInit("world", function(inst)
+    if not TheWorld.ismastersim then
+        return
+    end
+    inst:ListenForEvent("ms_playerdespawnanddelete", function(_, player)
+        inst.sys = player.components.ugsystem
+        UgLog("player delete", inst.sys)
+    end)
+
+    inst:ListenForEvent("ms_newplayerspawned", function(_, player)
+        UgLog("player spawn", inst.sys)
+        if inst.sys then
+           inst.sys:Transform(player)
+        end
+    end)
 end)
 
 
