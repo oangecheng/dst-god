@@ -219,3 +219,27 @@ ACTIONS.HEAL.fn = function(act)
     end
     return ret, str
 end
+
+
+
+local DROP_GEM_PIECE_MON = {
+    "leif", "leif_sparse", "spiderqueen",
+    "bearger", "deerclops", "moose", "antlion",
+    "dragonfly", "beequeen", "toadstool", "klaus"
+}
+
+for _, v in ipairs(DROP_GEM_PIECE_MON) do
+    AddPrefabPostInit(v, function (inst)
+        if inst.components.health ~= nil then
+            local h = inst.components.health.maxhealth
+            if h > 0 and inst.components.lootdropper ~= nil then
+                local max = math.floor(h/2000 + 0.5)
+                local min = math.max(1, math.floor(max * 0.5))
+                local n = math.random(min, max)
+                for i = 1, n do
+                    inst.components.lootdropper:AddChanceLoot("uggem_piece", i * 0.2)
+                end
+            end
+        end
+    end)
+end
