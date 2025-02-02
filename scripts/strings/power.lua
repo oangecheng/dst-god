@@ -44,3 +44,10 @@ for _, v in pairs(EQUIPS) do
     local name = STRINGS.NAMES[powername]
     register_name(v.."_gem", name.."宝石", name.." Gem")
 end
+
+
+for _, v in pairs(PLAYER) do
+    local powername = string.upper(v)
+    local name = STRINGS.NAMES[powername]
+    register_name(v.."_potion", name.."药剂", name.." Potion")
+end
