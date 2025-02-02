@@ -3,7 +3,7 @@
 local ch = locale == "zh" or locale == "zhr"
 
 -- 名称
-name = ch and "神之试炼" or "Trial"
+name = ch and "全面升级" or "Trial"
 
 -- 描述
 description = ch and "模板" or "template"
@@ -11,7 +11,7 @@ description = ch and "模板" or "template"
 -- 作者
 author = "orange"
 -- 版本
-version = "0.1.0"
+version = "1.0.0"
 -- klei官方论坛地址，为空则默认是工坊的地址
 forumthread = ""
 -- modicon 下一篇再介绍怎么创建的
