@@ -149,7 +149,10 @@ function GridPage:BuildSkinScrollGrid()
 			local data = w.data
 			if not data then return end
 
-			local str = data.lv .. "  " .. data.xp
+			local str = "等级:" .. tostring(data.lv)
+			str = str .. "\n经验:" .. tostring(data.xp)
+			str = str .. "\n" .. STRINGS.UGPOWERS_STR[data.name].info(data.lv)
+
 			w.powerlv:SetString(str)
 
 			if data.xml ~= nil then

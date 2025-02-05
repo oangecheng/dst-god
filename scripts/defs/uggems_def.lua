@@ -122,7 +122,8 @@ end
 
 
 return {
-    caninlayfn = can_inlay_fn,
-    enhancefn  = enhance_fn,
-    equips     = JoinArrays(weapons, armors, clothes)
+    caninlayfn  = can_inlay_fn,
+    enhancefn   = enhance_fn,
+    equips      = JoinArrays(weapons, armors, clothes),
+    items       = ITEMS,
 }

@@ -396,7 +396,7 @@ local function on_pick_farm(player, data)
     end
 
     local oversized = data.object.is_oversized
-    local exp = oversized and 10 or 5
+    local exp = oversized and 15 or 5
     GainUgPowerXp(player, NAMES.FARMER, exp)
 
     local dropper = data.object.components.lootdropper
@@ -480,7 +480,7 @@ local function update_runner(inst, owner, detach)
             locomotor:RemoveExternalSpeedMultiplier(inst, NAMES.RUNNER)
         else
             local lv = inst.components.uglevel:GetLv()
-            local mult = math.min(1 + lv * 0.01, 1.5)
+            local mult = math.min(1 + lv * 0.0025, 1.25)
             locomotor:SetExternalSpeedMultiplier(inst, NAMES.RUNNER, mult)
         end
     end
@@ -545,7 +545,7 @@ local _doctor = {
 local function on_hunter_killed(inst, data)
     local victim = data.victim
    
-    if victim.components.freezable or victim:HasTag("monster") then
+    if victim:HasTag("monster") then
         local dropper = victim.components.lootdropper
         if dropper == nil then
             return
@@ -568,7 +568,7 @@ local function on_hunter_killed(inst, data)
             -- 击杀大于血量1000的怪物能够升级属性
             if victim.components.health then
                 local max = victim.components.health.maxhealth
-                if max >= 1000 then
+                if max > 200 then
                     GainUgPowerXp(inst, NAMES.HUNTER, max * 0.01)
                 end 
             end

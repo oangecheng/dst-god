@@ -72,11 +72,11 @@ local _damage = {
 
 --------------------------------------------------------------------------**-----------------------------------------------------------------------------------------------
 -- 最高暴击倍率
-local critmax = 5
+local critmax = 3
 local function dmg_criter(power, lv, dmg, spdmg, data)
     local m = 1
-    if math.random() < 0.2 then
-        local seed = lv * 0.1
+    if math.random() < 0.25 then
+        local seed = lv * 0.01
         m = math.min(math.floor(2 + seed), critmax)
     end
     return dmg * m, spdmg
@@ -97,7 +97,7 @@ local _criter = {
 -- 最高闪避概率
 local DODGER_MAX = 0.3
 local function dmg_dodger(power, lv, dmg, spdmg, data)
-    local seed = math.min(lv * 0.01, DODGER_MAX)
+    local seed = math.min(lv * 0.003, DODGER_MAX)
     -- 闪避支持位面伤害等
     if math.random() < seed then
         return 0, nil
@@ -134,8 +134,7 @@ end
 
 local function attack_vampir(power, attacker, victim, weapon, lv)
     if can_vampir(victim) and attacker.components.health then
-        local delta = math.floor(lv * 0.05 + 1.5)
-        delta = math.min(delta, 10)
+        local delta = math.min(math.floor(lv * 0.05 + 1.5), 10)
         attacker.components.health:DoDelta(delta, false, NAMES.VAMPIR)
     end
 end
@@ -214,8 +213,8 @@ local function attack_blindr(power, attacker, victim, weapon, lv)
             victim.ugblindtask:Cancel()
             victim.ugblindtask = nil
         end
-        -- 3s后移除标记
-        victim.ugblindtask = victim:DoTaskInTime(3, function ()
+        -- 2s后移除标记
+        victim.ugblindtask = victim:DoTaskInTime(2, function ()
             PutUgData(victim, UGMARK.ATK_MISS, nil)
         end)
     end
