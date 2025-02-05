@@ -306,7 +306,7 @@ EQUIPS_INFO[EQUIPS.WARMER] = {
     desc = "有点神奇",
     info = function (lv)
         local v = lv * 10
-        return "保暖/隔热 +"..tostring(v) + "\n(使用紫宝石激活衣帽，再使用红宝石切换模式)"
+        return "保暖/隔热 +"..tostring(v) + "\n(使用紫宝石激活衣帽)" + "\n(再使用红宝石切换模式)"
     end
 }
 
