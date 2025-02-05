@@ -5,7 +5,6 @@ local FN_UPDATE = "update"
 local FN_SAVE   = "save"
 local FN_LOAD   = "load"
 
-
 ---comment 缓存数据
 ---@param power table 属性
 ---@param key string key

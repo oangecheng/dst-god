@@ -93,8 +93,8 @@ end
 
 local powers = {}
 local defs = MergeMaps(
-    require("defs/powers/player"),
-    require("defs/powers/equip")
+    require("defs/ugpower_players"),
+    require("defs/ugpower_equips")
 )
 for k,v in pairs(defs) do
     table.insert(powers, MakePower(k, v))
