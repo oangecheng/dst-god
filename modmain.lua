@@ -25,6 +25,8 @@ Assets = {
     Asset("IMAGE", "images/inventoryimages/uggems.tex"),
     Asset("ATLAS", "images/inventoryimages/ugitems.xml"),
     Asset("IMAGE", "images/inventoryimages/ugitems.tex"),
+    Asset("ATLAS", "images/inventoryimages/ugpotions.xml"),
+    Asset("IMAGE", "images/inventoryimages/ugpotions.tex"),
 
 
     Asset("ATLAS", "images/names_ugfoxgirl.xml"),

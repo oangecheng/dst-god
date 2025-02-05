@@ -62,7 +62,7 @@ PLAYER_INFO[PLAYER.SANITY] = {
     desc = "神奇的药剂",
     gain = "制作物品",
     info = function (lv)
-        return "精神上限 +"..tostring(lv) + "%"
+        return "精神上限 +"..tostring(lv) .. "%"
     end
 }
 
@@ -73,7 +73,7 @@ PLAYER_INFO[PLAYER.HUNGER] = {
     desc = "神奇的药剂",
     gain = "吃东西",
     info = function (lv)
-        return "饱食上限 +"..tostring(lv) + "%"
+        return "饱食上限 +"..tostring(lv) .. "%"
     end
 }
 
@@ -84,7 +84,7 @@ PLAYER_INFO[PLAYER.HEALTH] = {
     desc = "神奇的药剂",
     gain = "制作物品",
     info = function (lv)
-        return "生命上限 +"..tostring(lv) + "%"
+        return "生命上限 +"..tostring(lv) .. "%"
     end
 }
 
@@ -148,7 +148,7 @@ PLAYER_INFO[PLAYER.FISHER] = {
     gain = "钓各种鱼",
     info = function (lv)
         local v = 1 - math.max(1 - lv * 0.01, 0.2)
-        return "钓鱼速度 +"..tostring(v * 100) + "%"
+        return "钓鱼速度 +"..tostring(v * 100) .. "%"
     end
 }
 
@@ -160,7 +160,7 @@ PLAYER_INFO[PLAYER.RUNNER] = {
     gain = "走路就完事了",
     info = function (lv)
         local v = math.max(lv * 0.0025, 0.25)
-        return "移动速度 +"..tostring(v * 100) + "%"
+        return "移动速度 +"..tostring(v * 100) .. "%"
     end
 }
 
@@ -171,7 +171,7 @@ PLAYER_INFO[PLAYER.DOCTOR] = {
     desc = "神奇的药剂",
     gain = "使用回血物品",
     info = function (lv)
-        return "治疗效率 +"..tostring(lv) + "%"
+        return "治疗效率 +"..tostring(lv) .. "%"
     end
 }
 
@@ -182,7 +182,7 @@ PLAYER_INFO[PLAYER.HUNTER] = {
     desc = "神奇的药剂",
     gain = "击杀血量>200的怪物",
     info = function (lv)
-        return "治疗效率 +"..tostring(lv) + "%"
+        return "治疗效率 +"..tostring(lv) .. "%"
     end
 }
 
@@ -198,7 +198,7 @@ local function get_equip_item(name)
     if is ~= nil then
         for k, v in pairs(is) do
             local prefab_name = STRINGS.NAMES[string.upper(k)]
-            str = str.."|"..prefab_name
+            str = str.." "..prefab_name.." "
         end
     end
     return str
@@ -211,7 +211,7 @@ EQUIPS_INFO[EQUIPS.CRITER] = {
     desc = "狂暴的能量",
     info = function (lv)
         local v = math.floor(2 + lv * 0.01)
-        return "25%概率造成"..tostring(v) + "倍伤害"
+        return "25%概率造成"..tostring(v) .. "倍伤害"
     end
 }
 
@@ -222,7 +222,7 @@ EQUIPS_INFO[EQUIPS.DODGER] = {
     desc = "无休止的躲闪",
     info = function (lv)
         local v = math.min(lv * 0.003, 0.3) * 100
-        return tostring(v) + "%概率躲避一次任意攻击"
+        return tostring(v) .. "%概率躲避一次任意攻击"
     end
 }
 
@@ -274,7 +274,7 @@ EQUIPS_INFO[EQUIPS.THORNS] = {
     desc = "有点扎手",
     info = function (lv)
         local v =  math.floor( lv * 0.1)
-        return "被攻击时反弹" + tostring(v).."+(0~5)点伤害"
+        return "被攻击时反弹" .. tostring(v).."+(0~5)点伤害"
     end
 }
 
@@ -284,7 +284,7 @@ EQUIPS_INFO[EQUIPS.DAMAGE] = {
     recp = "提升基础攻击力",
     desc = "真香",
     info = function (lv)
-        return "基础攻击 +" + tostring(lv)
+        return "基础攻击 +" .. tostring(lv)
     end
 }
 
@@ -306,7 +306,7 @@ EQUIPS_INFO[EQUIPS.WARMER] = {
     desc = "有点神奇",
     info = function (lv)
         local v = lv * 10
-        return "保暖/隔热 +"..tostring(v) + "\n(使用紫宝石激活衣帽)" + "\n(再使用红宝石切换模式)"
+        return "保暖/隔热 +"..tostring(v)
     end
 }
 

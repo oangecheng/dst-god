@@ -92,7 +92,8 @@
         "AddMinimapAtlas",
         "AddModCharacter",
         "JoinArrays",
-        "UGRARITY"
+        "UGRARITY",
+        "ANCHOR_TOP"
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",

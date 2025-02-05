@@ -55,7 +55,7 @@ local GridPage = Class(Widget, function(self, parent_widget, owner, data)
             lv = v.lv,
             xp = v.xp,
 			xml = data.xml,
-			tex = k.."_gem.tex"
+			tex = k..data.tex..".tex"
         }
 		table.insert(datas, pdata)
 	end
@@ -108,23 +108,26 @@ function GridPage:BuildSkinScrollGrid()
 		w.skin_seperator = w.cell_root:AddChild(Image("images/plantregistry.xml", "plant_entry_seperator.tex"))
 		w.skin_seperator:SetPosition(0, 88)
 
-		--皮肤贴图
-		w.skin_img = w.cell_root:AddChild(Image())
-		w.skin_img:SetPosition(0, 0)
-		w.skin_img:SetScale(0.8, 0.8)
-
-
 		-- 属性标题，在每个cell最上方
 		w.powername = w.cell_root:AddChild(Text(font, font_size))
 		w.powername:SetPosition(0, 100)
 		w.powername:SetRegionSize(width_label, height)
 		w.powername:SetHAlign(ANCHOR_MIDDLE)
 
+		--贴图
+		w.skin_img = w.cell_root:AddChild(Image())
+		w.skin_img:SetPosition(0, 50)
+		w.skin_img:SetScale(0.8, 0.8)
+
+
 		--- 等级
 		w.powerlv = w.cell_root:AddChild(Text(font, font_size))
-		w.powerlv:SetPosition(0, 50)
-		w.powerlv:SetRegionSize(width_label, height )
-		w.powerlv:SetHAlign( ANCHOR_MIDDLE )
+		w.powerlv:SetPosition(0, -90)
+		w.powerlv:SetRegionSize(width_label, 200 )
+		w.powerlv:SetHAlign(ANCHOR_MIDDLE)
+		w.powerlv:SetVAlign(ANCHOR_TOP)
+		w.powerlv:SetColour(PLANTREGISTRYUICOLOURS.LOCKEDBROWN)
+
 		
 
 		local lean = true
@@ -134,13 +137,31 @@ function GridPage:BuildSkinScrollGrid()
 		w.skin_spinner:SetPosition(0, -85)
 		w.skin_spinner:SetTextColour(PLANTREGISTRYUICOLOURS.UNLOCKEDBROWN)
 		w.skin_spinner.text:SetPosition(8, 12)
+		w.skin_spinner:Hide()
+
 
 		--按钮
-		w.sure_button = w.cell_root:AddChild(
-			TEMPLATES.StandardButton(nil, "确定", {60, 30})
+		w.unload_btn = w.cell_root:AddChild(
+			TEMPLATES.StandardButton(
+				nil,
+				"卸下",
+				{ 60, 30}
+			)
 		)
-		w.sure_button:SetTextSize(18)
-		w.sure_button:SetPosition(0, -95, 0)
+		w.unload_btn:SetTextSize(18)
+		w.unload_btn:SetPosition(-35, -80, 0)
+
+		--按钮
+		w.upgrade_btn = w.cell_root:AddChild(
+			TEMPLATES.StandardButton(
+				nil,
+				"强化",
+				{ 60, 30 }
+			)
+		)
+		w.upgrade_btn:SetTextSize(18)
+		w.upgrade_btn:SetPosition(35, -80, 0)
+
 		
 		local page = self
 
@@ -159,9 +180,9 @@ function GridPage:BuildSkinScrollGrid()
 				w.skin_img:SetTexture(data.xml, data.tex)
 			end
 
-			w.sure_button:SetOnClick(function()
+			w.unload_btn:SetOnClick(function()
 				local popup
-				popup = PopupDialogScreen("title", "desc",
+				popup = PopupDialogScreen("title", STRINGS.UGPOWERS_STR[data.name].gain,
 					{
 						{
 							text = "确认",
@@ -182,13 +203,13 @@ function GridPage:BuildSkinScrollGrid()
 				)
 				TheFrontEnd:PushScreen(popup)
 			end)
-			w.sure_button:Enable()
+			w.unload_btn:Enable()
 		end
 
 		local _OnControl = w.cell_root.OnControl
 		w.cell_root.OnControl = function(_, control, down)
 			if w.skin_spinner.focus or (control == CONTROL_PREVVALUE or control == CONTROL_NEXTVALUE) then if w.skin_spinner:IsVisible() then w.skin_spinner:OnControl(control, down) end return true end
-			if w.sure_button.focus or (control == CONTROL_PREVVALUE or control == CONTROL_NEXTVALUE) then if w.sure_button:IsVisible() then w.sure_button:OnControl(control, down) end return true end
+			if w.unload_btn.focus or (control == CONTROL_PREVVALUE or control == CONTROL_NEXTVALUE) then if w.unload_btn:IsVisible() then w.unload_btn:OnControl(control, down) end return true end
 			return _OnControl(_, control, down)
 		end
 
