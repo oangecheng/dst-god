@@ -51,7 +51,7 @@ modimport("scripts/strings/power.lua")
 modimport("scripts/mods/hookaction.lua")
 modimport("scripts/ui/ugui.lua")
 modimport("scripts/mods/rpc.lua")
-modimport("scripts/mods/init.lua")
+modimport("scripts/mods/mod_init.lua")
 modimport("scripts/mods/recipes.lua")
 
 

@@ -105,7 +105,7 @@ end
 
 
 --添加镶嵌系统
-local equips = require("defs/enhance/gems").equips
+local equips = require("defs/uggems_def").equips
 for _, v in ipairs(equips) do
     AddPrefabPostInit(v, init_equip_fn)
 end

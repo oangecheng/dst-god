@@ -10,7 +10,7 @@ local assets = {
     Asset("IMAGE", "images/inventoryimages/uggems.tex")
 }
 
-local enhance = require("defs/enhance/gems")
+local enhance = require("defs/uggems_def")
 
 
 ---comment 镶嵌函数
