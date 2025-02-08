@@ -3,6 +3,9 @@
 local function tryUpdatePower(inst, name, data)
     if inst.owner ~= nil then
         inst.owner:PushEvent(UGEVENTS.POWER_UPDATE, { name = name })
+        if inst.owner.components.ugsync then
+            inst.owner.components.ugsync:SyncPower()
+        end
         if data then
             if data.update then
                 UgLog("update power", name, inst.components.uglevel:GetLv() )

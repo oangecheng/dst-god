@@ -25,7 +25,7 @@ local UgUserPopupScreen = Class(Screen, function(self, owner)
 	root:SetPosition(0, -25)
 	self.ugscreen = root:AddChild(MultiTabWidget(owner))
 	self.default_focus = self.ugscreen
-    SetAutopaused(true)
+    SetAutopaused(false)
 end)
 
 function UgUserPopupScreen:OnDestroy()

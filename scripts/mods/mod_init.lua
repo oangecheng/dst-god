@@ -54,6 +54,8 @@ end)
 
 
 
+--添加镶嵌系统
+local GEMS_DEF = require("defs/uggems_def")
 
 
 local function unload_gem_fn(doer, inst, name)
@@ -78,15 +80,87 @@ local function unload_gem_fn(doer, inst, name)
         gem.tempdata = da
         doer.components.inventory:GiveItem(gem)
         ent:Remove()
+        if inst.components.ugsync then
+            inst.components.ugsync:SyncPower()
+        end
     end
 end
 
-local function rpc_unload_gem(player, inst, name)
+
+
+
+local items = GEMS_DEF.items
+
+
+--获取堆叠数量
+local function GetStackSize(item)
+    return item.components.stackable ~= nil and item.components.stackable:StackSize() or 1
+end
+
+
+---comment 尝试消耗
+---@param user table 玩家
+---@param target_prefab string 
+---@return table|nil 数量
+local function consum_items(user, target_prefab)
+    local inventory = user.components.inventory
+    if not inventory then
+        return nil
+    end
+
+    local temp = inventory:FindItem(function (i) return i.prefab == target_prefab end)
+
+    local cnt = 0
+    if temp ~= nil then
+        cnt = GetStackSize(temp)
+    end
+    return {
+        item = temp,
+        cnt  = cnt
+    }
+end
+
+local function upgrade_gem(doer, inst, name)
+    local sys = inst.components.ugsystem
+    if not (sys ~= nil and name ~= nil) then
+        return
+    end
+    local ent = sys:GetEntity(name)
+    if ent == nil then
+        UgSay(doer, "宝石不存在")
+        return
+    end
+
+    local is = items[name]
+    if is ~= nil then
+        for k, v in pairs(is) do
+            local d = consum_items(doer, k)
+            if d ~= nil and d.cnt > 0 then
+                local exp = d.cnt * v
+                ent.components.uglevel:XpDelta(exp)
+                if d.item ~= nil then
+                    d.item:Remove()
+                end
+                -- 每次只升级一次
+                return
+            end
+        end
+    end
+end
+
+
+
+
+local function rpc_unload_gem(player, inst, name, mode)
     if name ~= nil and inst ~= nil then
         if TheWorld.ismastersim then
-            unload_gem_fn(player, inst, name)
+            if mode == 1 then
+                unload_gem_fn(player, inst, name)
+            elseif mode == 2 then
+                upgrade_gem(player, inst, name)
+            end
         else
-            SendModRPCToServer(MOD_RPC.ugapi.UnLoadGem, inst, name)
+            SendModRPCToServer(MOD_RPC.ugapi.UnLoadGem, inst, name, mode)
         end
     end
 end
@@ -105,7 +179,7 @@ end
 
 
 --添加镶嵌系统
-local equips = require("defs/uggems_def").equips
+local equips = GEMS_DEF.equips
 for _, v in ipairs(equips) do
     AddPrefabPostInit(v, init_equip_fn)
 end

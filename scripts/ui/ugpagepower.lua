@@ -59,7 +59,9 @@ local GridPage = Class(Widget, function(self, parent_widget, owner, data)
         }
 		table.insert(datas, pdata)
 	end
-	self.skin_grid:SetItemsData(datas)
+
+	self.origin_data = data
+	self:Refresh()
 	self.parent_default_focus = self.skin_grid
 end)
 
@@ -94,6 +96,8 @@ function GridPage:BuildSkinScrollGrid()
 
 	local font = HEADERFONT
 	local font_size = 20
+
+	local root = self
 
 	local function ScrollWidgetsCtor(context, index)
 
@@ -162,6 +166,20 @@ function GridPage:BuildSkinScrollGrid()
 		w.upgrade_btn:SetTextSize(18)
 		w.upgrade_btn:SetPosition(35, -80, 0)
 
+		if self.target and self.target:HasTag("player") then
+			w.upgrade_btn:Hide()
+			w.unload_btn:Hide()
+
+			
+			--- 等级
+			w.gain = w.cell_root:AddChild(Text(font, font_size))
+			w.gain:SetPosition(0, -150)
+			w.gain:SetRegionSize(width_label, 200)
+			w.gain:SetHAlign(ANCHOR_MIDDLE)
+			w.gain:SetVAlign(ANCHOR_TOP)
+			w.gain:SetColour(PLANTREGISTRYUICOLOURS.LOCKEDBROWN)
+		end
+
 		
 		local page = self
 
@@ -174,6 +192,12 @@ function GridPage:BuildSkinScrollGrid()
 			str = str .. "\n经验:" .. tostring(data.xp)
 			str = str .. "\n" .. STRINGS.UGPOWERS_STR[data.name].info(data.lv)
 
+
+			if w.gain ~= nil then
+				local s = STRINGS.UGPOWERS_STR[data.name].gain
+				w.gain:SetString(s)
+			end
+
 			w.powerlv:SetString(str)
 
 			if data.xml ~= nil then
@@ -182,15 +206,24 @@ function GridPage:BuildSkinScrollGrid()
 
 			w.unload_btn:SetOnClick(function()
 				local popup
-				popup = PopupDialogScreen("title", STRINGS.UGPOWERS_STR[data.name].gain,
+				popup = PopupDialogScreen("卸载属性", "物品将不再具备此属性",
 					{
 						{
 							text = "确认",
 							cb = function()
 								if page and page.target and page.target.ugunload_gem then
-									page.target.ugunload_gem(page.owner, page.target, data.name)
+									page.target.ugunload_gem(page.owner, page.target, data.name, 1)
 								end
 								TheFrontEnd:PopScreen(popup)
+								UgLog("Refresh 1")
+								if root.inst ~= nil then
+									UgLog("Refresh 10.1")
+									root.inst:DoSimTaskInTime(.2,function()
+										UgLog("Refresh 2")
+										root:Refresh()
+									end)
+								end
+								
 							end
 						},
 						{
@@ -204,12 +237,48 @@ function GridPage:BuildSkinScrollGrid()
 				TheFrontEnd:PushScreen(popup)
 			end)
 			w.unload_btn:Enable()
+
+
+			
+			w.upgrade_btn:SetOnClick(function()
+				local popup
+				popup = PopupDialogScreen("升级属性", STRINGS.UGPOWERS_STR[data.name].gain,
+					{
+						{
+							text = "确认",
+							cb = function()
+								if page and page.target and page.target.ugunload_gem then
+									page.target.ugunload_gem(page.owner, page.target, data.name, 2)
+								end
+								TheFrontEnd:PopScreen(popup)
+								if root.inst ~= nil then
+									root.inst:DoSimTaskInTime(.2,function()
+										root:Refresh()
+									end)
+								end
+								
+							end
+						},
+						{
+							text = "取消",
+							cb = function()
+								TheFrontEnd:PopScreen(popup)
+							end
+						},
+					}
+				)
+				TheFrontEnd:PushScreen(popup)
+			end)
+			w.upgrade_btn:Enable()
+
 		end
 
 		local _OnControl = w.cell_root.OnControl
 		w.cell_root.OnControl = function(_, control, down)
 			if w.skin_spinner.focus or (control == CONTROL_PREVVALUE or control == CONTROL_NEXTVALUE) then if w.skin_spinner:IsVisible() then w.skin_spinner:OnControl(control, down) end return true end
 			if w.unload_btn.focus or (control == CONTROL_PREVVALUE or control == CONTROL_NEXTVALUE) then if w.unload_btn:IsVisible() then w.unload_btn:OnControl(control, down) end return true end
+			if w.upgrade_btn.focus or (control == CONTROL_PREVVALUE or control == CONTROL_NEXTVALUE) then if w.upgrade_btn:IsVisible() then w.upgrade_btn:OnControl(control, down) end return true end
+
 			return _OnControl(_, control, down)
 		end
 
@@ -312,5 +381,33 @@ function GridPage:OnControl(control, down)
 	end
 	return GridPage._base.OnControl(self, control, down)
 end
+
+local function getTargetPowers(inst)
+    local system = TheWorld.ismastersim and inst.components.ugsync or inst.replica.ugsync
+    if system ~= nil then
+        return system:GetPowers()
+    end
+end
+
+function GridPage:Refresh()
+	UgLog("Refresh")
+	local powers = getTargetPowers(self.target)
+	if powers ~= nil and self.origin_data ~= nil then
+		local datas = {}      --皮肤数据
+		for k, v in pairs(powers) do --遍历皮肤数据表
+			local pdata = {
+				name = k,
+				lv = v.lv,
+				xp = v.xp,
+				xml = self.origin_data.xml,
+				tex = k .. self.origin_data.tex .. ".tex"
+			}
+			table.insert(datas, pdata)
+		end
+		self.skin_grid:SetItemsData(datas)
+		self.skin_grid:RefreshView()--更新数据
+	end
+end
+
 
 return GridPage
