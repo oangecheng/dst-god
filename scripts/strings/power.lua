@@ -124,6 +124,7 @@ PLAYER_INFO[PLAYER.PICKER] = {
         if lv >= 5 then
             str1 = str1.."\n快速采集"
         end
+        return str1
     end
 }
 

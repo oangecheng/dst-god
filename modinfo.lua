@@ -2,16 +2,18 @@
 
 local ch = locale == "zh" or locale == "zhr"
 
+local VERSION = "1.0.6"
+
 -- 名称
 name = ch and "全面升级" or "Trial"
 
 -- 描述
-description = ch and "模板" or "template"
+description = (ch and "模板" or "template").." "..VERSION
 
 -- 作者
 author = "orange"
 -- 版本
-version = "1.0.3"
+version = VERSION
 -- klei官方论坛地址，为空则默认是工坊的地址
 forumthread = ""
 -- modicon 下一篇再介绍怎么创建的

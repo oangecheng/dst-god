@@ -190,11 +190,17 @@ function GridPage:BuildSkinScrollGrid()
 
 			local str = "等级:" .. tostring(data.lv)
 			str = str .. "\n经验:" .. tostring(data.xp)
-			str = str .. "\n" .. STRINGS.UGPOWERS_STR[data.name].info(data.lv)
+
+			local str_data = STRINGS.UGPOWERS_STR[data.name] 
+			if str_data and str_data.info then
+				str = str .. "\n" .. str_data.info(data.lv)
+			else
+				str = str .. "\n" .. tostring(data.name)
+			end
 
 
-			if w.gain ~= nil then
-				local s = STRINGS.UGPOWERS_STR[data.name].gain
+			if w.gain ~= nil and str_data and str_data.gain then
+				local s = str_data.gain
 				w.gain:SetString(s)
 			end
 
