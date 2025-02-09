@@ -96,7 +96,7 @@ PLAYER_INFO[PLAYER.COOKER] = {
     gain = "收获料理",
     info = function (lv)
         local v = math.min(lv * 0.005, 0.5)
-        return "烹饪速率 +"..tostring(v * 100) + "%"
+        return "烹饪速率 +"..tostring(v * 100) .. "%"
     end
 }
 
@@ -108,7 +108,7 @@ PLAYER_INFO[PLAYER.DRYERR] = {
     gain = "收获晾肉架",
     info = function (lv)
         local v = 1 - math.max(1 - lv * 0.01, 0.3)
-        return "风干速率 +"..tostring(v * 100) + "%"
+        return "风干速率 +"..tostring(v * 100) .. "%"
     end
 }
 

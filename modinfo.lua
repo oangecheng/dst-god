@@ -11,7 +11,7 @@ description = ch and "模板" or "template"
 -- 作者
 author = "orange"
 -- 版本
-version = "1.0.1"
+version = "1.0.3"
 -- klei官方论坛地址，为空则默认是工坊的地址
 forumthread = ""
 -- modicon 下一篇再介绍怎么创建的
