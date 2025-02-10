@@ -198,3 +198,29 @@ for _, v in ipairs(berrybushs) do
         inst:AddTag(UGTAGS.MAGIC_TARGET)
     end)
 end
+
+
+
+local function get_lv(inst)
+    local sync = TheWorld.ismastersim and inst.components.ugsync or inst.replica.ugsync
+    if sync ~= nil then
+        return sync:GetLevel()
+    end
+end
+
+--- 显示物品的额外信息
+AddClassPostConstruct("widgets/hoverer", function(hoverer)
+	local oldSetString = hoverer.text.SetString
+	hoverer.text.SetString = function(text, str)
+		local target = GLOBAL.TheInput:GetHUDEntityUnderMouse()
+		target = (target and target.widget and target.widget.parent ~= nil and target.widget.parent.item) or
+		TheInput:GetWorldEntityUnderMouse() or nil
+		if target and target.GUID then
+            local lv = get_lv(target)
+			if lv ~= nil then
+				str = str .."\n lv".. tostring(lv)
+			end
+		end
+		return oldSetString(text, str)
+	end
+end)
