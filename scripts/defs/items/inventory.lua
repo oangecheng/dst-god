@@ -8,18 +8,24 @@ local gem_piece = {
 }
 
 
+--- 这几个植物多次采集会枯萎，可以使用药水
+local plants = {
+    "berrybush", "berrybush2", "berrybush_juicy", "grass", "bananabush"
+}
+
 --- 植物精华
 local PLANT_ENERGY  = { key = "ugmagic_plant_energy" }
 PLANT_ENERGY.tags   = { UGTAGS.MAGIC_ITEM }
 PLANT_ENERGY.givefn = function(inst, target, doer)
-    local pickable = target.components.pickable
-    if pickable and pickable:CanBeFertilized() and pickable.transplanted then
-        pickable:Fertilize(inst, doer)
-        pickable.cycles_left = nil
-        pickable.transplanted = nil
-        return true
+    if table.contains(plants, target.prefab) then
+        local pos = target:GetPosition()
+        local new_plant = SpawnPrefab(target.prefab)
+        if new_plant ~= nil then
+            target:Remove()
+            new_plant.Transform:SetPosition(pos:Get())
+            return true
+        end
     end
-    return false
 end
 
 

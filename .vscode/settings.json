@@ -93,7 +93,8 @@
         "AddModCharacter",
         "JoinArrays",
         "UGRARITY",
-        "ANCHOR_TOP"
+        "ANCHOR_TOP",
+        "MakeInventoryFloatable"
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",
