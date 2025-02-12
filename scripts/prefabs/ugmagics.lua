@@ -77,7 +77,7 @@ end
 
 local items = {}
 
-local NORMAL = require("defs/ugmagics")
+local NORMAL = require("defs/ugpotions_def")
 for k, v in pairs(NORMAL) do
     table.insert(items, MakeItem(k, v))
 end
