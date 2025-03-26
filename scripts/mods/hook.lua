@@ -27,6 +27,20 @@ end)
 
 
 
+
+AddComponentPostInit("edible", function(self)
+    local old_fn = self.GetHunger
+    self.GetHunger = function(self, eater)
+        if old_fn ~= nil then
+            local hunger_value = old_fn(self, eater)
+            local hunger_multi = GetUgData(eater, "eat_food_hunger_multi", 1)
+            return hunger_value * hunger_multi
+        end
+    end
+end)
+
+
+
 --- 晾晒加速hook， 由于晾晒的动作没有传入doer，所以hook比较麻烦
 --- 实现方式，在执行晾晒之前打上标记，获取时间的时候就可以根据标记计算时间
 AddComponentPostInit("dryable", function(self)

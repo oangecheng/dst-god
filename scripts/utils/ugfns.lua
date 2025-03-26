@@ -71,11 +71,13 @@ end
 ---comment 获取临时存放owner上的数据
 ---@param owner table|nil 目标
 ---@param key string 数据的key
+---@param default_value any 兜底数据
 ---@return any data 任意类型，做好类型check
-function GetUgData(owner, key)
+function GetUgData(owner, key, default_value)
     if owner ~= nil and owner.ugdata ~= nil then
-        return owner.ugdata[key]
+        return owner.ugdata[key] or default_value
     end
+    return default_value
 end
 
 
