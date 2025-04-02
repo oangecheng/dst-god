@@ -10,6 +10,9 @@
 
 local PLAYER = UGPOWERS.PLAYER
 
+local function step_fn(lv)
+    return math.ceil(lv * 0.05 + 1)
+end
 
 
 local function init_hunger_data ()
@@ -86,7 +89,7 @@ local function init_hunger_data ()
         local edible = data.food and data.food.components.edible
         local lv = GetUgPowerLv(eater, PLAYER.HUNGER)
         if edible ~= nil and lv ~= nil then
-            local step = lv * 0.05 + 1
+            local step = step_fn(lv)
             local exp = 0
             if step > 5 then
                 exp = 0.4 * edible.hungervalue + edible.healthvalue * 0.6 + edible.sanityvalue * 1
@@ -111,8 +114,9 @@ local function init_hunger_data ()
     end
 
 
-    local function on_update(inst, owner, name, lv)
-        local step = lv * 0.05 + 1
+    local function update_fn(inst, owner, name)
+        local lv = GetUgPowerLv(owner, name) or 0
+        local step = step_fn(lv)
         if step > 5 then
             god_fn(inst, owner, lv)
         end
@@ -125,35 +129,45 @@ local function init_hunger_data ()
     end
 
 
+    local function exp_fn(lv)
+        return 100
+    end
+
+    local function attach_fn(inst, owner, name)
+        owner:ListenForEvent("oneat", on_eat)
+        inst.origin_max_hunger = owner.components.hunger.max
+        inst.components.uglevel.expfn = exp_fn
+        if inst.percent then
+            owner.components.hunger:SetPercent(inst.percent)
+        end
+    end
+
+    local function detach_fn(inst, owner, name)
+        owner:RemoveEventCallback("oneat", on_eat)
+    end
+
+
     return {
-        attach = function (inst, owner, name)
-            owner:ListenForEvent("oneat", on_eat)
-            inst.origin_max_hunger = owner.components.hunger.max
-            inst.components.uglevel.expfn = function ()
-                return 100
-            end
-            if inst.percent then
-                owner.components.hunger:SetPercent(inst.percent)
-            end
-        end,
-
-        detach = function (inst, owner, name)
-            owner:RemoveEventCallback("oneat", on_eat)
-        end,
-
-        update = function (inst, owner, name)
-            local lv = GetUgPowerLv(owner, name) or 0
-            on_update(inst, owner, name, lv)
-        end,
-
-        save = function (inst, data)
+        attach = attach_fn,
+        detach = detach_fn,
+        update = update_fn,
+        onsave = function (inst, data)
             data.percent = inst.owner and inst.owner.components.hunger:GetPercent()
         end,
-
-        load = function (inst, data)
+        onload = function (inst, data)
             inst.percent = data.percent or nil
         end
     }
+end
+
+
+
+
+local function init_sanity_data()
+    local items = {
+        { rope = 20 }, { papyrus = 20 }, { featherpencil = 20 }, { purplegem = 100 },{ lobsterdinner = 80 }
+    }
+
 end
 
 
