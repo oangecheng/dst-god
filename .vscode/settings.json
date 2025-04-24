@@ -94,7 +94,8 @@
         "JoinArrays",
         "UGRARITY",
         "ANCHOR_TOP",
-        "MakeInventoryFloatable"
+        "MakeInventoryFloatable",
+        "FOODGROUP"
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",

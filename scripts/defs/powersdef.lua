@@ -10,16 +10,9 @@
 
 local PLAYER = UGPOWERS.PLAYER
 
-local function step_fn(lv)
-    return math.ceil(lv * 0.05 + 1)
-end
 
 
 local function init_hunger_data ()
-
-    local items = {
-        { dragonpie = 50 }, { turkeydinner = 40 }, { fishtacos = 25 }, { waffles = 50 },{ lobsterdinner = 80 }
-    }
 
     local buffers = {
         buff_attack = { w = 3 },
@@ -29,8 +22,15 @@ local function init_hunger_data ()
     }
 
     local common_fns = {
+
+        --- 增加饱食上限
         {
             lv = 0,
+            xp = function (owner, food, lv)
+                if food.prefab == "turkeydinner" then
+                    return 50
+                end
+            end,
             fn = function (inst, owner, lv)
                 local origin_max_hunger = inst.origin_max_hunger
                 local com_hunger = owner.components.hunger
@@ -42,12 +42,18 @@ local function init_hunger_data ()
             end
         },
 
+        --- 增加工作效率
         {
-            lv = 20,
+            lv = 25,
+            xp = function (owner, food, lv)
+                if food.prefab == "talleggs" then
+                    return 40
+                end
+            end,
             fn = function (inst, owner, lv)
                 local com_workmultiplier = owner.components.workmultiplier
                 if com_workmultiplier ~= nil then
-                    local multiplier = math.min(0.001 * lv, 1) + 1
+                    local multiplier = (lv - 25) * 0.01 + 1
                     com_workmultiplier:AddMultiplier(ACTIONS.CHOP,   multiplier, inst)
                     com_workmultiplier:AddMultiplier(ACTIONS.MINE,   multiplier, inst)
                     com_workmultiplier:AddMultiplier(ACTIONS.HAMMER, multiplier, inst)
@@ -55,59 +61,77 @@ local function init_hunger_data ()
             end
         },
 
+        --- 吃东西额外获得饱食度
         {
-            lv = 40, 
-            fn =  function (inst, owner, lv)
-                
-            end
-        },
-
-        {
-            lv = 60, 
+            lv = 50,
+            xp = function (owner, food, lv)
+                if food.prefab == "icecream" then
+                    return 50
+                end
+            end,
             fn = function (inst, owner, lv)
-                local m = math.min(0.001 * lv, 0.5) + 1
+                local m = (lv - 50) * 0.01 + 1
                 PutUgData(owner, "eat_food_hunger_multi", m)
             end
         },
 
+        --- 吃喜欢的东西概率获得buff
         {
-            lv = 80,
+            lv = 75,
+            xp = function (owner, food, lv)
+                if food.prefab == "jellybean" then
+                    return 80
+                end
+            end,
             fn = function (inst, owner, lv)
-                local ratio = math.min(0.0025 * lv, 0.25)
+                local ratio = math.min(0.01 * (lv - 75), 1)
                 PutUgData(owner, "eat_food_give_buff", ratio)
+            end
+        }, 
+
+        --- 吃任何东西都能升级
+        --- 赋予食神称号
+        {
+            lv = 100,
+            xp = function (owner, food, lv)
+                local edible = food.components.edible
+                if edible ~= nil then
+                    return 0.4 * edible.hungervalue + edible.healthvalue * 0.6 + edible.sanityvalue * 1
+                end
+            end,
+            fn = function (inst, owner, lv)
+                AddUgTag(owner, "eat_food_master", PLAYER.HUNGER)
             end
         }
     }
 
 
-    local function god_fn(inst, owner, lv)
-        AddUgTag(owner, "cooker_god", PLAYER.HUNGER)
-    end
-
-
     local function on_eat(eater, data)
-        local edible = data.food and data.food.components.edible
-        local lv = GetUgPowerLv(eater, PLAYER.HUNGER)
-        if edible ~= nil and lv ~= nil then
-            local step = step_fn(lv)
-            local exp = 0
-            if step > 5 then
-                exp = 0.4 * edible.hungervalue + edible.healthvalue * 0.6 + edible.sanityvalue * 1
-            elseif step > 0 then
-                local item = items[step]
-                if item ~= nil then
-                    exp = item[data.food.prefab] or 0
-                end
-            end
-            GainUgPowerXp(eater, PLAYER.HUNGER, exp)
+        local food = data.food
+        if food == nil then
+            return
+        end
 
-            local r = GetUgData(eater, "eat_food_give_buff", 0)
-            if r > 0 then
-                if math.random() < r then
-                    local buff = GetUgRandomItem(buffers)
-                    if buff ~= nil then
-                        eater:AddDebuff(buff, buff)
-                    end
+        local lv = GetUgPowerLv(eater, PLAYER.HUNGER)
+        ---@diagnostic disable-next-line: undefined-field
+        local common_fns_reverse = table.reverse(common_fns)
+        for _, v in ipairs(common_fns_reverse) do
+            if lv >= v.lv and v.xp ~= nil then
+                local exp = v.xp(eater, data.food, lv)
+                if exp ~= nil then
+                    GainUgPowerXp(eater, PLAYER.HUNGER, exp)
+                end
+                break
+            end
+        end
+
+        local r = GetUgData(eater, "eat_food_give_buff", 0)
+        local food_affinity = eater.components.foodaffinity
+        if r > 0 and food_affinity and food_affinity:HasAffinity(data.food) then
+            if math.random() < r then
+                local buff = GetUgRandomItem(buffers)
+                if buff ~= nil then
+                    eater:AddDebuff(buff, buff)
                 end
             end
         end
@@ -116,27 +140,21 @@ local function init_hunger_data ()
 
     local function update_fn(inst, owner, name)
         local lv = GetUgPowerLv(owner, name) or 0
-        local step = step_fn(lv)
-        if step > 5 then
-            god_fn(inst, owner, lv)
-        end
-        for i = 1, step do
-            local fn = common_fns[i]
-            if fn ~= nil then
-                fn(inst, owner, lv)
+        for _, v in ipairs(common_fns) do
+            if lv >= v.lv and v.fn ~= nil then
+                v.fn(inst)
             end
         end
     end
 
 
-    local function exp_fn(lv)
-        return 100
-    end
-
     local function attach_fn(inst, owner, name)
+        owner.components.eater:SetDiet({ FOODGROUP.OMNI }, { FOODGROUP.OMNI })
         owner:ListenForEvent("oneat", on_eat)
         inst.origin_max_hunger = owner.components.hunger.max
-        inst.components.uglevel.expfn = exp_fn
+        inst.components.uglevel.expfn = function ()
+            return 100
+        end
         if inst.percent then
             owner.components.hunger:SetPercent(inst.percent)
         end
@@ -164,8 +182,14 @@ end
 
 
 local function init_sanity_data()
-    local items = {
-        { rope = 20 }, { papyrus = 20 }, { featherpencil = 20 }, { purplegem = 100 },{ lobsterdinner = 80 }
+    
+
+    local common_fns = {
+        --- 提升精神值上限
+        {
+
+        }
+
     }
 
 end
