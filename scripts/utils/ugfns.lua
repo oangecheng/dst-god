@@ -174,3 +174,8 @@ function GetUgRandomItem(loot)
 
 	return target, cnt
 end
+
+
+function IsMedalOpen()
+    return TUNING.FUNCTIONAL_MEDAL_IS_OPEN
+end

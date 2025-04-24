@@ -152,22 +152,18 @@ local function init_hunger_data ()
         owner.components.eater:SetDiet({ FOODGROUP.OMNI }, { FOODGROUP.OMNI })
         owner:ListenForEvent("oneat", on_eat)
         inst.origin_max_hunger = owner.components.hunger.max
-        inst.components.uglevel.expfn = function ()
-            return 100
-        end
         if inst.percent then
             owner.components.hunger:SetPercent(inst.percent)
         end
-    end
-
-    local function detach_fn(inst, owner, name)
-        owner:RemoveEventCallback("oneat", on_eat)
+        inst.components.uglevel.expfn = function ()
+            return 100
+        end
     end
 
 
     return {
         attach = attach_fn,
-        detach = detach_fn,
+        detach = nil,
         update = update_fn,
         onsave = function (inst, data)
             data.percent = inst.owner and inst.owner.components.hunger:GetPercent()
@@ -183,15 +179,126 @@ end
 
 local function init_sanity_data()
     
-
+    local rewards_def = require("defs/rewardsdef").sanity
+    
     local common_fns = {
         --- 提升精神值上限
         {
+            lv = 0,
+            xp = function (item, owner, lv)
+                if item.prefab == "rope"  then
+                    return 25
+                end
+            end,
+            fn = function (inst, owner, lv)
+                local max = inst.org_max_sanity
+                local com = owner.components.sanity
+                if com ~= nil and max ~= nil then
+                    local percent = com:GetPercent()
+                    com.max = math.floor(max * (1 + 0.01 * lv) + 0.5)
+                    com:SetPercent(percent)
+                end
+            end
+        },
 
+        --- 未开启勋章，添加快速制作标签和女工标签
+        --- 献祭物品获得1阶蓝图
+        {
+            lv = 25,
+            xp = function (item, owner, lv)
+                if item.prefab == "papyrus" then
+                    return 25
+                end
+            end,
+            fn = function (inst, owner, lv)
+                PutUgData(owner, "gain_blue_print", 1)
+                if not IsMedalOpen() then
+                    AddUgTag(owner,"handyperson", PLAYER.SANITY)
+                    AddUgTag(owner,"fastbuilder", PLAYER.SANITY)
+                    owner:PushEvent("refreshcrafting") --更新制作栏
+                end 
+            end
+        },
+
+        --- 献祭物品获得2阶蓝图
+        {
+            lv = 50,
+            xp = function (item, owner, lv)
+                if item.prefab == "featherpencil" then
+                    return 25
+                end
+            end,
+            fn = function (inst, owner, lv)
+                PutUgData(owner, "gain_blue_print", 2)
+                if not IsMedalOpen() then
+                    AddUgTag(owner,"bookbuilder", PLAYER.SANITY)
+                    if owner.components.reader == nil then
+                        owner:AddComponent("reader")
+                    end
+                    owner:PushEvent("refreshcrafting") --更新制作栏
+                end
+            end
         }
-
     }
 
+    local function update_fn(inst, owner, name)
+        local lv = GetUgPowerLv(owner, name) or 0
+        for _, v in ipairs(common_fns) do
+            if lv >= v.lv and v.fn ~= nil then
+                v.fn(inst)
+            end
+        end
+    end
+
+
+    local function on_sacrificial(doer, data)
+        if data.item ~= nil then
+            local lv = GetUgPowerLv(doer, PLAYER.SANITY)
+            ---@diagnostic disable-next-line: undefined-field
+            local common_fns_reverse = table.reverse(common_fns)
+            for _, v in ipairs(common_fns_reverse) do
+                if lv >= v.lv and v.xp ~= nil then
+                    local exp = v.xp(data.item, doer, lv)
+                    if exp ~= nil then
+                        GainUgPowerXp(doer, PLAYER.SANITY, exp)
+                    end
+                    break
+                end
+            end
+
+            local rcp = GetUgData(doer, "gain_blue_print", 0)
+            if rcp > 0 then
+                local r = rewards_def[rcp]
+                -- 给予奖励
+            end
+
+        end
+    end
+
+
+    local attach_fn = function (inst, owner, name)
+        owner:ListenForEvent("ugsacrificial_items", on_sacrificial)
+        local sanity = owner.components.sanity
+        inst.org_max_sanity = sanity and sanity.max or nil
+        if inst.percent then
+            sanity:SetPercent(inst.percent)
+        end
+        inst.components.uglevel.expfn = function ()
+            return 100
+        end
+    end
+
+    return {
+        attach = attach_fn,
+        detach = nil,
+        update = update_fn,
+        onsave = function (inst, data)
+            data.percent = inst.owner and inst.owner.components.sanity:GetPercent()
+        end,
+        onload = function (inst, data)
+            inst.percent = data.percent or nil
+        end
+    }
 end
 
 
@@ -199,8 +306,8 @@ end
 
 local UGPOWERS = {
 
-    [PLAYER.HUNGER] = init_hunger_data()
-
+    [PLAYER.HUNGER] = init_hunger_data(),
+    [PLAYER.SANITY] = init_sanity_data(),
 
 }
 
