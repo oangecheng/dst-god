@@ -142,7 +142,7 @@ local function init_hunger_data()
         local lv = GetUgPowerLv(owner, name) or 0
         for _, v in ipairs(common_fns) do
             if lv >= v.lv and v.fn ~= nil then
-                v.fn(inst)
+                v.fn(inst, owner, lv)
             end
         end
     end
@@ -280,7 +280,7 @@ local function init_sanity_data()
         local lv = GetUgPowerLv(owner, name) or 0
         for _, v in ipairs(common_fns) do
             if lv >= v.lv and v.fn ~= nil then
-                v.fn(inst)
+                v.fn(inst, owner, lv)
             end
         end
     end
@@ -367,10 +367,176 @@ end
 
 
 
+
+
+local function init_health_data()
+
+
+    local common_fns = {
+
+        ---杀蜘蛛升级
+        ---提升血量上限
+        {
+            lv = 0,
+            xp = function (victim, owner, lv)
+                if victim.prefab == "spider" then
+                    return 25
+                end
+            end,
+            fn = function(inst, owner, lv)
+                local max = inst.org_maxhealth
+                local com = owner.components.health
+                if com ~= nil and max ~= nil then
+                    local percent = com:GetPercent()
+                    com:SetMaxHealth(math.floor(max * (1 + 0.01 * lv) + 0.5))
+                    com:SetPercent(percent)
+                end
+            end
+        },
+
+        ---杀狗升级
+        ---提升防御 max = 25%
+        ---提升攻击 max = 25%
+        {
+            lv = 25,
+            xp = function (victim, owner, lv)
+                if victim.prefab == "hound" then
+                    return 25
+                end
+            end,
+            fn = function (inst, owner, lv)
+                local mult1 = math.min(lv - 25 * 0.0025, 0.25)
+                if owner.components.health ~= nil then
+                    owner.components.health.externalabsorbmodifiers:SetModifier(PLAYER.HEALTH, mult1)
+                end
+                local mult2 = math.min(lv - 25 * 0.0025, 0.25) + 1
+                if owner.components.combat ~= nil then
+                    owner.components.combat.externaldamagemultipliers:SetModifier(PLAYER.HEALTH, mult2)
+                end
+            end
+        },
+
+        ---杀触手升级
+        ---
+        {
+            lv = 50,
+            xp = function (victim, owner, lv)
+                if victim.prefab == "tentacle" then
+                    return 100
+                end
+            end,
+            fn = function (inst, owner, lv)
+                local mult = math.min(lv - 25 * 0.0025, 0.25) + 1
+                if owner.components.combat ~= nil then
+                    owner.components.combat.externaldamagemultipliers:SetModifier(PLAYER.HEALTH, mult)
+                end
+            end
+        },
+
+        ---杀蜘蛛女王升级
+        ---位面伤害&位面防御
+        {
+            lv = 75,
+            xp = function (victim, owner, lv)
+                if victim.prefab == "spiderqueen" then
+                    return 100
+                end
+            end,
+            fn = function (inst, owner, lv)
+                local v = (lv - 75) * 1
+            end
+        },
+
+
+        ---杀怪升级
+        ---战神属性：僵直抗性
+        {
+            lv = 100,
+            xp = function (victim, owner, lv)
+                if victim.prefab == "spiderqueen" then
+                    return 100
+                end
+            end,
+            fn = function (inst, owner, lv)
+                local v = (lv - 75) * 1
+            end
+        },
+
+    }
+
+
+    local function update_fn(inst, owner, name)
+        local lv = GetUgPowerLv(owner, name) or 0
+        for _, v in ipairs(common_fns) do
+            if lv >= v.lv and v.fn ~= nil then
+                v.fn(inst)
+            end
+        end
+    end
+
+
+    local function on_kill_other(killer, data)
+        local victim = data.victim
+        if victim and victim.components.health and victim.components.freezable then
+            local health_value = victim.components.health.maxhealth
+            if health_value >= 4000 then
+                local inst = GetUgEntity(killer, PLAYER.HEALTH)
+                if inst and inst.components.ugentity then
+                    local v = inst.components.ugentity:GetValue("boss_killer_value") or 0
+                    inst.components.ugentity:PutValue("boss_killer_value", v + math.random(1, 2))
+                end
+            end
+
+            local lv = GetUgPowerLv(killer, PLAYER.HEALTH)
+            ---@diagnostic disable-next-line: undefined-field
+            local common_fns_reverse = table.reverse(common_fns)
+            for _, v in ipairs(common_fns_reverse) do
+                if lv >= v.lv and v.xp ~= nil then
+                    local exp = v.xp(victim, killer, lv)
+                    if exp ~= nil then
+                        GainUgPowerXp(killer, PLAYER.HEALTH, exp)
+                    end
+                    break
+                end
+            end
+
+        end
+    end
+
+    
+    local function attach_fn(inst, owner, name)
+        owner:ListenForEvent("killed", on_kill_other)
+        local health = owner.components.health
+        inst.org_maxhealth = health.maxhealth
+        if inst.percent then
+            health:SetPercent(inst.percent)
+        end
+        inst.components.uglevel.expfn = function ()
+            return 100
+        end
+    end
+
+    return {
+        attach = attach_fn,
+        detach = nil,
+        update = update_fn,
+        onsave = function (inst, data)
+            data.percent = inst.owner and inst.owner.components.health:GetPercent()
+        end,
+        onload = function (inst, data)
+            inst.percent = data.percent or nil
+        end
+    }
+end
+
+
+
+
 local UGPOWERS = {
 
     [PLAYER.HUNGER] = init_hunger_data(),
     [PLAYER.SANITY] = init_sanity_data(),
+    [PLAYER.HEALTH] = init_health_data(),
 
 }
 
