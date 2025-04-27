@@ -179,3 +179,35 @@ end
 function IsMedalOpen()
     return TUNING.FUNCTIONAL_MEDAL_IS_OPEN
 end
+
+
+
+---持久数据至组件
+---@param owner table
+---@param powername string
+---@param key string
+---@param value any
+function AddEntityNumber(owner, powername, key, value)
+    local inst = GetUgEntity(owner, powername)
+    local comp = inst and inst.components.ugentity or nil
+    if comp ~= nil then
+        local v = comp:GetValue(key) or 0
+        comp:PutValue(key, v + value)
+    end
+end
+
+
+---获取数据
+---@param owner any
+---@param powername any
+---@param key any
+---@return number
+function GetEntityNumber(owner, powername, key)
+    local inst = GetUgEntity(owner, powername)
+    local comp = inst and inst.components.ugentity or nil
+    if comp ~= nil then
+        return comp:GetValue(key) or 0
+    else
+        return 0
+    end
+end

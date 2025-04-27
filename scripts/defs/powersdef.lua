@@ -12,6 +12,8 @@ local PLAYER = UGPOWERS.PLAYER
 
 
 
+
+
 local function init_hunger_data()
 
     local buffers = {
@@ -313,12 +315,7 @@ local function init_sanity_data()
 
 
     local function give_wisdom_value(player, value)
-        local inst = GetUgEntity(player, PLAYER.SANITY)
-        local comp = inst and inst.components.ugentity or nil
-        if comp ~= nil then
-            local v = (comp:GetValue("wisdom_value") or 0) + value
-            comp:PutValue("wisdom_value", v)
-        end
+        AddEntityNumber(player, PLAYER.SANITY, "wisdom_value", value)
     end
 
 
@@ -426,10 +423,7 @@ local function init_health_data()
                 end
             end,
             fn = function (inst, owner, lv)
-                local mult = math.min(lv - 25 * 0.0025, 0.25) + 1
-                if owner.components.combat ~= nil then
-                    owner.components.combat.externaldamagemultipliers:SetModifier(PLAYER.HEALTH, mult)
-                end
+                --待定
             end
         },
 
@@ -443,7 +437,19 @@ local function init_health_data()
                 end
             end,
             fn = function (inst, owner, lv)
-                local v = (lv - 75) * 1
+                AddUgTag(owner, "player_lunar_aligned")
+                AddUgTag(owner, "player_shadow_aligned")
+                local delta = math.min((lv - 75) * 0.01, 0.2)
+                local persist = owner.components.damagetyperesist
+                if persist ~= nil then
+                    persist:AddResist("shadow_aligned", owner, 1 - delta, PLAYER.HEALTH)
+                    persist:AddResist("lunar_aligned" , owner, 1 - delta, PLAYER.HEALTH)
+                end
+                local bouns = owner.components.damagetypebonus
+                if bouns ~= nil then
+                    bouns:AddBonus("lunar_aligned" , owner, 1 + delta, PLAYER.HEALTH)
+                    bouns:AddBonus("shadow_aligned", owner, 1 + delta, PLAYER.HEALTH)
+                end
             end
         },
 
@@ -453,12 +459,11 @@ local function init_health_data()
         {
             lv = 100,
             xp = function (victim, owner, lv)
-                if victim.prefab == "spiderqueen" then
-                    return 100
-                end
+                local max_health = victim.components.health.maxhealth
+                return math.min(max_health * 0.01, 100)
             end,
             fn = function (inst, owner, lv)
-                local v = (lv - 75) * 1
+                AddUgTag(owner, "ughealth_master", PLAYER.HEALTH)
             end
         },
 
@@ -480,11 +485,8 @@ local function init_health_data()
         if victim and victim.components.health and victim.components.freezable then
             local health_value = victim.components.health.maxhealth
             if health_value >= 4000 then
-                local inst = GetUgEntity(killer, PLAYER.HEALTH)
-                if inst and inst.components.ugentity then
-                    local v = inst.components.ugentity:GetValue("boss_killer_value") or 0
-                    inst.components.ugentity:PutValue("boss_killer_value", v + math.random(1, 2))
-                end
+                local v = math.random(1, 2)
+                AddEntityNumber(killer, PLAYER.HEALTH, "boss_killer_value", v)
             end
 
             local lv = GetUgPowerLv(killer, PLAYER.HEALTH)
