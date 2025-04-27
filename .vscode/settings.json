@@ -95,7 +95,8 @@
         "UGRARITY",
         "ANCHOR_TOP",
         "MakeInventoryFloatable",
-        "FOODGROUP"
+        "FOODGROUP",
+        "ArrayUnion"
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",

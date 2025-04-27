@@ -181,6 +181,7 @@ end
 
 local function init_sanity_data()
     
+    local NAME = PLAYER.SANITY
     local rewards_def = require("defs/rewardsdef").sanity
     
     local common_fns = {
@@ -218,8 +219,8 @@ local function init_sanity_data()
                 local v = math.min((lv - 25) * 0.08 + 1, 2.1)
                 PutUgData(owner, "gain_blue_print", math.floor(v))
                 if not IsMedalOpen() then
-                    AddUgTag(owner,"handyperson", PLAYER.SANITY)
-                    AddUgTag(owner,"fastbuilder", PLAYER.SANITY)
+                    AddUgTag(owner,"handyperson", NAME)
+                    AddUgTag(owner,"fastbuilder", NAME)
                     owner:PushEvent("refreshcrafting") --更新制作栏
                 end 
             end
@@ -239,7 +240,7 @@ local function init_sanity_data()
                 local v = math.min((lv - 50) * 0.08 + 3, 4.1)
                 PutUgData(owner, "gain_blue_print", math.floor(v))
                 if not IsMedalOpen() then
-                    AddUgTag(owner,"bookbuilder", PLAYER.SANITY)
+                    AddUgTag(owner,"bookbuilder", NAME)
                     if owner.components.reader == nil then
                         owner:AddComponent("reader")
                     end
@@ -273,7 +274,7 @@ local function init_sanity_data()
             fn = function (inst, owner, lv)
                 local r = math.min((lv - 75) * 0.01, 1)
                 PutUgData(owner, "copy_item", r)
-                AddUgTag(owner, "ugsanity_master")
+                AddUgTag(owner, "ugsanity_master", NAME)
             end
         }
     }
@@ -290,14 +291,14 @@ local function init_sanity_data()
 
     local function on_sacrificial(doer, data)
         if data.item ~= nil then
-            local lv = GetUgPowerLv(doer, PLAYER.SANITY)
+            local lv = GetUgPowerLv(doer, NAME)
             ---@diagnostic disable-next-line: undefined-field
             local common_fns_reverse = table.reverse(common_fns)
             for _, v in ipairs(common_fns_reverse) do
                 if lv >= v.lv and v.xp ~= nil then
                     local exp = v.xp(data.item, doer, lv)
                     if exp ~= nil then
-                        GainUgPowerXp(doer, PLAYER.SANITY, exp)
+                        GainUgPowerXp(doer, NAME, exp)
                     end
                     break
                 end
@@ -368,6 +369,7 @@ end
 
 local function init_health_data()
 
+    local NAME = PLAYER.HEALTH
 
     local common_fns = {
 
@@ -414,7 +416,7 @@ local function init_health_data()
         },
 
         ---杀触手升级
-        ---
+        ---所有回血效果增强
         {
             lv = 50,
             xp = function (victim, owner, lv)
@@ -423,7 +425,8 @@ local function init_health_data()
                 end
             end,
             fn = function (inst, owner, lv)
-                --待定
+                local v = math.min((lv - 50) * 0.005, 0.5) + 1
+                PutUgData(owner, "health_delta", v)
             end
         },
 
@@ -437,18 +440,18 @@ local function init_health_data()
                 end
             end,
             fn = function (inst, owner, lv)
-                AddUgTag(owner, "player_lunar_aligned")
-                AddUgTag(owner, "player_shadow_aligned")
+                AddUgTag(owner, "player_lunar_aligned", NAME)
+                AddUgTag(owner, "player_shadow_aligned", NAME)
                 local delta = math.min((lv - 75) * 0.01, 0.2)
                 local persist = owner.components.damagetyperesist
                 if persist ~= nil then
-                    persist:AddResist("shadow_aligned", owner, 1 - delta, PLAYER.HEALTH)
-                    persist:AddResist("lunar_aligned" , owner, 1 - delta, PLAYER.HEALTH)
+                    persist:AddResist("shadow_aligned", owner, 1 - delta, NAME)
+                    persist:AddResist("lunar_aligned" , owner, 1 - delta, NAME)
                 end
                 local bouns = owner.components.damagetypebonus
                 if bouns ~= nil then
-                    bouns:AddBonus("lunar_aligned" , owner, 1 + delta, PLAYER.HEALTH)
-                    bouns:AddBonus("shadow_aligned", owner, 1 + delta, PLAYER.HEALTH)
+                    bouns:AddBonus("lunar_aligned" , owner, 1 + delta, NAME)
+                    bouns:AddBonus("shadow_aligned", owner, 1 + delta, NAME)
                 end
             end
         },
@@ -463,7 +466,7 @@ local function init_health_data()
                 return math.min(max_health * 0.01, 100)
             end,
             fn = function (inst, owner, lv)
-                AddUgTag(owner, "ughealth_master", PLAYER.HEALTH)
+                AddUgTag(owner, "ughealth_master", NAME)
             end
         },
 
@@ -534,11 +537,143 @@ end
 
 
 
+local function init_cooker_data()
+
+    local NAME = PLAYER.COOKER
+
+
+    local common_fns = {
+
+        --- 升级：青蛙三明治
+        --- 提升烹饪速度
+        {
+            lv = 0,
+            xp = function (prefab, owner, lv)
+                if prefab == "frogglebunwich" then
+                    return 25
+                end
+            end,
+            fn = function (inst, owner, lv)
+                local v = math.max(1 - lv * 0.02, 0.25)
+                PutUgData(owner, "cook_time_mult", v)
+            end
+        },
+
+        --- 升级：鱼肉玉米卷
+        --- 晾肉加速
+        --- 获得升级晾肉架的能力
+        {
+            lv = 25,
+            xp = function (prefab, owner, lv)
+                if prefab == "fishtacos" then
+                    return 25
+                end
+            end,
+            fn = function (inst, owner, lv)
+                local v = math.max(1 - (lv - 25) * 0.01, 0.75)
+                PutUgData(owner, "dry_time_mult", v)
+                if not IsMedalOpen() then
+                    AddUgTag(owner,"masterchef", NAME) --大厨标签
+                    AddUgTag(owner,"professionalchef", NAME) --调料站
+                    AddUgTag(owner,"expertchef", NAME)--熟练烹饪标签
+                end
+            end
+        },
+
+        --- 升级：叶肉糕
+        --- 获得一些特殊能力 升级晾肉架、手搓丸子
+        {
+            lv = 50,
+            xp = function (prefab, owner, lv)
+                if prefab == "leafloaf" then
+                    return 25
+                end
+            end,
+            fn = function (inst, owner, lv)
+                AddUgTag(owner, "ugmeatrack_maker",NAME)
+                AddUgTag(owner, "ugfood_maker", NAME)
+            end
+        },
+
+        --- 升级：叶肉糕
+        --- 
+        {
+            lv = 75,
+            xp = function (prefab, owner, lv)
+                if prefab == "leafloaf" then
+                    return 25
+                end
+            end,
+            fn = function (inst, owner, lv)
+                
+            end
+        },
+
+        --- 升级：叶肉糕
+        --- 
+        {
+            lv = 100,
+            xp = function (prefab, owner, lv)
+                if prefab == "leafloaf" then
+                    return 25
+                end
+            end,
+            fn = function (inst, owner, lv)
+                
+            end
+        }
+    }
+
+
+    local function on_harvest_food(owner, data)
+        local lv = GetUgPowerLv(owner, NAME)
+        ---@diagnostic disable-next-line: undefined-field
+        local common_fns_reverse = table.reverse(common_fns)
+        for _, v in ipairs(common_fns_reverse) do
+            if lv >= v.lv and v.xp ~= nil then
+                local exp = v.xp(data.food, owner, lv)
+                if exp ~= nil then
+                    GainUgPowerXp(owner, NAME, exp)
+                end
+                break
+            end
+        end
+    end
+
+    
+    local function attach_fn(inst, owner, name)
+        owner:ListenForEvent(UGEVENTS.HARVEST_SELF_FOOD, on_harvest_food)
+        inst.components.uglevel.expfn = function ()
+            return 100
+        end
+    end
+
+
+    local function update_fn(inst, owner, name)
+        local lv = GetUgPowerLv(owner, name) or 0
+        for _, v in ipairs(common_fns) do
+            if lv >= v.lv and v.fn ~= nil then
+                v.fn(inst)
+            end
+        end
+    end
+
+
+    return {
+        attach = attach_fn,
+        update = update_fn,
+    }
+end
+
+
+
+
 local UGPOWERS = {
 
     [PLAYER.HUNGER] = init_hunger_data(),
     [PLAYER.SANITY] = init_sanity_data(),
     [PLAYER.HEALTH] = init_health_data(),
+    [PLAYER.COOKER] = init_cooker_data(),
 
 }
 

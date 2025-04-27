@@ -121,7 +121,10 @@ function RemoveUgComponent(owner, com, source)
 end
 
 
-
+---增加tag
+---@param owner table
+---@param tag string
+---@param source string
 function AddUgTag(owner, tag, source)
     if owner ~= nil then
         if owner.ugtags == nil then
@@ -146,6 +149,43 @@ function RemoveUgTag(owner, tag, source)
         end
     end
 end
+
+
+-- ---增加tag
+-- ---@param owner table
+-- ---@param tag string
+-- ---@param source string
+-- function AddUgTag(owner, tag, source)
+--     if owner ~= nil then
+--         owner.ugtags = owner.ugtags or {}
+--         owner.ugtags[tag] = owner.ugtags[tag] or {}
+--         --- merge数组
+--         ArrayUnion(owner.ugtags[tag], { source })
+--         if not owner:HasTag(tag) then
+--             owner:AddTag(tag)
+--         end
+--     end
+-- end
+
+
+
+-- function RemoveUgTag(owner, tag, source)
+--     if owner ~= nil then
+--         local tags = owner.ugtags and owner.ugtags or nil
+--         if tags ~= nil then
+--             local sources = tags[tag] or nil
+--             if sources ~= nil then
+--                 ---@diagnostic disable-next-line: undefined-field
+--                 table.removearrayvalue(sources, source)
+--                 if IsTableEmpty(sources) then
+--                     owner:RemoveTag(tag)
+--                 end
+--             end
+--         end
+--     end
+-- end
+
+
 
 
 ---comment 根据权重获取随机物品(权重表,随机值)
