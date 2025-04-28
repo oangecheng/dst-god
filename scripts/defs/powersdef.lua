@@ -959,7 +959,7 @@ local function init_farmer_data()
                 return plant.is_oversized and 10 or 3
             end,
             fn = function (inst, owner, lv)
-                
+                AddUgTag(owner, "ugfarm_item_maker", NAME)
             end
         },
 
