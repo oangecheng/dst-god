@@ -901,7 +901,7 @@ local function init_picker_data()
         local lv = GetUgPowerLv(owner, name) or 0
         for _, v in ipairs(common_fns) do
             if lv >= v.lv and v.fn ~= nil then
-                v.fn(inst)
+                v.fn(inst, owner, lv)
             end
         end
     end
@@ -915,14 +915,152 @@ end
 
 
 
-local UGPOWERS = {
 
+local function init_farmer_data()
+
+    local NAME = PLAYER.FARMER
+
+
+    local common_fns = {
+        {
+            lv = 0,
+            xp = function (plant, owner, lv)
+                return plant.is_oversized and 100 or 12
+            end,
+            fn = function (inst, owner, lv)
+                
+            end
+        },
+
+        {
+            lv = 25,
+            xp = function (plant, owner, lv)
+                return plant.is_oversized and 50 or 9
+            end,
+            fn = function (inst, owner, lv)
+                
+            end
+        },
+
+        {
+            lv = 50,
+            xp = function (plant, owner, lv)
+                return plant.is_oversized and 25 or 6
+            end,
+            fn = function (inst, owner, lv)
+                local m = math.min((lv - 50) * 0.1, 10)
+                PutUgData(owner, "deployable_mult", m)
+            end
+        },
+
+        {
+            lv = 75,
+            xp = function (plant, owner, lv)
+                return plant.is_oversized and 10 or 3
+            end,
+            fn = function (inst, owner, lv)
+                
+            end
+        },
+
+        {
+            lv = 100,
+            xp = function (plant, owner, lv)
+                return plant.is_oversized and 5 or 1
+            end,
+            fn = function (inst, owner, lv)
+                AddUgTag(owner, "ugfarm_master", NAME)
+            end
+        },
+    }
+
+    local MAX = 5
+    local function calc_extra_num(powerlv)
+        local lv = math.min(math.floor(powerlv * 0.04) + 1, MAX)
+        local r = math.random(2 ^ MAX)
+        for i = lv, 1, -1 do
+            local ratio = 32 / (2 ^ i)
+            if r <= ratio then
+                return i
+            end
+        end
+        return 0
+    end
+
+    local function on_pick_farm_plant(player, data)
+        if not (data and data.object and data.object:HasTag("farm_plant"))  then
+            return
+        end
+        local powerlv = GetUgPowerLv(player, NAME)
+        if powerlv == nil then
+            return
+        end
+
+        ---@diagnostic disable-next-line: undefined-field
+        local common_fns_reverse = table.reverse(common_fns)
+        for _, v in ipairs(common_fns_reverse) do
+            if powerlv >= v.lv and v.xp ~= nil then
+                local exp = v.xp(data.object, player, powerlv)
+                if exp ~= nil then
+                    GainUgPowerXp(player, NAME, exp)
+                end
+                break
+            end
+        end
+
+        local dropper = data.object.components.lootdropper
+        -- 额外掉落物
+        if dropper then
+            local num = calc_extra_num(powerlv)
+            local loot = dropper:GenerateLoot()
+            if num <= 0 or IsTableEmpty(loot) then return end
+            local extraloot = {}
+            for _, p in ipairs(loot) do
+                for i = 1, num do
+                    table.insert(extraloot, dropper:SpawnLootPrefab(p))
+                end
+            end
+            -- 给予玩家物品
+            for _, item in ipairs(extraloot) do
+                player.components.inventory:GiveItem(item, nil, player:GetPosition())
+            end 
+        end
+        
+    end
+    
+
+    local function attach_fn(inst, owner, name)
+        owner:ListenForEvent("picksomething", on_pick_farm_plant)
+    end
+
+    local function update_fn(inst, owner, name)
+        local lv = GetUgPowerLv(owner, name) or 0
+        for _, v in ipairs(common_fns) do
+            if lv >= v.lv and v.fn ~= nil then
+                v.fn(inst, owner, lv)
+            end
+        end
+    end
+
+    return {
+        attach_fn = attach_fn,
+        update_fn = update_fn,
+    }
+
+end
+
+
+
+
+
+
+local UGPOWERS = {
     [PLAYER.HUNGER] = init_hunger_data(),
     [PLAYER.SANITY] = init_sanity_data(),
     [PLAYER.HEALTH] = init_health_data(),
     [PLAYER.COOKER] = init_cooker_data(),
     [PLAYER.PICKER] = init_picker_data(),
-
+    [PLAYER.FARMER] = init_farmer_data(),
 }
 
 

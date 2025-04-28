@@ -177,7 +177,6 @@ end
 
 
 
-
 --多汁浆果采集是掉落
 AddPrefabPostInit("berrybush_juicy", function(inst)
     if GLOBAL.TheWorld.ismastersim then
@@ -192,3 +191,64 @@ AddPrefabPostInit("berrybush_juicy", function(inst)
         end
     end
 end)
+
+
+
+-- 根据用户等级计算肥力值的倍率对肥力值进行修改
+-- 并且返回原始的肥力值，如果之前的肥力值不存在，则返回nil
+local function tryModifyNutrients(fertilizer, deployer)
+    if not fertilizer or not deployer then return nil end
+    local cacheValue = fertilizer.nutrients
+    if not cacheValue then return nil end
+
+    local multi = GetUgData(deployer, "deployable_mult", 0) + 1
+    local newValue = {}
+    for i,v in ipairs(cacheValue) do
+        -- 土地肥力值的上限就是100
+        table.insert(newValue, math.min(math.floor(v * multi), 100))
+    end
+    fertilizer.nutrients = newValue
+    return cacheValue
+end
+
+---comments hook 施肥组件
+AddComponentPostInit("deployable", function (deployable)
+    local oldfn = deployable.Deploy
+    deployable.Deploy = function (self, pt, deployer, rot)
+        local inst = self.inst
+        local fertilizer = inst.components.fertilizer
+        local ret = tryModifyNutrients(fertilizer, deployer)
+        local deployed = oldfn(self, pt, deployer, rot)
+        if ret then
+            inst.components.fertilizer.nutrients = ret
+        end
+		return deployed
+    end
+end)
+
+
+--- comment 照料作物巨大化
+AddComponentPostInit("farmplanttendable", function (tendable)
+    local oldfn = tendable.TendTo
+    tendable.TendTo = function (self, doer)
+        if doer:HasTag("ugfarm_master") and self.inst.components.ugmark then
+            self.inst.components.ugmark:Put("oversized", true)
+        end
+        return oldfn(self, doer)
+    end
+end)
+
+
+local farmplants = require("prefabs/farm_plant_defs").PLANT_DEFS
+for k, v in pairs(farmplants) do
+    AddPrefabPostInit(v.prefab, function (inst)
+        if TheWorld.ismastersim then
+            inst:AddComponent("ugmark")
+            inst.components.ugmark:SetFunc("oversized", function (data)
+                if data then
+                    inst.force_oversized = true
+                end
+            end)
+        end
+    end)
+end

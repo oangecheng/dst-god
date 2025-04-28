@@ -2,11 +2,21 @@
 local Mark = Class(function (self, inst)
     self.inst = inst
     self.marks = {}
+    self.fns = {}
 end)
 
 
 function Mark:Put(key, value)
     self.marks[key] = value
+    local fn = self.fns[key]
+    if fn ~= nil then
+        fn(value)
+    end
+end
+
+
+function Mark:SetFunc(key, fn)
+    self.fns[key] = fn
 end
 
 
@@ -36,6 +46,12 @@ end
 
 function Mark:OnLoad(data)
     self.marks = data.marks or {}
+    for k, v in pairs(self.marks) do
+        local fn = self.fns[k]
+        if fn ~= nil then
+            fn(v)
+        end
+    end
 end
 
 
