@@ -177,3 +177,18 @@ end
 
 
 
+
+--多汁浆果采集是掉落
+AddPrefabPostInit("berrybush_juicy", function(inst)
+    if GLOBAL.TheWorld.ismastersim then
+        if inst.components.pickable then
+            local oldpickfn = inst.components.pickable.onpickedfn
+            inst.components.pickable.onpickedfn = function(inst, picker, loot)
+                picker:PushEvent(UGEVENTS.PICK_STH, { object = inst, prefab = "berries_juicy", num = 3 })
+                if oldpickfn then
+                    oldpickfn(inst, picker, loot)
+                end
+            end
+        end
+    end
+end)

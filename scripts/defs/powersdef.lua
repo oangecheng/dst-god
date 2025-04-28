@@ -477,7 +477,7 @@ local function init_health_data()
         local lv = GetUgPowerLv(owner, name) or 0
         for _, v in ipairs(common_fns) do
             if lv >= v.lv and v.fn ~= nil then
-                v.fn(inst)
+                v.fn(inst, owner, lv)
             end
         end
     end
@@ -651,7 +651,7 @@ local function init_cooker_data()
         local lv = GetUgPowerLv(owner, name) or 0
         for _, v in ipairs(common_fns) do
             if lv >= v.lv and v.fn ~= nil then
-                v.fn(inst)
+                v.fn(inst, owner, lv)
             end
         end
     end
@@ -666,12 +666,262 @@ end
 
 
 
+
+local function init_picker_data()
+
+    local NAME = PLAYER.PICKER
+
+    local PICKABLE_DEFS = {
+        grass = 1,   -- 草
+        sapling = 1,  -- 树枝
+        flower = 1, -- 花
+        carrot_planted = 1, -- 胡萝卜
+        reeds = 1, -- 芦苇
+        flower_evil = 1,  -- 恶魔花
+        berrybush = 2,  -- 浆果丛1
+        berrybush2 = 2, -- 浆果丛2
+        berrybush_juicy = 2, -- 多汁浆果
+        cactus = 2,  -- 仙人掌1
+        oasis_cactus = 2, -- 仙人掌2
+        red_mushroom = 2, -- 红蘑菇
+        green_mushroom = 2, -- 绿蘑菇
+        blue_mushroom = 2, -- 蓝蘑菇
+        cave_fern = 1, -- 蕨类植物 
+        cave_banana_tree = 2, -- 洞穴香蕉 
+        lichen = 2,  -- 洞穴苔藓
+        marsh_bush = 2, -- 荆棘丛
+        flower_cave = 2, -- 荧光果
+        flower_cave_double = 2, -- 荧光果2 
+        flower_cave_triple = 2, -- 荧光果3 
+        sapling_moon = 2, -- 月岛树枝
+        succulent_plant = 2, -- 多肉植物
+        bullkelp_plant = 2, -- 公牛海带
+        wormlight_plant = 2, -- 荧光植物
+        stalker_fern = 2, -- 蕨类植物
+        rock_avocado_bush = 2, -- 石果树
+        oceanvine = 2, -- 苔藓藤条
+        bananabush = 2, -- 香蕉丛
+        monkeytail = 2, -- 猴尾草
+        ancienttree_nightvision = 10, --夜莓
+
+        stalker_berry = 2, -- 神秘植物
+        stalker_bulb = 2, -- 荧光果1，编织者召唤的
+        stalker_bulb_double = 2, -- 荧光果2，编织者召唤的
+        rosebush = 2, -- 棱镜蔷薇花
+        orchidbush = 2, -- 棱镜兰草花
+        lilybush = 2, -- 棱镜蹄莲花
+        monstrain = 2, -- 棱镜雨竹
+        shyerryflower = 2, -- 棱镜颤栗花
+        mandrake_berry = 2, -- 勋章曼德拉果
+        medal_fruit_tree_carrot = 2, -- 勋章胡萝卜树
+        medal_fruit_tree_pomegranate = 2, --勋章石榴树
+        medal_fruit_tree_pepper = 2, --辣椒
+        medal_fruit_tree_garlic = 2, --大蒜
+        medal_fruit_tree_dragonfruit= 2, -- 火龙果
+        medal_fruit_tree_banana = 2,
+        medal_fruit_tree_asparagus = 2,
+        medal_fruit_tree_potato = 2,
+        medal_fruit_tree_onion = 2,
+        medal_fruit_tree_tomato = 2,
+        medal_fruit_tree_watermelon = 2,
+        medal_fruit_tree_pumpkin = 2,
+        medal_fruit_tree_eggplant = 2,
+        medal_fruit_tree_corn = 2,
+        medal_fruit_tree_durian = 2,
+        medal_fruit_tree_immortal_fruit = 2,
+        medal_fruit_tree_lucky_fruit = 2,
+    }
+
+    local MAX = 5
+    local function calc_extra_num(powerlv)
+        local lv = math.min(math.floor(powerlv * 0.04) + 1, MAX)
+        local r = math.random(2 ^ MAX)
+        for i = lv, 1, -1 do
+            local ratio = 32 / (2 ^ i)
+            if r <= ratio then
+                return i
+            end
+        end
+        return 0
+    end
+
+
+    local common_fns = {
+
+        {
+            lv = 0,
+            xp = function (target, owner, lv)
+                if target.prefab == "grass" or target.prefab == "sapling" then
+                    return 5
+                end
+            end,
+            fn = function (inst, owner, lv)
+            end
+        },
+
+        {
+            lv = 25,
+            xp = function (target, owner, lv)
+                if target.prefab == "berrybush" or target.prefab == "berrybush2" then
+                    return 10
+                elseif target.prefab == "berrybush_juicy" then
+                    return 20
+                end
+            end,
+            fn = function (inst, owner, lv)
+                AddUgTag(owner, "fastpicker", NAME)
+            end
+        },
+
+        {
+            lv = 50,
+            xp = function (target, owner, lv)
+                if target.prefab == "cactus" or target.prefab == "oasis_cactus" then
+                    return target.has_flower and 30 or 20
+                end
+            end,
+            fn = function (inst, owner, lv)
+                AddUgTag(owner, "ugpick_item_maker", NAME)
+            end
+        },
+
+        {
+            lv = 75,
+            xp = function(target, owner, lv)
+                if target.prefab == "oceanvine" then
+                    return 25
+                elseif target.prefab == "ancienttree_nightvision" then
+                    return 50
+                end
+            end,
+            fn = function(inst, owner, lv)
+                local r = math.min(lv - 50, 50) * 0.01
+                PutUgData(owner, "ugpick_value_ratio", r)
+            end
+        },
+
+        {
+            lv = 100,
+            xp = function(target, owner, lv)
+                return PICKABLE_DEFS[target.prefab] or 0
+            end,
+            fn = function(inst, owner, lv)
+                AddUgTag(owner, "ugpick_master", NAME)
+            end
+        }
+
+    }
+
+
+    local function on_pick_plant(player, data)
+        local obj = data and data.object
+        if obj == nil or obj:HasTag("farm_plant") then
+            return
+        end
+        local powerlv = GetUgPowerLv(player, NAME)
+        if powerlv == nil then
+            return
+        end
+        local loot = data.loot
+        if obj.prefab ~= nil and PICKABLE_DEFS[obj.prefab] ~= nil then
+            ---@diagnostic disable-next-line: undefined-field
+            local common_fns_reverse = table.reverse(common_fns)
+            for _, v in ipairs(common_fns_reverse) do
+                if powerlv >= v.lv and v.xp ~= nil then
+                    local exp = v.xp(obj, player, powerlv)
+                    if exp ~= nil then
+                        GainUgPowerXp(player, NAME, exp)
+                    end
+                    break
+                end
+            end
+
+            ---每次采集概率获得1点植物能量
+            if math.random() < GetUgData(player, "ugpick_value_ratio", 0) then
+                AddEntityNumber(player, NAME, "ugpick_value", 1)
+            end
+
+            local num = calc_extra_num(powerlv)
+            if num < 0 then
+                return
+            end
+            -- 处理特殊case，目前支持多汁浆果
+            if data.prefab then
+                if obj.components.lootdropper then
+                    local pt = obj:GetPosition()
+                    pt.y = pt.y + (obj.components.pickable.dropheight or 0)
+                    for _ = 1, num * data.num do
+                        obj.components.lootdropper:SpawnLootPrefab(data.prefab, pt)
+                    end
+                end
+            elseif loot then
+                --- 单个物品
+                if loot.prefab ~= nil then
+                    for _ = 1, num do
+                        local item = SpawnPrefab(loot.prefab)
+                        player.components.inventory:GiveItem(item, nil, player:GetPosition())
+                    end
+                elseif not IsTableEmpty(loot) then
+                    local extraloot = {}
+                    local lootdropper = obj.components.lootdropper
+                    local dropper = lootdropper:GenerateLoot()
+                    if (not IsTableEmpty(dropper)) then
+                        for _, prefab in ipairs(dropper) do
+                            for i = 1, num do
+                                table.insert(extraloot, lootdropper:SpawnLootPrefab(prefab))
+                            end
+                        end
+                        for i, item in ipairs(extraloot) do
+                            player.components.inventory:GiveItem(item, nil, player:GetPosition())
+                        end
+                    end
+                end
+            end
+
+            -- 仙人掌花单独处理
+            if obj.has_flower and (obj.prefab == "cactus" or obj.prefab == "oasis_cactus") then
+                local flower = SpawnPrefab("cactus_flower")
+                if flower ~= nil then
+                    flower.components.stackable:SetStackSize(num)
+                    player.components.inventory:GiveItem(flower, nil, player:GetPosition()) 
+                end
+            end
+        end
+    end
+    
+    local function attach_fn(inst, owner, name)
+        owner:ListenForEvent("picksomething", on_pick_plant)
+        owner:ListenForEvent(UGEVENTS.PICK_STH, on_pick_plant)
+        inst.components.uglevel.expfn = function ()
+            return 100
+        end
+    end
+
+    local function update_fn(inst, owner, name)
+        local lv = GetUgPowerLv(owner, name) or 0
+        for _, v in ipairs(common_fns) do
+            if lv >= v.lv and v.fn ~= nil then
+                v.fn(inst)
+            end
+        end
+    end
+
+    return {
+        attach = attach_fn,
+        update = update_fn
+    }
+end
+
+
+
+
 local UGPOWERS = {
 
     [PLAYER.HUNGER] = init_hunger_data(),
     [PLAYER.SANITY] = init_sanity_data(),
     [PLAYER.HEALTH] = init_health_data(),
     [PLAYER.COOKER] = init_cooker_data(),
+    [PLAYER.PICKER] = init_picker_data(),
 
 }
 
