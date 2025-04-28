@@ -580,46 +580,44 @@ local function init_cooker_data()
             end
         },
 
-        --- 升级：叶肉糕
+        --- 升级：花沙拉
         --- 获得一些特殊能力 升级晾肉架、手搓丸子
         {
             lv = 50,
             xp = function (prefab, owner, lv)
-                if prefab == "leafloaf" then
+                if prefab == "flowersalad" then
                     return 25
                 end
             end,
             fn = function (inst, owner, lv)
-                AddUgTag(owner, "ugmeatrack_maker",NAME)
-                AddUgTag(owner, "ugfood_maker", NAME)
+                AddUgTag(owner, "cook_item_maker",NAME)
+                AddUgTag(owner, "ugfood_maker_normal", NAME)
             end
         },
 
-        --- 升级：叶肉糕
-        --- 
+        --- 升级：鳄梨酱
+        --- 解锁各种特殊食物配方，提升各项能力
         {
             lv = 75,
             xp = function (prefab, owner, lv)
-                if prefab == "leafloaf" then
+                if prefab == "guacamole" then
                     return 25
                 end
             end,
             fn = function (inst, owner, lv)
-                
+                AddUgTag(owner, "ugfood_maker_special", NAME)
             end
         },
 
-        --- 升级：叶肉糕
-        --- 
+        --- 升级：制作并收获
+        --- 能制作传说中的厨具
         {
             lv = 100,
             xp = function (prefab, owner, lv)
-                if prefab == "leafloaf" then
-                    return 25
-                end
+                return math.random(1, 3)
             end,
             fn = function (inst, owner, lv)
-                
+                AddUgTag(owner, "ugcook_master", NAME)
             end
         }
     }
