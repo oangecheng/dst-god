@@ -226,7 +226,7 @@ end
 ---@param owner table
 ---@param powername string
 ---@param key string
----@param value any
+---@param value number
 function AddEntityNumber(owner, powername, key, value)
     local inst = GetUgEntity(owner, powername)
     local comp = inst and inst.components.ugentity or nil

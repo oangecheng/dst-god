@@ -850,7 +850,7 @@ local function init_picker_data()
                 if obj.components.lootdropper then
                     local pt = obj:GetPosition()
                     pt.y = pt.y + (obj.components.pickable.dropheight or 0)
-                    for _ = 1, num * data.num do
+                    for _ = 1, num do
                         obj.components.lootdropper:SpawnLootPrefab(data.prefab, pt)
                     end
                 end
@@ -928,7 +928,6 @@ local function init_farmer_data()
                 return plant.is_oversized and 100 or 12
             end,
             fn = function (inst, owner, lv)
-                
             end
         },
 
@@ -938,7 +937,7 @@ local function init_farmer_data()
                 return plant.is_oversized and 50 or 9
             end,
             fn = function (inst, owner, lv)
-                
+                PutUgData(owner, "oversized_mult", true)
             end
         },
 
@@ -1008,6 +1007,11 @@ local function init_farmer_data()
             end
         end
 
+        --- 巨大化作物多倍需要条件
+        if data.object.is_oversized and not GetUgData(player, "oversized_mult") then
+            return
+        end
+
         local dropper = data.object.components.lootdropper
         -- 额外掉落物
         if dropper then
@@ -1051,6 +1055,93 @@ end
 
 
 
+local function init_hunter_data()
+
+    local NAME = PLAYER.HUNTER
+
+    local common_fns = {
+        {
+            lv = 0,
+            fn = function (inst, owner, lv)
+                local r = math.min(lv * 0.02, 0.2)
+                PutUgData(owner, "butter_drop_ratio", r)
+            end
+        }
+    }
+
+
+    local function on_work_finished(worker, data)
+        local target = data.target
+        local action = data.action
+    end
+
+
+    local function on_kill_other(player, data)
+        local victim = data.victim
+        if victim and victim.components.health and victim.components.freezable then
+            local lootdropper = victim.components.lootdropper
+
+
+            if victim.prefab == "butterfly" then
+                local r = GetUgData(player, "butter_drop_ratio", 0)
+                if lootdropper ~= nil and math.random() < r then
+                    lootdropper:SpawnLootPrefab("butter", victim:GetPosition())
+                end
+            end
+
+
+            --- 记录种类和击杀次数
+            local power = GetUgEntity(player, NAME)
+            local entity = power and power.components.ugentity or nil
+            if entity ~= nil then
+                local victim_data = entity:GetValue("victim") or {}
+                local killed_value = victim_data[victim.prefab] or 0
+
+                if lootdropper ~= nil and killed_value > 0 then
+                    local lv = entity.components.uglevel:GetLv()
+                    local r = (lv * 0.002) * math.max(1, killed_value * 0.05)
+                    if math.random() < r then
+                        lootdropper:DropLoot()
+                    end
+                end
+
+                --- 计算新目标，积累经验
+                --- 击杀累计杀戮值，提升下次击杀的双倍掉落几率
+                local max_health = victim.components.health.maxhealth
+                if killed_value == 0 then
+                    local exp = max_health >= 4000 and 200 or 100
+                    GainUgPowerXp(player, NAME, exp)
+                end
+
+                local v = math.max(math.floor(max_health * 0.01), 1)
+                victim_data[victim.prefab] = killed_value + v
+                entity:PutValue("victim", victim_data)
+            end
+        end
+    end
+
+    local function attach_fn(inst, owner, name)
+        owner:ListenForEvent("finishedwork", on_work_finished)
+        owner:ListenForEvent("killed", on_kill_other)
+        inst.components.uglevel.expfn = function ()
+            return 100
+        end
+    end
+
+    local function update_fn(inst, owner, name)
+        local lv = GetUgPowerLv(owner, name) or 0
+        for _, v in ipairs(common_fns) do
+            if lv >= v.lv and v.fn ~= nil then
+                v.fn(inst, owner, lv)
+            end
+        end
+    end
+
+    return {
+        attach = attach_fn,
+        update = update_fn
+    }
+end
 
 
 
@@ -1061,6 +1152,7 @@ local UGPOWERS = {
     [PLAYER.COOKER] = init_cooker_data(),
     [PLAYER.PICKER] = init_picker_data(),
     [PLAYER.FARMER] = init_farmer_data(),
+    [PLAYER.HUNTER] = init_hunter_data()
 }
 
 
