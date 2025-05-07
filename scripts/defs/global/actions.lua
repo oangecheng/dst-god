@@ -56,8 +56,8 @@ local actions = {
         state = "dolongaction",
         fn = function (act)
             local sys = act.target and act.target.components.ugsystem
-            if sys and act.invobject and act.invobject.inlayfn then
-                if act.invobject.inlayfn(act.doer, act.target, act.invobject) then
+            if sys and act.target and act.target.ugload_gem then
+                if act.target.ugload_gem(act.doer, act.target, act.invobject) then
                    removeItem(act.invobject)
                    return true
                 end 

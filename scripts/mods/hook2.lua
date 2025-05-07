@@ -154,7 +154,7 @@ AddComponentPostInit("dryer", function(self)
     end
 end)
 --- hook 动作
-local old_dry_action_fn = ACTIONS.DRY.fn 
+local old_dry_action_fn = ACTIONS.DRY.fn
 ACTIONS.DRY.fn = function(act)
     local obj = act.invobject
     local target = act.target
@@ -203,7 +203,7 @@ local function tryModifyNutrients(fertilizer, deployer)
 
     local multi = GetUgData(deployer, "deployable_mult", 0) + 1
     local newValue = {}
-    for i,v in ipairs(cacheValue) do
+    for i, v in ipairs(cacheValue) do
         -- 土地肥力值的上限就是100
         table.insert(newValue, math.min(math.floor(v * multi), 100))
     end
@@ -212,9 +212,9 @@ local function tryModifyNutrients(fertilizer, deployer)
 end
 
 ---comments hook 施肥组件
-AddComponentPostInit("deployable", function (deployable)
+AddComponentPostInit("deployable", function(deployable)
     local oldfn = deployable.Deploy
-    deployable.Deploy = function (self, pt, deployer, rot)
+    deployable.Deploy = function(self, pt, deployer, rot)
         local inst = self.inst
         local fertilizer = inst.components.fertilizer
         local ret = tryModifyNutrients(fertilizer, deployer)
@@ -222,15 +222,15 @@ AddComponentPostInit("deployable", function (deployable)
         if ret then
             inst.components.fertilizer.nutrients = ret
         end
-		return deployed
+        return deployed
     end
 end)
 
 
 --- comment 照料作物巨大化
-AddComponentPostInit("farmplanttendable", function (tendable)
+AddComponentPostInit("farmplanttendable", function(tendable)
     local oldfn = tendable.TendTo
-    tendable.TendTo = function (self, doer)
+    tendable.TendTo = function(self, doer)
         if doer:HasTag("ugfarm_master") and self.inst.components.ugmark then
             self.inst.components.ugmark:Put("oversized", true)
         end
@@ -241,10 +241,10 @@ end)
 
 local farmplants = require("prefabs/farm_plant_defs").PLANT_DEFS
 for k, v in pairs(farmplants) do
-    AddPrefabPostInit(v.prefab, function (inst)
+    AddPrefabPostInit(v.prefab, function(inst)
         if TheWorld.ismastersim then
             inst:AddComponent("ugmark")
-            inst.components.ugmark:SetFunc("oversized", function (data)
+            inst.components.ugmark:SetFunc("oversized", function(data)
                 if data then
                     inst.force_oversized = true
                 end
@@ -252,3 +252,262 @@ for k, v in pairs(farmplants) do
         end
     end)
 end
+
+
+
+
+
+
+local function init_player_fn(player)
+
+    local PLAYER = UGPOWERS.PLAYER
+    local BLACK_NAMES = {
+        wx78 = { PLAYER.SANITY, PLAYER.HEALTH, PLAYER.HUNGER }
+    }
+
+    local sys = player:AddComponent("ugsystem")
+    local bnames = BLACK_NAMES[player.prefab]
+    if bnames ~= nil then
+        sys:SetAttachTestFn(function(name, ent)
+            ---@diagnostic disable: undefined-field
+            return not table.contains(bnames, name)
+        end)
+    end
+
+    player:AddComponent("ugsync")
+    player:ListenForEvent(UGEVENTS.TASK_FINISH, function(inst, data)
+        sys:RemoveEntity(data.name)
+    end)
+    player:DoTaskInTime(0.1, function()
+        player.components.ugsync:SyncPower()
+    end)
+end
+
+AddPlayerPostInit(function(player)
+    if TheWorld.ismastersim and player.prefab ~= "ugfoxgirl" then
+        init_player_fn(player)
+    end
+end)
+
+
+
+
+
+AddPrefabPostInit("world", function(inst)
+    if not TheWorld.ismastersim then
+        return
+    end
+    inst:ListenForEvent("ms_playerdespawnanddelete", function(_, player)
+        inst.sys = player.components.ugsystem
+    end)
+
+    inst:ListenForEvent("ms_newplayerspawned", function(_, player)
+        if inst.sys then
+            inst.sys:Transform(player)
+        end
+    end)
+end)
+
+
+
+
+
+--添加镶嵌系统
+local ITEMS_DEF = require("defs/ugitems_def")
+
+
+local function init_equip_fn(owner)
+
+    local ENHANCE_ITEMS = ITEMS_DEF.enhance.items
+
+    ---comment 尝试消耗
+    ---@param user table 玩家
+    ---@param target_prefab string
+    ---@return table|nil 数量
+    local function consum_items(user, target_prefab)
+        local inventory = user.components.inventory
+        if not inventory then
+            return nil
+        end
+
+        local temp = inventory:FindItem(function(i) return i.prefab == target_prefab end)
+
+        local cnt = 0
+        if temp ~= nil then
+            cnt = temp.components.stackable ~= nil and temp.components.stackable:StackSize() or 1
+        end
+        return {
+            item = temp,
+            cnt  = cnt
+        }
+    end
+
+
+    local function valid_items(lv, name)
+        local items = ENHANCE_ITEMS[name]
+        ---@diagnostic disable-next-line: undefined-field
+        local common_fns_reverse = table.reverse(items)
+        for _, v in ipairs(common_fns_reverse) do
+            if lv >= v.lv and v.it ~= nil then
+                return v.it
+            end
+        end
+    end
+
+
+    local function upgrade_gem(doer, inst, name)
+        local sys = inst.components.ugsystem
+        if not (sys ~= nil and name ~= nil) then
+            return
+        end
+        local ent = sys:GetEntity(name)
+        if ent == nil then
+            UgSay(doer, "宝石不存在")
+            return
+        end
+
+        local lv = ent.components.uglevel:GetLv()
+        local is = valid_items(lv, name)
+
+        if is ~= nil then
+            for k, v in pairs(is) do
+                local d = consum_items(doer, k)
+                if d ~= nil and d.cnt > 0 then
+                    local exp = d.cnt * v
+                    ent.components.uglevel:XpDelta(exp)
+                    if d.item ~= nil then
+                        d.item:Remove()
+                    end
+                    -- 每次只升级一次
+                    return
+                end
+            end
+        end
+    end
+
+
+    local function load_gem_fn(doer, inst, gem)
+        local power = gem.power
+
+        local equip_powers = ITEMS_DEF.equips[inst.prefab]
+        if table.contains(equip_powers, power) then
+            if inst.components.ugsystem:GetEntity(power) ~= nil then
+                return false
+            else
+                local cache_data = gem.comments.ugmark:Get("power_data")
+                inst.components.ugsystem:AddEntity(power, cache_data)
+                return true
+            end
+
+        else
+            return false
+        end
+
+        
+    end
+
+
+    local function unload_gem_fn(doer, inst, name)
+        local sys = inst.components.ugsystem
+        if not (sys ~= nil and name ~= nil) then
+            return
+        end
+        local ent = sys:RemoveEntity(name)
+        if ent == nil then
+            UgSay(doer, "宝石不存在")
+            return
+        end
+
+        local ex_data = ent.components.ugentity:OnSave()
+        local lv_data = ent.components.uglevel:OnSave()
+
+        local cache = {
+            entity = ex_data,
+            lv = lv_data,
+        }
+
+        local gem = SpawnPrefab(name .. "_gem")
+
+        if gem ~= nil then
+            gem.components.ugmark:Put("power_data", cache)
+            doer.components.inventory:GiveItem(gem)
+            ent:Remove()
+        end
+    end
+
+    local function operate_gem_fn(player, inst, name, mode)
+        if name ~= nil and inst ~= nil then
+            if TheWorld.ismastersim then
+                if mode == 1 then
+                    unload_gem_fn(player, inst, name)
+                elseif mode == 2 then
+                    upgrade_gem(player, inst, name)
+                end
+            else
+                SendModRPCToServer(MOD_RPC.ugapi.UnLoadGem, inst, name, mode)
+            end
+        end
+    end
+
+
+    owner.ugunload_gem = operate_gem_fn
+    owner.ugload_gem = load_gem_fn
+
+    if TheWorld.ismastersim then
+        owner:AddComponent("ugsystem")
+        owner:AddComponent("ugsync")
+        owner:DoTaskInTime(0.1, function()
+            owner.components.ugsync:SyncPower()
+        end)
+    end
+end
+
+
+
+--添加镶嵌系统
+local equips = ITEMS_DEF.equips
+for k, v in pairs(equips) do
+    AddPrefabPostInit(k, init_equip_fn)
+end
+
+
+
+
+
+local berrybushs = {
+    "berrybush_juicy",
+    "berrybush",
+    "berrybush2"
+}
+for _, v in ipairs(berrybushs) do
+    AddPrefabPostInit(v, function (inst)
+        inst:AddTag(UGTAGS.MAGIC_TARGET)
+    end)
+end
+
+
+
+
+local function get_lv(inst)
+    local sync = TheWorld.ismastersim and inst.components.ugsync or inst.replica.ugsync
+    if sync ~= nil then
+        return sync:GetLevel()
+    end
+end
+
+--- 显示物品的额外信息
+AddClassPostConstruct("widgets/hoverer", function(hoverer)
+	local oldSetString = hoverer.text.SetString
+	hoverer.text.SetString = function(text, str)
+		local target = GLOBAL.TheInput:GetHUDEntityUnderMouse()
+		target = (target and target.widget and target.widget.parent ~= nil and target.widget.parent.item) or
+		TheInput:GetWorldEntityUnderMouse() or nil
+		if target and target.GUID then
+            local lv = get_lv(target)
+			if lv ~= nil then
+				str = str .."\n lv".. tostring(lv)
+			end
+		end
+		return oldSetString(text, str)
+	end
+end)

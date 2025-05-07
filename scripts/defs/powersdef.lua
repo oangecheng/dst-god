@@ -1153,38 +1153,6 @@ end
 local EQUIPS = UGPOWERS.EQUIPS
 
 
-
-local function enhance_fn(inst, item, doer, items)
-    local lv_comp = inst.components.uglevel
-    if lv_comp ~= nil and item ~= nil then
-        local lv = lv_comp:GetLv()
-        ---@diagnostic disable-next-line: undefined-field
-        local common_fns_reverse = table.reverse(items)
-        for _, v in ipairs(common_fns_reverse) do
-            if lv >= v.lv and v.it ~= nil then
-                local xp = v.it[item.prefab]
-                if xp ~= nil then
-                    if item.components.stackable ~= nil then
-                        xp = xp * item.components.stackable:StackSize()
-                    end
-                    lv_comp:XpDelta(xp)
-                    return true
-                else
-                    return false
-                end
-            end
-        end
-    end
-    return false
-end
-
-
-
-local function atk_common_enhance_fn(inst, item, doer)
-   return enhance_fn(inst, item, doer, UGTUNNING.ENHANCE_WEAPON_ITEMS)
-end
-
-
 local function init_damage_data()
 
     --- purebrilliance = 5, horrorfuel = 5, 
@@ -1200,7 +1168,6 @@ local function init_damage_data()
     
     return {
         attach = function (inst, owner, name)
-            inst.enhancefn = atk_common_enhance_fn
             inst.components.uglevel.expfn = function ()
                 return 100
             end
@@ -1214,7 +1181,6 @@ local function init_damage_data()
         end,
 
         detach = function (inst, owner, name)
-            inst.enhancefn = nil
             update_fn(inst, owner, true)
         end
     }
@@ -1236,14 +1202,12 @@ local function init_criter_data()
 
     return {
         attach = function(inst)
-            inst.enhancefn = atk_common_enhance_fn
             inst.components.uglevel.expfn = function ()
                 return 100
             end
             inst.dmgfn = dmg_criter
         end,
         detach = function(inst)
-            inst.enhancefn = nil
             inst.dmgfn = nil
         end
     }
@@ -1292,14 +1256,12 @@ local function init_splash_data()
 
     return {
         attach = function (inst)
-            inst.enhancefn = atk_common_enhance_fn
             inst.attackfn = attack_splash
             inst.components.uglevel.expfn = function ()
                 return 100
             end
         end,
         detach = function (inst)
-            inst.enhancefn = nil
             inst.attackfn = nil
         end,
     }
@@ -1336,14 +1298,12 @@ local function init_vampir_data()
     
     return {
         attach = function (inst, owner)
-            inst.enhancefn = atk_common_enhance_fn
             inst.attackfn = attack_vampir
             inst.components.uglevel.expfn = function ()
                 return 100
             end
         end,
         detach = function (inst)
-            inst.enhancefn = nil
             inst.attackfn = nil
         end
     }    
@@ -1371,14 +1331,12 @@ local function init_blindr_data()
     
     return {
         attach = function (inst)
-            inst.enhancefn = atk_common_enhance_fn
             inst.attackfn = attack_blindr
             inst.components.uglevel.expfn = function ()
                 return 100
             end
         end,
         detach = function (inst)
-            inst.enhancefn = nil
             inst.attackfn = nil
         end
     }
@@ -1410,25 +1368,17 @@ local function init_posion_data()
     
     return {
         attach = function (inst)
-            inst.enhancefn = atk_common_enhance_fn
             inst.attackfn = attack_poison
             inst.components.uglevel.expfn = function ()
                 return 100
             end
         end,
         detach = function (inst)
-            inst.enhancefn = nil
             inst.attackfn = nil
         end
     }
 end
 
-
-
-
-local function armor_enhance_fn(inst, item, doer)
-    return enhance_fn(inst, item, doer, UGTUNNING.ENHANCE_ARMOR_ITEMS)
-end
 
 
 local function init_thorns_data()
@@ -1442,14 +1392,12 @@ local function init_thorns_data()
     
     return {
         attach = function (inst, owner)
-            inst.enhancefn = armor_enhance_fn
             inst.attackedfn = atked_thorns
             inst.components.uglevel.expfn = function ()
                 return 100
             end
         end,
         detach = function (inst, owner)
-            inst.enhancefn = nil
             inst.attackedfn = nil
         end
     }    
@@ -1475,7 +1423,6 @@ local function init_absorb_data()
 
     return {
         attach = function (inst, owner)
-            inst.enhancefn = armor_enhance_fn
             if owner.components.armor ~= nil then
                 inst.org_absorb = owner.components.armor.absorb_percent
             end
@@ -1484,7 +1431,6 @@ local function init_absorb_data()
             update_absorb(inst, owner)
         end,
         detach = function (inst, owner)
-            inst.enhancefn = nil
             update_absorb(inst, owner, true)
         end,
     }
