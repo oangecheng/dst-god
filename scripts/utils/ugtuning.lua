@@ -131,3 +131,32 @@ UGMARK = {
     HEAL_MULTI = "heal_multi",
     FULE_MULTI = "fule_multi";
 }
+
+
+
+UGTUNNING = {
+
+    ENHANCE_WEAPON_ITEMS = {
+        { lv = 0  , it = { stinger = 20 } },
+        { lv = 20 , it = { houndstooth = 25  } },
+        { lv = 40 , it = { redgem = 80, bluegem = 80 } },
+        { lv = 60 , it = { lightninggoathorn = 80, horn = 80 } },
+        { lv = 80 , it = { purplegem = 50 } },
+        { lv = 100, it = { orangegem = 20, yellowgem = 20, greengem = 20 } }
+    },
+
+    ENHANCE_ARMOR_ITEMS  = {
+        { lv = 0  , it = { goldnugget = 20 } },
+        { lv = 20 , it = { marble = 20 } },
+        { lv = 40 , it = { townportaltalisman = 20 } },
+        { lv = 60 , it = { slurtle_shellpieces = 20, cookiecuttershell = 20 } },
+        { lv = 80 , it = { thulecite = 50 } },
+        { lv = 100, it = { steelwool = 20, dragon_scales = 50, armorskeleton = 100, armorsnurtleshell = 100 } }
+    },
+
+
+    ENHANCE_CLOTHES_ITEMS = {
+        
+    }
+
+}

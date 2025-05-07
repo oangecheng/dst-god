@@ -37,7 +37,17 @@ local function hook_damage(attacker, victim, weapon, dmg, spdmg)
         attacker = attacker, 
         victim = victim, 
         weapon = weapon
-     }
+    }
+
+    if check_dmg(dmg, spdmg) then
+        return dmg, spdmg
+    end
+
+    --- 致盲标记
+    if GetUgData(attacker, "attack_miss") ~= nil then
+        return 0, nil
+    end
+
 
     ---计算攻击者
     xdmg, xspd = dmgfn(attacker, xdmg, xspd, data)
