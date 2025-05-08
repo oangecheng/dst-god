@@ -118,7 +118,7 @@ local actions = {
         state = "dolongaction",
         fn    = function(act)
             if act.doer and act.target and act.target.ugactivefn then
-                if act.target.ugswitchfn(act.doer, {}) then
+                if act.target.ugswitchfn(act.doer, act.invobject) then
                     removeItem(act.invobject)
                     return true
                 end
@@ -189,7 +189,7 @@ local component_actions = {
             {
                 action = IDS.SWICTH,
                 testfn = function (inst, doer, target, acts, right)
-                    return target:HasTag(UGTAGS.SWICTH) and inst.prefab == "redgem"
+                    return target:HasTag(UGTAGS.SWICTH)
                 end
             },
             {
