@@ -255,6 +255,43 @@ end
 
 
 
+--修改普通鱼竿组件
+AddComponentPostInit("fishingrod", function(fishingrod)
+    local oldCollect = fishingrod.Collect
+    fishingrod.Collect = function(self)
+        if self.caughtfish and self.fisherman and self.target then
+            self.fisherman:PushEvent(UGEVENTS.FISH_SUCCESS, { fish = self.caughtfish, pond = self.target })
+        end
+        if oldCollect then
+            oldCollect(self)
+        end
+    end
+
+    local oldWaitForFish = fishingrod.WaitForFish
+    fishingrod.WaitForFish = function(self)
+        local mult = GetUgData(self.fisherman, UGMARK.FISH_MULTI)
+        local oldmin = self.minwaittime
+        local oldmax = self.maxwaittime
+        if mult ~= nil then
+            -- 根据源码，这里同步缩小 min和max值 就能实现缩短时间，不需要copy代码
+            if oldmin ~= nil and oldmax ~= nil then
+                self.minwaittime = oldmin * mult
+                self.maxwaittime = oldmax * mult
+            end
+        end
+        
+        if oldWaitForFish ~= nil then
+            oldWaitForFish(self)
+        end
+
+        self.minwaittime = oldmin
+        self.maxwaittime = oldmax
+    end
+end)
+
+
+
+
 
 
 
@@ -395,7 +432,11 @@ local function init_equip_fn(owner)
                 return false
             else
                 local cache_data = gem.comments.ugmark:Get("power_data")
-                inst.components.ugsystem:AddEntity(power, cache_data)
+                inst.components.ugsystem:AddEntity(power)
+                if cache_data ~= nil then
+                    inst.components.ugentity:OnLoad(cache_data.entity)
+                    inst.components.uglevel:OnLoad(cache_data.lv)
+                end
                 return true
             end
 

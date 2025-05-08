@@ -1117,6 +1117,94 @@ end
 
 
 
+local function init_runner_data()
+    local NAME = PLAYER.RUNNER
+
+    local function update_runner(inst, owner, detach)
+        local locomotor = owner.components.locomotor
+        if locomotor ~= nil then
+            if detach then
+                locomotor:RemoveExternalSpeedMultiplier(inst, NAME)
+            else
+                local lv = inst.components.uglevel:GetLv()
+                local mult = math.min(1 + lv * 0.0025, 1.25)
+                locomotor:SetExternalSpeedMultiplier(inst, NAME, mult)
+            end
+        end
+    end
+
+    return {
+        attach = function ()
+            
+        end,
+        update = function (inst, owner)
+            update_runner(inst, owner)
+        end,
+        detach = function (inst, owner)
+            update_runner(inst, owner, true)
+        end
+    }
+end
+
+
+
+
+local function init_fisher_data()
+
+    local NAME = PLAYER.FISHER
+
+    local function on_fish(owner, data)
+        GainUgPowerXp(owner, NAME, 25)
+    end
+    
+    local function update_fisher(inst, owner)
+        local lv = inst.components.uglevel:GetLv()
+        local mv = math.max(1 - lv * 0.01, 0.2)
+        PutUgData(owner, UGMARK.FISH_MULTI, mv)
+    end
+
+    return {
+        attach = function (inst, owner, name)
+            owner:ListenForEvent("fishcaught", on_fish)
+            owner:ListenForEvent(UGEVENTS.FISH_SUCCESS, on_fish)
+            inst.components.uglevel.expfn = function ()
+                return 100
+            end
+        end,
+        update = function (inst, owner, name)
+            update_fisher(inst, owner)
+        end
+    }
+end
+
+
+
+
+local function init_doctor_data()
+    
+    return {
+        attach = function ()
+            
+        end,
+        update = function ()
+            
+        end
+    }
+end
+
+
+
+local function init_dryyer_data()
+    
+    return {
+        attach = function ()
+            
+        end,
+        update = function ()
+            
+        end
+    }
+end
 
 
 
@@ -1878,7 +1966,11 @@ return  {
         [PLAYER.COOKER] = init_cooker_data(),
         [PLAYER.PICKER] = init_picker_data(),
         [PLAYER.FARMER] = init_farmer_data(),
-        [PLAYER.HUNTER] = init_hunter_data()
+        [PLAYER.HUNTER] = init_hunter_data(),
+        [PLAYER.RUNNER] = init_runner_data(),
+        [PLAYER.FISHER] = init_fisher_data(),
+        [PLAYER.DOCTOR] = init_doctor_data(),
+        [PLAYER.DRYERR] = init_dryyer_data()
     },
 
     equips = {
