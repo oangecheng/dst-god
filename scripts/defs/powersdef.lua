@@ -185,15 +185,9 @@ local function init_sanity_data()
     local rewards_def = require("defs/rewardsdef").sanity
     
     local common_fns = {
-        --- 献祭绳子提升等级
         --- 提升精神值上限
         {
             lv = 0,
-            xp = function (item, owner, lv)
-                if item.prefab == "rope"  then
-                    return 25
-                end
-            end,
             fn = function (inst, owner, lv)
                 local max = inst.org_max_sanity
                 local com = owner.components.sanity
@@ -205,16 +199,10 @@ local function init_sanity_data()
             end
         },
 
-        --- 献祭莎草纸提升等级
-        --- 献祭物品获得1-2阶蓝图
+        --- 物品获得1-2阶蓝图
         --- 未开启勋章，添加快速制作标签和女工标签
         {
             lv = 25,
-            xp = function (item, owner, lv)
-                if item.prefab == "papyrus" then
-                    return 25
-                end
-            end,
             fn = function (inst, owner, lv)
                 local v = math.min((lv - 25) * 0.08 + 1, 2.1)
                 PutUgData(owner, "gain_blue_print", math.floor(v))
@@ -226,16 +214,10 @@ local function init_sanity_data()
             end
         },
 
-        --- 献祭羽毛笔升级
-        --- 献祭物品获得2-4阶蓝图
+        --- 物品获得2-4阶蓝图
         --- 未开启勋章，解锁读书标签
         {
             lv = 50,
-            xp = function (item, owner, lv)
-                if item.prefab == "featherpencil" then
-                    return 25
-                end
-            end,
             fn = function (inst, owner, lv)
                 local v = math.min((lv - 50) * 0.08 + 3, 4.1)
                 PutUgData(owner, "gain_blue_print", math.floor(v))
@@ -249,15 +231,9 @@ local function init_sanity_data()
             end
         },
 
-        --- 献祭紫宝石升级
         --- 可以使用智慧值兑换物品，等级越高价格越便宜，缓存的是兑换折扣 0 - 1
         {
             lv = 75,
-            xp = function (item, owner, lv)
-                if item.prefab == "purplegem" then
-                    return 50
-                end
-            end,
             fn = function (inst, owner, lv)
                 local r = math.max((0.8 - lv * 0.005), 0.3)
                 PutUgData(owner, "item_exchanger", r)
@@ -289,56 +265,50 @@ local function init_sanity_data()
     end
 
 
-    local function on_sacrificial(doer, data)
-        if data.item ~= nil then
-            local lv = GetUgPowerLv(doer, NAME)
-            ---@diagnostic disable-next-line: undefined-field
-            local common_fns_reverse = table.reverse(common_fns)
-            for _, v in ipairs(common_fns_reverse) do
-                if lv >= v.lv and v.xp ~= nil then
-                    local exp = v.xp(data.item, doer, lv)
-                    if exp ~= nil then
-                        GainUgPowerXp(doer, NAME, exp)
-                    end
-                    break
-                end
-            end
 
-            local rcplv = GetUgData(doer, "gain_blue_print", 0)
-            if rcplv > 0 then
-                -- local r = rewards_def[rcplv]
-                UgLog("获得蓝图奖励", "等级"..tostring(rcplv))
-                -- 给予奖励
-            end
+    local function record_build_item(doer, item, xp)
+        --- 记录种类和击杀次数
+        local power = GetUgEntity(doer, NAME)
+        local entity = power and power.components.ugentity or nil
+        if entity ~= nil then
+            local items_data = entity:GetValue("items_data") or {}
+            local value = items_data[item.prefab] or 0
 
+            --- 计算新目标，积累经验
+            --- 击杀累计杀戮值，提升下次击杀的双倍掉落几率
+            if value == 0 then
+                GainUgPowerXp(doer, NAME, 100)
+            end
+            items_data[item.prefab] = value + 1
+            entity:PutValue("items_data", items_data)
         end
     end
 
 
-    local function give_wisdom_value(player, value)
-        AddEntityNumber(player, PLAYER.SANITY, "wisdom_value", value)
+    local function random_give_blueprint(doer)
+        local rcplv = GetUgData(doer, "gain_blue_print", 0)
+        if rcplv > 0 then
+            -- local r = rewards_def[rcplv]
+            UgLog("获得蓝图奖励", "等级" .. tostring(rcplv))
+            -- 给予奖励
+        end
     end
 
 
-    local function on_build_item(player)
-        give_wisdom_value(math.random(1, 2))
+    local function on_build_item(player, data)
+        record_build_item(player, data.item, 50)
     end
     
-    local function on_build_structure(player)
-        give_wisdom_value(math.random(2, 4))
+    local function on_build_structure(player, data)
+        record_build_item(player, data.item, 100)
     end
-    
-    local function on_unlock_recipe(player)
-        give_wisdom_value(math.random(5, 10))
-    end
+
 
 
     local attach_fn = function (inst, owner, name)
-        owner:ListenForEvent("ugsacrificial_items", on_sacrificial)
         --- 制作物品获得智慧值
         owner:ListenForEvent("builditem", on_build_item)
         owner:ListenForEvent("buildstructure", on_build_structure)
-        owner:ListenForEvent("unlockrecipe", on_unlock_recipe)
         local sanity = owner.components.sanity
         inst.org_max_sanity = sanity and sanity.max or nil
         if inst.percent then
