@@ -251,3 +251,20 @@ function GetEntityNumber(owner, powername, key)
         return 0
     end
 end
+
+
+
+---显示提示信息
+---@param player table
+---@param msg string
+---@param type number
+function SpawnUgTip(player, msg, type)
+    if player ~= nil then
+        local tips = SpawnPrefab("ugtips")
+        tips.Transform:SetPosition(player.Transform:GetWorldPosition())
+        if tips.ug_tips_value then
+            local data = { text = msg, type = type }
+            tips.ug_tips_value:set(json.encode(data))
+        end
+    end
+end

@@ -96,7 +96,11 @@
         "ANCHOR_TOP",
         "MakeInventoryFloatable",
         "FOODGROUP",
-        "ArrayUnion"
+        "ArrayUnion",
+        "GetTime",
+        "Lerp",
+        "NUMBERFONT",
+        "net_shortint"
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",
