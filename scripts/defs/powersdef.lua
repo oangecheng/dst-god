@@ -30,11 +30,6 @@ local function init_hunger_data()
         --- 增加饱食上限
         {
             lv = 0,
-            xp = function (owner, food, lv)
-                if food.prefab == "turkeydinner" then
-                    return 50
-                end
-            end,
             fn = function (inst, owner, lv)
                 local origin_max_hunger = inst.origin_max_hunger
                 local com_hunger = owner.components.hunger
@@ -49,11 +44,6 @@ local function init_hunger_data()
         --- 增加工作效率
         {
             lv = 25,
-            xp = function (owner, food, lv)
-                if food.prefab == "talleggs" then
-                    return 40
-                end
-            end,
             fn = function (inst, owner, lv)
                 local com_workmultiplier = owner.components.workmultiplier
                 if com_workmultiplier ~= nil then
@@ -68,11 +58,6 @@ local function init_hunger_data()
         --- 吃东西额外获得饱食度
         {
             lv = 50,
-            xp = function (owner, food, lv)
-                if food.prefab == "icecream" then
-                    return 50
-                end
-            end,
             fn = function (inst, owner, lv)
                 local m = (lv - 50) * 0.01 + 1
                 PutUgData(owner, "eat_food_hunger_multi", m)
@@ -82,11 +67,6 @@ local function init_hunger_data()
         --- 吃喜欢的东西概率获得buff
         {
             lv = 75,
-            xp = function (owner, food, lv)
-                if food.prefab == "jellybean" then
-                    return 80
-                end
-            end,
             fn = function (inst, owner, lv)
                 local ratio = math.min(0.01 * (lv - 75), 1)
                 PutUgData(owner, "eat_food_give_buff", ratio)
@@ -97,17 +77,18 @@ local function init_hunger_data()
         --- 赋予食神称号
         {
             lv = 100,
-            xp = function (owner, food, lv)
-                local edible = food.components.edible
-                if edible ~= nil then
-                    return 0.4 * edible.hungervalue + edible.healthvalue * 0.6 + edible.sanityvalue * 1
-                end
-            end,
             fn = function (inst, owner, lv)
                 AddUgTag(owner, "ughunger_master", NAME)
             end
         }
     }
+
+    local function food_xp(food)
+        local edible = food.components.edible
+        if edible ~= nil then
+            return 0.4 * edible.hungervalue + edible.healthvalue * 0.6 + edible.sanityvalue * 1
+        end
+    end
 
 
     local function on_eat(eater, data)
@@ -116,17 +97,28 @@ local function init_hunger_data()
             return
         end
 
-        local lv = GetUgPowerLv(eater, PLAYER.HUNGER)
-        ---@diagnostic disable-next-line: undefined-field
-        local common_fns_reverse = table.reverse(common_fns)
-        for _, v in ipairs(common_fns_reverse) do
-            if lv >= v.lv and v.xp ~= nil then
-                local exp = v.xp(eater, data.food, lv)
-                if exp ~= nil then
-                    GainUgPowerXp(eater, PLAYER.HUNGER, exp)
+        --- 记录种类和击杀次数
+        local power = GetUgEntity(eater, NAME)
+        local entity = power and power.components.ugentity or nil
+        if entity ~= nil and power ~= nil then
+            local foods_data = entity:GetValue("foods_data") or {}
+            local value = foods_data[food.prefab] or 0
+
+            -- 吃新食物，累计经验值
+            local xp = 0
+            if value == 0 then
+                xp = 100
+            else
+                if power.components.uglevel:GetLv() >= 100 then
+                    xp = food_xp(food)
                 end
-                break
             end
+            if xp > 0 then
+                GainUgPowerXp(eater, NAME, xp)
+            end
+
+            foods_data[food.prefab] = value + 1
+            entity:PutValue("foods_data", foods_data)
         end
 
         local r = GetUgData(eater, "eat_food_give_buff", 0)
@@ -268,19 +260,27 @@ local function init_sanity_data()
 
 
 
-    local function record_build_item(doer, item, xp)
-        --- 记录种类和击杀次数
+    local function record_build_item(doer, item, exp)
+        --- 记录种类和制作次数
         local power = GetUgEntity(doer, NAME)
         local entity = power and power.components.ugentity or nil
-        if entity ~= nil then
+        if entity ~= nil and power ~= nil then
             local items_data = entity:GetValue("items_data") or {}
             local value = items_data[item.prefab] or 0
 
-            --- 计算新目标，积累经验
-            --- 击杀累计杀戮值，提升下次击杀的双倍掉落几率
+            -- 制作物品，累计经验值
+            local xp = 0
             if value == 0 then
-                GainUgPowerXp(doer, NAME, 100)
+                xp = exp
+            else
+                if power.components.uglevel:GetLv() >= 100 then
+                    xp = math.random(1, 2)
+                end
             end
+            if xp > 0 then
+                GainUgPowerXp(doer, NAME, xp)
+            end
+
             items_data[item.prefab] = value + 1
             entity:PutValue("items_data", items_data)
         end
@@ -345,15 +345,9 @@ local function init_health_data()
 
     local common_fns = {
 
-        ---杀蜘蛛升级
         ---提升血量上限
         {
             lv = 0,
-            xp = function (victim, owner, lv)
-                if victim.prefab == "spider" then
-                    return 25
-                end
-            end,
             fn = function(inst, owner, lv)
                 local max = inst.org_maxhealth
                 local com = owner.components.health
@@ -365,16 +359,10 @@ local function init_health_data()
             end
         },
 
-        ---杀狗升级
         ---提升防御 max = 25%
         ---提升攻击 max = 25%
         {
             lv = 25,
-            xp = function (victim, owner, lv)
-                if victim.prefab == "hound" then
-                    return 25
-                end
-            end,
             fn = function (inst, owner, lv)
                 local mult1 = math.min(lv - 25 * 0.0025, 0.25)
                 if owner.components.health ~= nil then
@@ -387,30 +375,18 @@ local function init_health_data()
             end
         },
 
-        ---杀触手升级
         ---所有回血效果增强
         {
             lv = 50,
-            xp = function (victim, owner, lv)
-                if victim.prefab == "tentacle" then
-                    return 100
-                end
-            end,
             fn = function (inst, owner, lv)
                 local v = math.min((lv - 50) * 0.005, 0.5) + 1
                 PutUgData(owner, "health_delta", v)
             end
         },
 
-        ---杀蜘蛛女王升级
         ---位面伤害&位面防御
         {
             lv = 75,
-            xp = function (victim, owner, lv)
-                if victim.prefab == "spiderqueen" then
-                    return 100
-                end
-            end,
             fn = function (inst, owner, lv)
                 AddUgTag(owner, "player_lunar_aligned", NAME)
                 AddUgTag(owner, "player_shadow_aligned", NAME)
@@ -433,10 +409,6 @@ local function init_health_data()
         ---战神属性：僵直抗性
         {
             lv = 100,
-            xp = function (victim, owner, lv)
-                local max_health = victim.components.health.maxhealth
-                return math.min(max_health * 0.01, 100)
-            end,
             fn = function (inst, owner, lv)
                 AddUgTag(owner, "ughealth_master", NAME)
             end
@@ -457,26 +429,29 @@ local function init_health_data()
 
     local function on_kill_other(killer, data)
         local victim = data.victim
-        if victim and victim.components.health and victim.components.freezable then
-            local health_value = victim.components.health.maxhealth
-            if health_value >= 4000 then
-                local v = math.random(1, 2)
-                AddEntityNumber(killer, PLAYER.HEALTH, "boss_killer_value", v)
-            end
+        local power = GetUgEntity(killer, NAME)
+        if victim and victim.components.health and victim.components.freezable and power then
 
-            local lv = GetUgPowerLv(killer, PLAYER.HEALTH)
-            ---@diagnostic disable-next-line: undefined-field
-            local common_fns_reverse = table.reverse(common_fns)
-            for _, v in ipairs(common_fns_reverse) do
-                if lv >= v.lv and v.xp ~= nil then
-                    local exp = v.xp(victim, killer, lv)
-                    if exp ~= nil then
-                        GainUgPowerXp(killer, PLAYER.HEALTH, exp)
-                    end
-                    break
+            local health_value = victim.components.health.maxhealth
+            local entity = power.components.ugentity
+
+            local killed_data = entity:GetValue("killed_data") or {}
+            local value = killed_data[victim.prefab] or 0
+            killed_data[victim.prefab] = value + 1
+            entity:PutValue("killed_data", killed_data)
+
+            -- 制作物品，累计经验值
+            local xp = 0
+            if value == 0 then
+                xp = math.random(40, 60)
+            else
+                if power.components.uglevel:GetLv() >= 100 then
+                    xp = math.min(health_value * 0.01, 100)
                 end
             end
-
+            if xp > 0 then
+                GainUgPowerXp(killer, NAME, xp)
+            end
         end
     end
 
@@ -897,7 +872,7 @@ local function init_farmer_data()
         {
             lv = 0,
             xp = function (plant, owner, lv)
-                return plant.is_oversized and 100 or 12
+                return plant.is_oversized and 64 or 32
             end,
             fn = function (inst, owner, lv)
             end
@@ -906,7 +881,7 @@ local function init_farmer_data()
         {
             lv = 25,
             xp = function (plant, owner, lv)
-                return plant.is_oversized and 50 or 9
+                return plant.is_oversized and 32 or 16
             end,
             fn = function (inst, owner, lv)
                 PutUgData(owner, "oversized_mult", true)
@@ -916,7 +891,7 @@ local function init_farmer_data()
         {
             lv = 50,
             xp = function (plant, owner, lv)
-                return plant.is_oversized and 25 or 6
+                return plant.is_oversized and 16 or 8
             end,
             fn = function (inst, owner, lv)
                 local m = math.min((lv - 50) * 0.1, 10)
@@ -927,7 +902,7 @@ local function init_farmer_data()
         {
             lv = 75,
             xp = function (plant, owner, lv)
-                return plant.is_oversized and 10 or 3
+                return plant.is_oversized and 4 or 2
             end,
             fn = function (inst, owner, lv)
                 AddUgTag(owner, "ugfarm_item_maker", NAME)
@@ -937,7 +912,7 @@ local function init_farmer_data()
         {
             lv = 100,
             xp = function (plant, owner, lv)
-                return plant.is_oversized and 5 or 1
+                return plant.is_oversized and 2 or 1
             end,
             fn = function (inst, owner, lv)
                 AddUgTag(owner, "ugfarm_master", NAME)
@@ -1041,13 +1016,6 @@ local function init_hunter_data()
         }
     }
 
-
-    local function on_work_finished(worker, data)
-        local target = data.target
-        local action = data.action
-    end
-
-
     local function on_kill_other(player, data)
         local victim = data.victim
         if victim and victim.components.health and victim.components.freezable then
@@ -1093,7 +1061,6 @@ local function init_hunter_data()
     end
 
     local function attach_fn(inst, owner, name)
-        owner:ListenForEvent("finishedwork", on_work_finished)
         owner:ListenForEvent("killed", on_kill_other)
         inst.components.uglevel.expfn = function ()
             return 100
