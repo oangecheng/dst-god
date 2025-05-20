@@ -552,3 +552,80 @@ AddClassPostConstruct("widgets/hoverer", function(hoverer)
 		return oldSetString(text, str)
 	end
 end)
+
+
+
+
+
+
+
+
+
+local ITEM_DIR = "images/inventoryimages/"
+local SKIN_DIR = "images/zxskins/"
+
+
+local MOD_ITEMS = {  
+    "zxstone", 
+    "zxboss_proof"
+ }
+
+local SP_ITEMS = { 
+    sanity = function (num)
+        return Ingredient(CHARACTER_INGREDIENT.SANITY, num)
+    end 
+}
+
+
+local function recipe_ingredients_fn(make)
+    local ingredients = {}
+    for k, v in pairs(make) do
+        local i = nil
+        if SP_ITEMS[k] ~= nil then
+            i = SP_ITEMS[k](v)
+        elseif table.contains(MOD_ITEMS, k) then
+            i = Ingredient(k, v, ITEM_DIR .. k .. ".xml")
+        else
+            i = Ingredient(k, v)
+        end
+        table.insert(ingredients, i)
+    end
+    return ingredients
+end
+
+
+---添加配方通用函数
+---@param name string 预制物名称
+---@param data table 包含配方，科技和tab
+local function add_mod_recipe(name, data)
+    local extra = data.extra or {}
+    local res   = data.res or {}
+
+    local xml = res.xml or res.file or name
+    local img = res.img or res.file or name
+
+    if res.skinable then
+        extra.atlas  = SKIN_DIR .. name .. "/" .. xml .. ".xml"
+        extra.image  = img .. ".tex"
+        if not res.noplace then
+            extra.placer = name .. "_placer"
+       end
+    else
+        extra.atlas = ITEM_DIR .. xml .. ".xml"
+        extra.image = img .. ".tex"
+    end
+
+    AddRecipe2(
+        name, 
+        recipe_ingredients_fn(data.make), 
+        data.tech, 
+        extra, 
+        data.filter
+    )
+end
+
+
+local recipes = require("defs/recipe_defs")
+for _, v in ipairs(recipes) do
+    add_mod_recipe(v.name, v.data)
+end

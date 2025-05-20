@@ -100,7 +100,8 @@
         "GetTime",
         "Lerp",
         "NUMBERFONT",
-        "net_shortint"
+        "net_shortint",
+        "CHARACTER_INGREDIENT"
     ],
     "Lua.diagnostics.disable": [
         "undefined-doc-name",

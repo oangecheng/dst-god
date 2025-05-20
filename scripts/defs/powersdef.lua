@@ -539,6 +539,7 @@ local function init_cooker_data()
             fn = function (inst, owner, lv)
                 AddUgTag(owner, "cook_item_maker",NAME)
                 AddUgTag(owner, "ugfood_maker_normal", NAME)
+                owner:PushEvent("refreshcrafting")
             end
         },
 
@@ -729,6 +730,7 @@ local function init_picker_data()
             end,
             fn = function (inst, owner, lv)
                 AddUgTag(owner, "ugpick_item_maker", NAME)
+                owner:PushEvent("refreshcrafting") --更新制作栏
             end
         },
 
