@@ -15,7 +15,7 @@ local prefabs = {
 
 
 
-local function MakeItem(prefab, data)
+local function MakeItem(prefab, power)
     local function fn()
         local inst = CreateEntity()
 
@@ -26,26 +26,12 @@ local function MakeItem(prefab, data)
         inst.entity:SetPristine()
 
         MakeInventoryPhysics(inst)
-
         inst.AnimState:SetBank("ugpotions")
         inst.AnimState:SetBuild("ugpotions")
-        local scale = data.scale or 1
-        inst.AnimState:SetScale(scale, scale, scale)
-        inst.AnimState:PlayAnimation("idle", data.loop)
-        inst.AnimState:OverrideSymbol("swap_item", "ugpotions", data.power)
+        inst.AnimState:PlayAnimation("idle", true)
+        inst.AnimState:OverrideSymbol("swap_item", "ugpotions", power)
 
         inst:AddTag(UGTAGS.POTION)
-
-        if data.tags then
-            for _, v in ipairs(data.tags) do
-                inst:AddTag(v)
-            end
-        end
-
-        if data.initfn then
-            data.initfn(inst, prefab, TheWorld.ismastersim)
-        end
-
 
         if not TheWorld.ismastersim then
             return inst
@@ -54,22 +40,22 @@ local function MakeItem(prefab, data)
         inst:AddComponent("inspectable")
         inst:AddComponent("inventoryitem")
         inst.components.inventoryitem:SetOnDroppedFn(function(_)
-            inst.AnimState:PlayAnimation("idle", data.loop)
+            inst.AnimState:PlayAnimation("idle", true)
         end)
 
-        inst.components.inventoryitem.imagename = data.power
+        inst.components.inventoryitem.imagename = power
         inst.components.inventoryitem.atlasname = DIR..".xml"
 
         inst:AddComponent("stackable")
-        inst.components.stackable.maxsize = data.stacksize or TUNING.STACK_SIZE_SMALLITEM
+        inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
 
 
         inst.drinkfn = function(doer)
             local sys = doer.components.ugsystem
             if sys ~= nil then
-                local ent = sys:GetEntity(data.power)
+                local ent = sys:GetEntity(power)
                 if ent == nil then
-                    sys:AddEntity(data.power)
+                    sys:AddEntity(power)
                     return true
                 end
             end
@@ -84,9 +70,9 @@ end
 
 local items = {}
 
-local NORMAL = require("defs/items/potions")
-for k, v in pairs(NORMAL) do
-    table.insert(items, MakeItem(k, v))
+local NORMAL = UGPOWERS.PLAYER
+for _, v in pairs(NORMAL) do
+    table.insert(items, MakeItem(v.."_potion", v))
 end
 
 

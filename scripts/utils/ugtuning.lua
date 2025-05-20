@@ -80,9 +80,7 @@ UGPOWERS = {
 
 
 UGMAGICS = {
-    PLANT_BUSH = "ugmagic_plant_bush",
-    MEAT_RACK  = "ugmagic_meat_rack" ,
-    
+    PLANT_ENERGY_TARGETS = { "berrybush", "berrybush2", "berrybush_juicy", "grass", "bananabush" }
 }
 
 

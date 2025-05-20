@@ -95,7 +95,7 @@ end
 
 
 local powers = {}
-local defs = require("defs/powersdef")
+local defs = require("defs/ugpower_defs")
 for k,v in pairs(defs) do
     table.insert(powers, MakePower(k, v))
 end

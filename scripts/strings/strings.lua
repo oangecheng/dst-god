@@ -37,6 +37,10 @@ register_name("ugmagic_plant_energy","植物精华", "Plant Energy")
 register_name("ugmagic_meat_rack", "晾肉架升级套件", "meat rack tool")
 
 
+
+
+
+
 STRINGS.UGTASK_STRS = {
     DEMAND = ch and "任务要求" or "Task Demand",
     KILL   = ch and "狩猎" or "Kill",

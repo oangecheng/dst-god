@@ -191,7 +191,7 @@ function GridPage:BuildSkinScrollGrid()
 			local str = "等级:" .. tostring(data.lv)
 			str = str .. "\n经验:" .. tostring(data.xp)
 
-			local str_data = STRINGS.UGPOWERS_STR[data.name] 
+			local str_data = nil
 			if str_data and str_data.info then
 				str = str .. "\n" .. str_data.info(data.lv)
 			else

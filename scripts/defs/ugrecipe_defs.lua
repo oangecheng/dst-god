@@ -67,11 +67,4 @@ local NORMAL = {
 
 
 
-local GEMS = {
-
-}
-
-
-
-
-return JoinArrays(NORMAL)
+return NORMAL

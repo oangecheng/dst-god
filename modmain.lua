@@ -12,7 +12,7 @@ TUNING.STACK_SIZE_TINYITEM = 99
 --- 导入物品文件
 AddReplicableComponent("ugsync")
 PrefabFiles = {
-    -- "ugplayerfox",
+    "ugplayerfox",
     "ugpower",
     "uggems",
     -- "ugtasks",
@@ -49,8 +49,6 @@ Assets = {
 }
 
 modimport("scripts/strings/strings.lua")
-modimport("scripts/strings/power.lua")
-modimport("scripts/mods/hookaction.lua")
 modimport("scripts/ui/ugui.lua")
 modimport("scripts/mods/rpc.lua")
 modimport("scripts/mods/hook2.lua")
