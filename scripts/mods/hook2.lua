@@ -540,13 +540,7 @@ end
 
 
 
-
-local berrybushs = {
-    "berrybush_juicy",
-    "berrybush",
-    "berrybush2"
-}
-for _, v in ipairs(berrybushs) do
+for _, v in ipairs(UGMAGICS.PLANT_ENERGY_TARGETS) do
     AddPrefabPostInit(v, function (inst)
         inst:AddTag(UGTAGS.MAGIC_TARGET)
     end)
