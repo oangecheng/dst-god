@@ -135,8 +135,8 @@ local actions = {
         str   = STRINGS.ACTIONS[IDS.MAGIC],
         state = "dolongaction", 
         fn    = function(act)
-            if act.doer and act.invobject and act.invobject.givefn then
-                if act.invobject.givefn(act.invobject, act.target, act.doer) then
+            if act.doer and act.invobject and act.invobject.GiveToFn then
+                if act.invobject.GiveToFn(act.invobject, act.target, act.doer) then
                     removeItem(act.invobject)
                     return true
                 end
